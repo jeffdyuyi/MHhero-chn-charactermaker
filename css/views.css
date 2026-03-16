@@ -228,6 +228,10 @@
     color: var(--secondary-color);
 }
 
+.power-detail-btn {
+    margin-bottom: var(--spacing-sm);
+}
+
 .power-mods {
     display: flex;
     flex-wrap: wrap;
@@ -785,4 +789,39 @@
     font-size: var(--font-size-lg);
     text-align: center;
     padding: var(--spacing-lg);
+}
+
+/* 能力详情 */
+.power-detail-content {
+    padding: var(--spacing);
+}
+
+.power-description {
+    line-height: var(--line-height-relaxed);
+    color: var(--text-primary);
+    font-size: var(--font-size);
+}
+
+.power-description strong {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-bold);
+}
+
+.power-description em {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.power-clickable {
+    cursor: pointer;
+    color: var(--secondary-color);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+    transition: all var(--transition-fast);
+}
+
+.power-clickable:hover {
+    color: var(--secondary-dark);
+    text-decoration-style: solid;
 }

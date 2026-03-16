@@ -2,6 +2,8 @@
  * 模态框模块
  */
 
+import { getPowerDescription } from '../data/powers.js';
+
 const MODAL_ID = 'modal';
 
 /**
@@ -216,7 +218,7 @@ function createCharacterDetailHTML(character) {
                     ${character.powers.map(power => `
                         <div class="power-item">
                             <div class="power-info">
-                                <span class="power-name">${power.name}</span>
+                                <span class="power-name power-clickable" onclick="window.showPowerDetailInModal('${power.name}')">${power.name}</span>
                                 <span class="power-category">${power.category}</span>
                             </div>
                             <span class="power-level">等级 ${power.level}</span>
@@ -274,3 +276,18 @@ function getSpecialtyLevelName(level) {
     const names = { 1: '基础', 2: '专家', 3: '大师' };
     return names[level] || level;
 }
+
+window.showPowerDetailInModal = function(powerName) {
+    const description = getPowerDescription(powerName);
+    openModal({
+        title: powerName,
+        content: `
+            <div class="power-detail-content">
+                <div class="power-description">
+                    ${description}
+                </div>
+            </div>
+        `,
+        size: 'medium'
+    });
+};

@@ -88,6 +88,23 @@
     font-size: var(--font-size-sm);
 }
 
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    gap: var(--spacing-xs);
+}
+
+.btn-info {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-info:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
 .btn-icon {
     padding: var(--spacing-sm);
     border-radius: 50%;

@@ -27,6 +27,7 @@ import {
 import { showSuccess, showError, showInfo } from './ui/toast.js';
 import { openModal, closeModal, showConfirm, showCharacterDetail } from './ui/modal.js';
 import { POINT_BUY_CONFIG, APP_CONFIG } from './data/index.js';
+import { getPowerDescription } from './data/powers.js';
 
 /**
  * 应用主类
@@ -388,6 +389,9 @@ class ComicHeroApp {
                         <span class="power-category">${power.category}</span>
                     </div>
                     <div class="power-level">等级: ${power.level}</div>
+                    <button class="btn btn-info btn-sm power-detail-btn" onclick="app.showPowerDetail('${power.name}')">
+                        <span>📖</span> 查看详情
+                    </button>
                     ${isPointBuy ? `
                         <div class="power-actions">
                             <button onclick="app.adjustPowerLevel(${index}, -1)">-</button>
@@ -603,7 +607,7 @@ class ComicHeroApp {
                         <h4>特殊能力 (${character.powers.length}项)</h4>
                         ${character.powers.map(p => `
                             <div class="sheet-power">
-                                <strong>${p.name}</strong> (${p.category}) - 等级 ${p.level}
+                                <span class="power-clickable" onclick="app.showPowerDetail('${p.name}')">${p.name}</span> (${p.category}) - 等级 ${p.level}
                             </div>
                         `).join('')}
                     </div>
@@ -912,6 +916,21 @@ class ComicHeroApp {
         } else {
             this.switchView('help');
         }
+    }
+
+    showPowerDetail(powerName) {
+        const description = getPowerDescription(powerName);
+        openModal({
+            title: powerName,
+            content: `
+                <div class="power-detail-content">
+                    <div class="power-description">
+                        ${description}
+                    </div>
+                </div>
+            `,
+            size: 'medium'
+        });
     }
 
     closeModal() {
