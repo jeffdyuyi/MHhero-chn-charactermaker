@@ -1,0 +1,445 @@
+/* 响应式布局 */
+@media (max-width: 1200px) {
+    .main-content {
+        padding: var(--spacing);
+    }
+}
+
+@media (max-width: 992px) {
+    :root {
+        --header-height: 56px;
+    }
+
+    .header-content {
+        padding: 0 var(--spacing);
+    }
+
+    .logo h1 {
+        font-size: var(--font-size-md);
+    }
+
+    .logo .subtitle {
+        display: none;
+    }
+
+    .nav-text {
+        display: none;
+    }
+
+    .nav-btn {
+        padding: var(--spacing-sm);
+    }
+
+    .hero-section {
+        padding: var(--spacing-lg);
+    }
+
+    .hero-title {
+        font-size: var(--font-size-xl);
+    }
+
+    .mode-selection {
+        grid-template-columns: 1fr;
+    }
+
+    .help-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .formula-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: var(--spacing-sm);
+    }
+
+    .hero-section {
+        padding: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .hero-features {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .feature {
+        justify-content: center;
+    }
+
+    .mode-card {
+        margin-bottom: var(--spacing);
+    }
+
+    .mode-header {
+        padding: var(--spacing);
+    }
+
+    .mode-body {
+        padding: var(--spacing);
+    }
+
+    .action-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .creation-header {
+        flex-direction: column;
+        gap: var(--spacing);
+        text-align: center;
+    }
+
+    .creation-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .step-indicator {
+        flex-wrap: wrap;
+        gap: var(--spacing-xs);
+    }
+
+    .step {
+        flex: 1 1 calc(33.333% - var(--spacing-xs));
+        min-width: 80px;
+    }
+
+    .step-label {
+        font-size: var(--font-size-xs);
+    }
+
+    .creation-footer {
+        flex-direction: column;
+        gap: var(--spacing);
+    }
+
+    .step-navigation {
+        width: 100%;
+    }
+
+    .step-navigation .btn {
+        flex: 1;
+    }
+
+    .attributes-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .attribute-value {
+        font-size: var(--font-size-xl);
+    }
+
+    .origin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-bar {
+        flex-direction: column;
+    }
+
+    .filter-bar select {
+        width: 100%;
+    }
+
+    .character-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .character-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .sheet-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sheet-actions {
+        flex-direction: column;
+    }
+
+    .sheet-actions .btn {
+        width: 100%;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: var(--spacing);
+        text-align: center;
+    }
+
+    .section-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .modal-content {
+        margin: var(--spacing-sm);
+        max-height: calc(100vh - var(--spacing-lg));
+    }
+
+    .toast-container {
+        left: var(--spacing);
+        right: var(--spacing);
+        bottom: var(--spacing);
+    }
+
+    .toast {
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --font-size-xxl: 24px;
+        --font-size-xl: 20px;
+        --font-size-lg: 18px;
+    }
+
+    .header-content {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .logo-icon {
+        font-size: var(--font-size-lg);
+    }
+
+    .main-content {
+        padding: var(--spacing-xs);
+    }
+
+    .step {
+        flex: 1 1 calc(50% - var(--spacing-xs));
+    }
+
+    .step-number {
+        width: 28px;
+        height: 28px;
+        font-size: var(--font-size-xs);
+    }
+
+    .attributes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .attribute-card {
+        display: flex;
+        align-items: center;
+        text-align: left;
+        gap: var(--spacing);
+    }
+
+    .attribute-header {
+        flex: 1;
+        margin-bottom: 0;
+    }
+
+    .attribute-value {
+        font-size: var(--font-size-xl);
+        margin: 0;
+    }
+
+    .attribute-title {
+        display: none;
+    }
+
+    .attribute-desc {
+        display: none;
+    }
+
+    .power-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .specialty-card {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        text-align: center;
+    }
+
+    .specialty-info {
+        flex-direction: column;
+    }
+
+    .derived-stats-preview {
+        grid-template-columns: 1fr;
+    }
+
+    .sheet-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sheet-item-value {
+        font-size: var(--font-size-lg);
+    }
+
+    .help-section {
+        padding: var(--spacing);
+    }
+
+    .level-table {
+        font-size: var(--font-size-sm);
+    }
+
+    .level-table th,
+    .level-table td {
+        padding: var(--spacing-xs);
+    }
+}
+
+/* 横屏模式 */
+@media (max-height: 600px) and (orientation: landscape) {
+    .hero-section {
+        padding: var(--spacing);
+    }
+
+    .hero-features {
+        display: none;
+    }
+
+    .mode-selection {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .step-indicator {
+        position: sticky;
+        top: var(--header-height);
+        z-index: var(--z-sticky);
+    }
+}
+
+/* 打印样式 */
+@media print {
+    .app-header,
+    .app-footer,
+    .main-nav,
+    .creation-header,
+    .creation-footer,
+    .step-indicator,
+    .step-navigation,
+    .btn,
+    .no-print {
+        display: none !important;
+    }
+
+    .main-content {
+        max-width: none;
+        padding: 0;
+    }
+
+    .view {
+        display: none !important;
+    }
+
+    #create-view {
+        display: block !important;
+    }
+
+    .step-content {
+        box-shadow: none;
+        padding: 0;
+    }
+
+    .character-sheet {
+        box-shadow: none;
+    }
+
+    .sheet-section {
+        break-inside: avoid;
+    }
+
+    body {
+        background: white;
+    }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #000000;
+        --text-secondary: #000000;
+    }
+
+    .btn {
+        border-width: 2px;
+    }
+
+    .card {
+        border: 2px solid var(--border-color);
+    }
+}
+
+/* 减少动画 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #1a1a2e;
+        --bg-secondary: #16213e;
+        --bg-card: #0f3460;
+        --bg-dark: #1a1a2e;
+        
+        --text-primary: #eaeaea;
+        --text-secondary: #a0a0a0;
+        --text-muted: #6c757d;
+        
+        --border-color: #2d3748;
+        --border-light: #1a202c;
+        
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+
+    body {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, rgba(15, 52, 96, 0.95) 0%, rgba(22, 33, 62, 0.85) 100%);
+    }
+
+    .feature {
+        background: var(--bg-card);
+    }
+
+    input, textarea, select {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+
+    .attribute-card,
+    .origin-card,
+    .power-card,
+    .specialty-card {
+        background: var(--bg-secondary);
+    }
+
+    .help-card,
+    .formula-card {
+        background: var(--bg-secondary);
+    }
+
+    .level-table th {
+        background: var(--bg-secondary);
+    }
+
+    .level-table tr:hover {
+        background: var(--bg-primary);
+    }
+}
