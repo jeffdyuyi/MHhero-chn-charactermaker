@@ -103,7 +103,11 @@ export function validateCharacter(character) {
     if (character.mode === 'point-buy') {
         let usedPoints = 0;
         Object.values(character.attributes || {}).forEach(value => usedPoints += value);
-        (character.powers || []).forEach(power => usedPoints += power.level);
+        (character.powers || []).forEach(power => {
+            usedPoints += power.level;
+            usedPoints += (power.extras?.length || 0);
+            usedPoints -= (power.flaws?.length || 0);
+        });
         (character.specialties || []).forEach(specialty => usedPoints += specialty.level);
 
         if (usedPoints > POINT_BUY_CONFIG.totalPoints) {

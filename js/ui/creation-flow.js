@@ -12,6 +12,7 @@ import {
 
 import { formatOriginMechanics } from '../data/origins.js';
 import { getSpecialtiesList } from '../data/specialties.js';
+import { getAttributeKeys } from '../data/attributes.js';
 import { POINT_BUY_CONFIG } from '../data/index.js';
 import { CharacterGenerator } from '../core/character.js';
 import { showSuccess, showError, showInfo } from './toast.js';

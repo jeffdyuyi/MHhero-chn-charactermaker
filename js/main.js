@@ -115,6 +115,24 @@ class ComicHeroApp {
         return getCharacterById(id);
     }
 
+    // 验证角色点数计算
+    validateCharacter(character) {
+        const errors = [];
+        let usedPoints = 0;
+
+        (character.powers || []).forEach(power => {
+            usedPoints += power.level;
+            usedPoints += (power.extras?.length || 0);
+            usedPoints -= (power.flaws?.length || 0);
+        });
+        (character.specialties || []).forEach(specialty => usedPoints += specialty.level);
+
+        if (usedPoints > POINT_BUY_CONFIG.totalPoints) {
+            errors.push(`购点模式下总点数超过了 ${POINT_BUY_CONFIG.totalPoints} (当前: ${usedPoints})`);
+        }
+        return errors;
+    }
+
     showCharacterDetail(id) {
         const char = this.getCharacterById(id);
         if (char) {
@@ -123,7 +141,7 @@ class ComicHeroApp {
     }
 
     showPowerDetail(name) {
-        showCharacterDetail(null, name);
+        window.showPowerDetailInModal(name);
     }
 }
 
