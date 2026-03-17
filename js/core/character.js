@@ -32,7 +32,8 @@ import {
 
 import {
     getSpecialtyCountByRoll,
-    createSpecialty
+    createSpecialty,
+    SPECIALTIES
 } from '../data/specialties.js';
 
 import { roll2d6, rollD66 } from './dice.js';
@@ -241,15 +242,9 @@ export class CharacterGenerator {
             count += this.character.origin.mechanics.bonusSpecialties;
         }
 
-        const specialtyNames = [
-            '空中战斗', '艺术', '运动技巧', '商业', '陆地驾驶', '调查', '法律', '领导力',
-            '语言', '武术', '医学', '精神抗性', '军事', '神秘学', '表演', '空中驾驶',
-            '特殊能力', '精神病学', '科学', '快手', '潜行', '工艺', '水下战斗', '武器', '格斗'
-        ];
-
         for (let i = 0; i < count; i++) {
-            const name = specialtyNames[Math.floor(Math.random() * specialtyNames.length)];
-            const specialty = createSpecialty(name, 1);
+            const randomSpecialty = SPECIALTIES[Math.floor(Math.random() * SPECIALTIES.length)];
+            const specialty = createSpecialty(randomSpecialty.id, 1);
             this.character.specialties.push(specialty);
         }
     }

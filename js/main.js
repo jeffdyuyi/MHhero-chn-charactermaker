@@ -29,6 +29,7 @@ import { openModal, closeModal, showConfirm, showCharacterDetail } from './ui/mo
 import { POINT_BUY_CONFIG, APP_CONFIG } from './data/index.js';
 import { getPowerDescription } from './data/powers.js';
 import { formatOriginMechanics } from './data/origins.js';
+import { getSpecialtiesList } from './data/specialties.js';
 
 /**
  * 应用主类
@@ -508,17 +509,17 @@ class ComicHeroApp {
         html += `</div>`;
 
         if (isPointBuy) {
+            const specialtiesList = getSpecialtiesList();
+            const options = specialtiesList.map(s => 
+                `<option value="${s.value}">${s.label}</option>`
+            ).join('');
+
             html += `
                 <div class="add-specialty-form">
                     <h5>添加新专长</h5>
                     <select id="new-specialty">
                         <option value="">选择专长</option>
-                        <option value="空中战斗">空中战斗</option>
-                        <option value="武术">武术</option>
-                        <option value="科学">科学</option>
-                        <option value="调查">调查</option>
-                        <option value="潜行">潜行</option>
-                        <option value="武器">武器</option>
+                        ${options}
                     </select>
                     <button class="btn btn-primary" onclick="app.addSpecialty()">添加专长</button>
                 </div>
@@ -1003,8 +1004,33 @@ class ComicHeroApp {
     }
 
     updatePowerSelect() {
-        // 根据类别更新能力选择
-        // 简化实现
+        const categorySelect = document.getElementById('new-power-category');
+        const powerSelect = document.getElementById('new-power-name');
+        if (!categorySelect || !powerSelect) return;
+
+        const category = categorySelect.value;
+        powerSelect.innerHTML = '<option value="">选择能力</option>';
+
+        if (category) {
+            // 根据类别获取能力列表
+            const powers = {
+                alteration: ['能力增幅', '能力提升', '变形', '体型变化', '自愈', '模仿', '能量吸收', '元素转化'],
+                control: ['天气控制', '重力控制', '磁力控制', '植物控制', '水控制', '土控制', '火控制', '冰控制'],
+                defense: ['能量护盾', '物理防护', '精神防护', '再生', '不死', '适应性', '反制', '屏障'],
+                mental: ['心灵感应', '心灵控制', '幻觉', '记忆修改', '思维读取', '精神攻击', '意志力', '直觉'],
+                movement: ['飞行', '超级速度', '传送', '穿墙', '水下呼吸', '爬墙', '空间跳跃', '维度旅行'],
+                attack: ['能量投射', '火焰喷射', '冰冻射线', '闪电攻击', '声波攻击', '心灵攻击', '重力攻击', '毒素攻击'],
+                sensory: ['超视力', '超听力', '嗅觉增强', '触觉增强', '第六感', '雷达感知', '能量感知', '时间感知']
+            };
+
+            const categoryPowers = powers[category] || [];
+            categoryPowers.forEach(power => {
+                const option = document.createElement('option');
+                option.value = power;
+                option.textContent = power;
+                powerSelect.appendChild(option);
+            });
+        }
     }
 
     /**
