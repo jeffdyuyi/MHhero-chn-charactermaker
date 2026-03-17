@@ -1174,3 +1174,55 @@
     color: var(--secondary-dark);
     text-decoration-style: solid;
 }
+
+/* 作者信息 */
+.author-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    padding: var(--spacing);
+}
+
+.author-section {
+    background: linear-gradient(135deg, var(--gray-100) 0%, var(--white) 100%);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow);
+    border: 2px solid var(--border-color);
+    transition: all var(--transition-fast);
+}
+
+.author-section:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--secondary-color);
+}
+
+.author-section h4 {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: var(--spacing-xs);
+}
+
+.author-section p {
+    font-size: var(--font-size);
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+}
+
+.author-section a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: color var(--transition-fast);
+}
+
+.author-section a:hover {
+    color: var(--secondary-dark);
+    text-decoration: underline;
+}
