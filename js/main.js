@@ -28,6 +28,7 @@ import { showSuccess, showError, showInfo } from './ui/toast.js';
 import { openModal, closeModal, showConfirm, showCharacterDetail } from './ui/modal.js';
 import { POINT_BUY_CONFIG, APP_CONFIG } from './data/index.js';
 import { getPowerDescription } from './data/powers.js';
+import { formatOriginMechanics } from './data/origins.js';
 
 /**
  * 应用主类
@@ -283,12 +284,12 @@ class ComicHeroApp {
 
     createSelectOriginHTML(character) {
         const origins = [
-            { id: 'trained', name: '受训', range: '2-4' },
-            { id: 'altered', name: '改造', range: '5-6' },
-            { id: 'mutant', name: '天赋异禀', range: '7' },
-            { id: 'gimmick', name: '花招诡计', range: '8-9' },
-            { id: 'artificial', name: '人造生命', range: '10' },
-            { id: 'alien', name: '天外来客', range: '11-12' }
+            { id: 'trained', name: '受训', range: '2-4', description: '英雄是技艺娴熟的个体，拥有的"能力"实际上都来自精湛的训练或专门的设备。', effects: '额外获得 2 项专长，可选：放弃1项能力换取2项专长' },
+            { id: 'altered', name: '改造', range: '5-6', description: '英雄原本是正常人类，经由某些外部手段（通常是科学事故、实验室改造或特殊试验）成为超人。', effects: '一项能力 +2 级' },
+            { id: 'mutant', name: '天赋异禀', range: '7', description: '英雄与生俱来（或命中注定）拥有超越常人的特殊能力。', effects: '可选择：额外获得1项特殊能力 或 1项能力+2级' },
+            { id: 'gimmick', name: '花招诡计', range: '8-9', description: '英雄本身是凡人，角色的特殊能力完全依靠某种高科技装备、魔法道具或外挂装置。', effects: '所有能力带上"装置"限制，一项精神属性 +2 级' },
+            { id: 'artificial', name: '人造生命', range: '10', description: '角色是机器人、生化人或其他类型的构装体（如魔法魔像）。', effects: '力量 +2 级，额外获得 "维系生命" 能力，可选：放弃1项能力换取额外效果' },
+            { id: 'alien', name: '天外来客', range: '11-12', description: '角色是外星人、元素精灵、天使、魔鬼乃至神祇——来自另外一个世界或位面的生物。', effects: '两项能力 +2 级' }
         ];
 
         return `
@@ -303,6 +304,10 @@ class ComicHeroApp {
                                 <h4>${o.name}</h4>
                                 <span class="origin-roll">${o.range}</span>
                             </div>
+                            <p class="origin-desc">${o.description}</p>
+                            <div class="origin-effects">
+                                <p>${o.effects}</p>
+                            </div>
                         </div>
                     `).join('')}
                 </div>
@@ -311,8 +316,7 @@ class ComicHeroApp {
     }
 
     formatOriginEffects(mechanics) {
-        // 简化版本，实际应该使用 formatOriginMechanics
-        return '<p>查看详细效果</p>';
+        return `<p>${formatOriginMechanics(mechanics)}</p>`;
     }
 
     /**
@@ -395,21 +399,25 @@ class ComicHeroApp {
         `;
 
         character.powers.forEach((power, index) => {
+            const description = getPowerDescription(power.name);
             html += `
                 <div class="power-card">
                     <div class="power-header">
-                        <h4>${power.name}</h4>
+                        <h4 class="power-name">${power.name}</h4>
                         <span class="power-category">${power.category}</span>
                     </div>
-                    <div class="power-level">等级: ${power.level}</div>
-                    <button class="btn btn-info btn-sm power-detail-btn" onclick="app.showPowerDetail('${power.name}')">
-                        <span>📖</span> 查看详情
-                    </button>
+                    <div class="power-level">
+                        <span class="power-level-label">等级:</span>
+                        <span class="power-level-value">${power.level}</span>
+                    </div>
+                    <div class="power-description">
+                        ${description}
+                    </div>
                     ${isPointBuy ? `
                         <div class="power-actions">
                             <button onclick="app.adjustPowerLevel(${index}, -1)">-</button>
                             <button onclick="app.adjustPowerLevel(${index}, 1)">+</button>
-                            <button class="btn-danger" onclick="app.removePower(${index})">删除</button>
+                            <button class="btn-danger" onclick="app.removePower(${index})")">删除</button>
                         </div>
                     ` : ''}
                 </div>
@@ -469,14 +477,22 @@ class ComicHeroApp {
         `;
 
         character.specialties.forEach((specialty, index) => {
-            const levelNames = { 1: '基础', 2: '专家', 3: '大师' };
+            const levelInfo = {
+                1: { name: '基础', bonus: '+1', description: '对应检定+1' },
+                2: { name: '专家', bonus: '+2', description: '对应检定+2' },
+                3: { name: '大师', bonus: '+3', description: '对应检定+3，允许使用特技' }
+            };
+            const level = levelInfo[specialty.level] || levelInfo[1];
             html += `
                 <div class="specialty-card">
                     <div class="specialty-info">
                         <span class="specialty-name">${specialty.name}</span>
+                        <div class="specialty-description">
+                            ${level.description}
+                        </div>
                     </div>
                     <div class="specialty-level">
-                        <span class="specialty-level-badge">${levelNames[specialty.level]} (+${specialty.level})</span>
+                        <span class="specialty-level-badge">${level.name} ${level.bonus}</span>
                         ${isPointBuy ? `
                             <div class="attribute-controls">
                                 <button onclick="app.adjustSpecialtyLevel(${index}, -1)">-</button>

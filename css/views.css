@@ -333,6 +333,17 @@
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+.power-card .power-description {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--secondary-color);
+}
+
 .power-detail-btn {
     margin-bottom: var(--spacing-sm);
 }
@@ -430,6 +441,17 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-size: var(--font-size-sm);
+}
+
+.specialty-description {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+    line-height: var(--line-height-relaxed);
+    padding: var(--spacing-xs);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+    border-left: 4px solid var(--secondary-color);
 }
 
 .specialty-level {
