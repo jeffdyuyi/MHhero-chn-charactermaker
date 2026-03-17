@@ -14,8 +14,10 @@ import { formatOriginMechanics } from '../data/origins.js';
 import { getSpecialtiesList } from '../data/specialties.js';
 import { POINT_BUY_CONFIG } from '../data/index.js';
 import { CharacterGenerator } from '../core/character.js';
-import { showSuccess, showError } from './toast.js';
+import { showSuccess, showError, showInfo } from './toast.js';
 import { saveCharacter } from '../core/storage.js';
+import { openModal, closeModal } from './modal.js';
+import { POWER_EXTRAS, POWER_FLAWS } from '../data/modifiers.js';
 
 const ATTRIBUTE_NAMES = {
     brawn: '勇猛',
@@ -252,6 +254,70 @@ export class CreationFlow {
                 <p class="step-hint">所有属性等级范围：1-10</p>
         `;
 
+        // 起源选择逻辑 (随机模式下也有选择)
+        if (character.origin && character.origin.mechanics) {
+            const mech = character.origin.mechanics;
+            if (mech.statBoost || mech.choice === 'power_or_boost') {
+                html += `<div class="origin-choice-box">
+                    <h5>来源奖励选择 (${character.origin.name})</h5>`;
+
+                if (mech.choice === 'power_or_boost') {
+                    html += `
+                        <div class="choice-row">
+                            <label>选择奖励类型：</label>
+                            <select onchange="app.creationFlow.handleMutantChoice(this.value)">
+                                <option value="power" ${character.originChoices.mutantChoice === 'power' ? 'selected' : ''}>额外获得1项能力</option>
+                                <option value="boost" ${character.originChoices.mutantChoice === 'boost' ? 'selected' : ''}>一项属性 +2 级</option>
+                            </select>
+                        </div>
+                    `;
+                }
+
+                if (mech.statBoost?.target === 'any' || (mech.choice === 'power_or_boost' && character.originChoices.mutantChoice === 'boost')) {
+                    html += `
+                        <div class="choice-row">
+                            <label>选择要提升的属性 (+2)：</label>
+                            <select onchange="app.creationFlow.setOriginChoice('statBoost', this.value)">
+                                ${getAttributeKeys().map(key => `
+                                    <option value="${key}" ${character.originChoices.statBoost === key ? 'selected' : ''}>${ATTRIBUTE_NAMES[key]}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                    `;
+                } else if (mech.statBoost?.target === 'mental') {
+                    html += `
+                        <div class="choice-row">
+                            <label>选择要提升的精神属性 (+2)：</label>
+                            <select onchange="app.creationFlow.setOriginChoice('statBoost', this.value)">
+                                <option value="intellect" ${character.originChoices.statBoost === 'intellect' ? 'selected' : ''}>智力</option>
+                                <option value="awareness" ${character.originChoices.statBoost === 'awareness' ? 'selected' : ''}>感知</option>
+                                <option value="willpower" ${character.originChoices.statBoost === 'willpower' ? 'selected' : ''}>意志</option>
+                            </select>
+                        </div>
+                    `;
+                } else if (mech.statBoost?.target === 'any_two') {
+                    const selected = character.originChoices.statBoosts || [];
+                    html += `
+                        <div class="choice-row">
+                            <label>选择两项要提升的能力 (+2)：</label>
+                            <div class="checkbox-group">
+                                ${getAttributeKeys().map(key => `
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" value="${key}" 
+                                               ${selected.includes(key) ? 'checked' : ''} 
+                                               onchange="app.creationFlow.handleAnyTwoChoice('${key}', this.checked)">
+                                        ${ATTRIBUTE_NAMES[key]}
+                                    </label>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+            }
+        }
+
         if (isPointBuy) {
             const remaining = this.characterGenerator.getRemainingPoints();
             html += `<div class="points-display-inline ${remaining < 0 ? 'warning' : ''}">
@@ -262,10 +328,15 @@ export class CreationFlow {
         html += `<div class="attributes-grid">`;
 
         Object.entries(character.attributes).forEach(([key, value]) => {
+            const isBoosted = (character.originChoices.statBoost === key) ||
+                (character.originChoices.statBoosts?.includes(key)) ||
+                (character.origin?.mechanics.statBoost?.target === key);
+
             html += `
-                <div class="attribute-card">
+                <div class="attribute-card ${isBoosted ? 'boosted' : ''}">
                     <div class="attribute-header">
                         <h4>${ATTRIBUTE_NAMES[key]}</h4>
+                        ${isBoosted ? '<span class="boost-badge">+2</span>' : ''}
                     </div>
                     <div class="attribute-value">${value}</div>
                     ${isPointBuy ? `
@@ -322,16 +393,34 @@ export class CreationFlow {
                         <span class="power-level-label">等级:</span>
                         <span class="power-level-value">${power.level}</span>
                     </div>
+                    
+                    <div class="power-modifiers">
+                        <div class="mods-section extras">
+                            <span class="mods-label">增益:</span>
+                            ${power.extras.length > 0 ? power.extras.map(e => `
+                                <span class="mod-tag extra" onclick="app.creationFlow.removeModifier(${index}, 'extra', '${e.id}')">${e.name} ✕</span>
+                            `).join('') : '<span class="empty-mods">无</span>'}
+                            <button class="btn-add-mod" onclick="app.creationFlow.openModifierModal(${index}, 'extra')">+</button>
+                        </div>
+                        <div class="mods-section flaws">
+                            <span class="mods-label">限制:</span>
+                            ${power.flaws.length > 0 ? power.flaws.map(f => `
+                                <span class="mod-tag flaw" onclick="app.creationFlow.removeModifier(${index}, 'flaw', '${f.id}')">${f.name} ✕</span>
+                            `).join('') : '<span class="empty-mods">无</span>'}
+                            <button class="btn-add-mod" onclick="app.creationFlow.openModifierModal(${index}, 'flaw')">+</button>
+                        </div>
+                    </div>
+
                     <div class="power-description">
                         ${description}
                     </div>
-                    ${isPointBuy ? `
-                        <div class="power-actions">
-                            <button onclick="app.creationFlow.adjustPowerLevel(${index}, -1)">-</button>
-                            <button onclick="app.creationFlow.adjustPowerLevel(${index}, 1)">+</button>
-                            <button class="btn-danger" onclick="app.creationFlow.removePower(${index})">删除</button>
-                        </div>
-                    ` : ''}
+                    <div class="power-actions">
+                        ${isPointBuy ? `
+                            <button onclick="app.creationFlow.adjustPowerLevel(${index}, -1)" ${power.level <= 1 ? 'disabled' : ''}>-</button>
+                            <button onclick="app.creationFlow.adjustPowerLevel(${index}, 1)" ${power.level >= 10 ? 'disabled' : ''}>+</button>
+                        ` : ''}
+                        <button class="btn-danger" onclick="app.creationFlow.removePower(${index})">删除</button>
+                    </div>
                 </div>
             `;
         });
@@ -544,7 +633,15 @@ export class CreationFlow {
                         <h4>特殊能力 (${character.powers.length}项)</h4>
                         ${character.powers.length > 0 ? character.powers.map(p => `
                             <div class="sheet-power">
-                                <span class="power-clickable" onclick="app.showPowerDetail('${p.name}')">${p.name}</span> (${p.category}) - 等级 ${p.level}
+                                <div class="power-main">
+                                    <span class="power-clickable" onclick="app.showPowerDetail('${p.name}')">${p.name}</span> (${p.category}) - 等级 ${p.level}
+                                </div>
+                                ${p.extras.length > 0 || p.flaws.length > 0 ? `
+                                    <div class="power-mods-list">
+                                        ${p.extras.map(e => `<span class="mod-badge extra">${e.name}</span>`).join('')}
+                                        ${p.flaws.map(f => `<span class="mod-badge flaw">${f.name}</span>`).join('')}
+                                    </div>
+                                ` : ''}
                             </div>
                         `).join('') : '<p>无特殊能力</p>'}
                     </div>
@@ -667,7 +764,79 @@ export class CreationFlow {
         this.renderStep();
     }
 
+    handleMutantChoice(value) {
+        this.characterGenerator.setOriginChoice('mutantChoice', value);
+        if (value === 'power') {
+            this.characterGenerator.generatePowers();
+        }
+        this.renderStep();
+    }
+
+    handleAnyTwoChoice(key, checked) {
+        let selected = this.characterGenerator.getCharacter().originChoices.statBoosts || [];
+        if (checked) {
+            if (selected.length < 2) {
+                selected.push(key);
+            } else {
+                showInfo('只能选择两项能力');
+                this.renderStep();
+                return;
+            }
+        } else {
+            selected = selected.filter(s => s !== key);
+        }
+        this.characterGenerator.setOriginChoice('statBoosts', selected);
+        this.renderStep();
+    }
+
+    setOriginChoice(type, value) {
+        this.characterGenerator.setOriginChoice(type, value);
+        this.renderStep();
+    }
+
+    openModifierModal(powerIndex, type) {
+        const modifiers = type === 'extra' ? POWER_EXTRAS : POWER_FLAWS;
+        const title = type === 'extra' ? '添加增益 (Extra)' : '添加限制 (Flaw)';
+        const power = this.characterGenerator.getCharacter().powers[powerIndex];
+
+        let content = `
+            <div class="modifier-picker">
+                <p class="picker-hint">点击选择要为 <strong>${power.name}</strong> 添加的${type === 'extra' ? '增益' : '限制'}：</p>
+                <div class="modifier-grid">
+                    ${modifiers.map(m => `
+                        <div class="modifier-item" onclick="app.creationFlow.addModifier(${powerIndex}, '${type}', '${m.id}')">
+                            <h6>${m.name}</h6>
+                            <p>${m.description}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        openModal({
+            title,
+            content,
+            size: 'medium'
+        });
+    }
+
+    addModifier(powerIndex, type, modifierId) {
+        const modifiers = type === 'extra' ? POWER_EXTRAS : POWER_FLAWS;
+        const modifier = modifiers.find(m => m.id === modifierId);
+        if (modifier) {
+            this.characterGenerator.addPowerModifier(powerIndex, type, modifier);
+            closeModal();
+            this.renderStep();
+        }
+    }
+
+    removeModifier(powerIndex, type, modifierId) {
+        this.characterGenerator.removePowerModifier(powerIndex, type, modifierId);
+        this.renderStep();
+    }
+
     save() {
+        // ... 原有逻辑 ...
         this.saveStepData();
         const character = this.characterGenerator.getCharacter();
 

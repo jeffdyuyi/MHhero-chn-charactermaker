@@ -108,11 +108,13 @@ export class CharacterGenerator {
                 this.character.attributes[key] = getAttributeLevel(roll);
             });
 
-            // 应用起源加成
+            // 保存基础属性
+            this.character.baseAttributes = { ...this.character.attributes };
+
+            // 应用起源加成 (仅限非选择项)
             this.applyOriginStatBoost();
 
             attempts++;
-            // 检查保底，若不通过则重试
         } while (!checkAttributeMinimum(this.character.attributes) && attempts < maxAttempts);
     }
 
@@ -126,26 +128,83 @@ export class CharacterGenerator {
 
         const boost = this.character.origin.mechanics.statBoost;
         const keys = getAttributeKeys();
+        const choices = this.character.originChoices;
 
+        // 如果是 Mutants，需要先看玩家选的是不是 boost
+        if (this.character.origin.mechanics.choice === 'power_or_boost' && choices.mutantChoice !== 'boost') {
+            return;
+        }
+
+        // 如果是固定项，直接应用。如果是‘any’类，等候玩家选择
         switch (boost.target) {
             case 'strength':
                 this.character.attributes.strength = Math.min(10, this.character.attributes.strength + boost.value);
                 break;
             case 'mental':
-                const mentalKeys = ['intellect', 'awareness', 'willpower'];
-                const targetKey = mentalKeys[Math.floor(Math.random() * mentalKeys.length)];
-                this.character.attributes[targetKey] = Math.min(10, this.character.attributes[targetKey] + boost.value);
-                break;
-            case 'any':
-                const randomKey = keys[Math.floor(Math.random() * keys.length)];
-                this.character.attributes[randomKey] = Math.min(10, this.character.attributes[randomKey] + boost.value);
-                break;
-            case 'any_two':
-                for (let i = 0; i < 2; i++) {
-                    const key = keys[Math.floor(Math.random() * keys.length)];
-                    this.character.attributes[key] = Math.min(10, this.character.attributes[key] + boost.value);
+                // 默认随机选一个，但玩家可以后续手动更改
+                if (!choices.statBoost) {
+                    const mentalKeys = ['intellect', 'awareness', 'willpower'];
+                    const targetKey = mentalKeys[Math.floor(Math.random() * mentalKeys.length)];
+                    choices.statBoost = targetKey;
                 }
                 break;
+            case 'any':
+                if (!choices.statBoost) {
+                    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+                    choices.statBoost = randomKey;
+                }
+                break;
+            case 'any_two':
+                if (!choices.statBoosts) {
+                    const shuffled = [...keys].sort(() => 0.5 - Math.random());
+                    choices.statBoosts = shuffled.slice(0, 2);
+                }
+                break;
+        }
+
+        this.applyOriginChoices();
+    }
+
+    setOriginChoice(type, value) {
+        this.character.originChoices[type] = value;
+        this.applyOriginChoices();
+        this.updateDerivedStats();
+    }
+
+    applyOriginChoices() {
+        if (!this.character.origin) return;
+
+        // 重置为基础值
+        if (this.character.baseAttributes) {
+            this.character.attributes = { ...this.character.baseAttributes };
+        }
+
+        // 应用固定属性
+        const mechanics = this.character.origin.mechanics;
+        if (mechanics.statBoost) {
+            if (mechanics.statBoost.target === 'strength') {
+                this.character.attributes.strength = Math.min(10, this.character.attributes.strength + mechanics.statBoost.value);
+            }
+        }
+
+        // 应用选择属性
+        const choices = this.character.originChoices;
+        if (choices.statBoost && this.character.attributes[choices.statBoost] !== undefined) {
+            this.character.attributes[choices.statBoost] = Math.min(10, this.character.attributes[choices.statBoost] + 2);
+        }
+        if (choices.statBoosts && Array.isArray(choices.statBoosts)) {
+            choices.statBoosts.forEach(key => {
+                if (this.character.attributes[key] !== undefined) {
+                    this.character.attributes[key] = Math.min(10, this.character.attributes[key] + 2);
+                }
+            });
+        }
+        if (choices.powerBoost && choices.powerBoostIndex !== undefined) {
+            const power = this.character.powers[choices.powerBoostIndex];
+            if (power) {
+                // 注意：这里需要考虑是否超过10级
+                power.level = Math.min(10, power.level + 2);
+            }
         }
     }
 
@@ -157,10 +216,17 @@ export class CharacterGenerator {
 
         const roll = roll2d6();
         let count = getPowerCountByRoll(roll);
+        const mech = this.character.origin?.mechanics;
 
         // 起源额外能力
-        if (this.character.origin?.mechanics.bonusPower) {
-            count++;
+        if (mech) {
+            if (mech.bonusPower && !mech.choice) {
+                // 固定增加的能力 (如人工生命)
+                count++;
+            } else if (mech.choice === 'power_or_boost' && this.character.originChoices.mutantChoice === 'power') {
+                // 选择增加的能力 (如天赋异禀)
+                count++;
+            }
         }
 
         for (let i = 0; i < count; i++) {
@@ -229,6 +295,34 @@ export class CharacterGenerator {
             this.character.powers[index].level = Math.max(1, Math.min(10, level));
             this.updateDerivedStats();
         }
+    }
+
+    addPowerModifier(powerIndex, modifierType, modifier) {
+        const power = this.character.powers[powerIndex];
+        if (!power) return;
+
+        if (modifierType === 'extra') {
+            if (!power.extras.some(e => e.id === modifier.id)) {
+                power.extras.push(modifier);
+            }
+        } else {
+            if (!power.flaws.some(f => f.id === modifier.id)) {
+                power.flaws.push(modifier);
+            }
+        }
+        this.updateDerivedStats();
+    }
+
+    removePowerModifier(powerIndex, modifierType, modifierId) {
+        const power = this.character.powers[powerIndex];
+        if (!power) return;
+
+        if (modifierType === 'extra') {
+            power.extras = power.extras.filter(e => e.id !== modifierId);
+        } else {
+            power.flaws = power.flaws.filter(f => f.id !== modifierId);
+        }
+        this.updateDerivedStats();
     }
 
     /**
@@ -336,9 +430,19 @@ export class CharacterGenerator {
         if (this.mode !== 'point-buy') return 0;
 
         let used = 0;
+        // 属性消耗
         Object.values(this.character.attributes).forEach(value => used += value);
-        this.character.powers.forEach(power => used += power.level);
+
+        // 能力消耗
+        this.character.powers.forEach(power => {
+            used += power.level;
+            used += power.extras.length; // 每个增益 +1
+            used -= power.flaws.length;  // 每个限制 -1
+        });
+
+        // 专长消耗
         this.character.specialties.forEach(specialty => used += specialty.level);
+
         return used;
     }
 

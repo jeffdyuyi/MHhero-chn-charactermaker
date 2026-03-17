@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="漫画英雄TRPG车卡器 - 基于2d6核心机制的超级英雄角色创建系统">
-    <meta name="theme-color" content="#2c3e50">
+    <meta name="theme-color" content="#000000">
     <title>漫画英雄 TRPG 车卡器</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
@@ -16,11 +17,12 @@
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/animations.css">
 </head>
+
 <body>
     <div id="app">
         <header class="app-header">
             <div class="header-content">
-                <div class="logo">
+                <div class="logo" id="logo" title="点击查看作者信息" style="cursor: pointer;">
                     <span class="logo-icon">🦸</span>
                     <h1>漫画英雄 <span class="subtitle">TRPG车卡器</span></h1>
                 </div>
@@ -41,10 +43,7 @@
                         <span class="nav-icon">❓</span>
                         <span class="nav-text">帮助</span>
                     </button>
-                    <button class="nav-btn theme-toggle" id="theme-toggle" data-view="theme" aria-label="切换主题">
-                        <span class="nav-icon theme-icon">🌙</span>
-                        <span class="nav-text">暗色</span>
-                    </button>
+
                 </nav>
             </div>
         </header>
@@ -137,10 +136,6 @@
                                 <span class="action-icon">📖</span>
                                 <span class="action-text">查看规则说明</span>
                             </button>
-                            <button class="action-card" onclick="app.showAuthorInfo()">
-                                <span class="action-icon">👤</span>
-                                <span class="action-text">作者信息</span>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -219,7 +214,8 @@
                         <button class="btn btn-secondary" onclick="app.savedCharactersView.exportAll()">
                             <span>📤</span> 导出全部
                         </button>
-                        <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()">
+                        <button class="btn btn-secondary"
+                            onclick="document.getElementById('import-file-input').click()">
                             <span>📥</span> 导入
                         </button>
                     </div>
@@ -306,16 +302,56 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td>2</td><td>1级</td><td>资质驽钝</td></tr>
-                                <tr><td>3</td><td>2级</td><td>相形见绌</td></tr>
-                                <tr><td>4</td><td>3级</td><td>平庸之辈</td></tr>
-                                <tr><td>5-6</td><td>4级</td><td>天赋尚可</td></tr>
-                                <tr><td>7-8</td><td>5级</td><td>高人一等</td></tr>
-                                <tr><td>9-10</td><td>6级</td><td>超乎常人</td></tr>
-                                <tr><td>11</td><td>7级</td><td>出类拔萃</td></tr>
-                                <tr><td>12</td><td>8级</td><td>卓尔不凡</td></tr>
-                                <tr><td>-</td><td>9级</td><td>望尘莫及（需加成）</td></tr>
-                                <tr><td>-</td><td>10级</td><td>登峰造极（需加成）</td></tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>1级</td>
+                                    <td>资质驽钝</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>2级</td>
+                                    <td>相形见绌</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>3级</td>
+                                    <td>平庸之辈</td>
+                                </tr>
+                                <tr>
+                                    <td>5-6</td>
+                                    <td>4级</td>
+                                    <td>天赋尚可</td>
+                                </tr>
+                                <tr>
+                                    <td>7-8</td>
+                                    <td>5级</td>
+                                    <td>高人一等</td>
+                                </tr>
+                                <tr>
+                                    <td>9-10</td>
+                                    <td>6级</td>
+                                    <td>超乎常人</td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td>7级</td>
+                                    <td>出类拔萃</td>
+                                </tr>
+                                <tr>
+                                    <td>12</td>
+                                    <td>8级</td>
+                                    <td>卓尔不凡</td>
+                                </tr>
+                                <tr>
+                                    <td>-</td>
+                                    <td>9级</td>
+                                    <td>望尘莫及（需加成）</td>
+                                </tr>
+                                <tr>
+                                    <td>-</td>
+                                    <td>10级</td>
+                                    <td>登峰造极（需加成）</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -354,4 +390,5 @@
     <!-- 模块脚本 -->
     <script type="module" src="js/main.js"></script>
 </body>
+
 </html>

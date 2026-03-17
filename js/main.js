@@ -19,7 +19,7 @@ import { openModal, closeModal, showCharacterDetail } from './ui/modal.js';
  */
 class ComicHeroApp {
     constructor() {
-        this.currentTheme = localStorage.getItem('theme') || 'light';
+        // 漫画风格固定单主题，移除主题切换逻辑
 
         // 初始化各个模块
         this.viewManager = new ViewManager(this);
@@ -33,14 +33,19 @@ class ComicHeroApp {
      * 初始化应用
      */
     init() {
-        this.initTheme();
         console.log(`${APP_CONFIG.name} v${APP_CONFIG.version} 已加载`);
 
-        // 绑定全局按钮事件 (不在模块内的)
+        // 绑定全局按钮事件
         this.bindGlobalEvents();
     }
 
     bindGlobalEvents() {
+        // LOGO 点击显示作者信息
+        const logo = document.getElementById('logo');
+        if (logo) {
+            logo.addEventListener('click', () => this.showAuthorInfo());
+        }
+
         // 开始创建按钮
         document.querySelectorAll('.start-creation-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -49,53 +54,6 @@ class ComicHeroApp {
                 this.viewManager.switchView('creation');
             });
         });
-    }
-
-    /**
-     * 初始化主题
-     */
-    initTheme() {
-        if (this.currentTheme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
-        this.updateThemeButton();
-    }
-
-    /**
-     * 切换主题
-     */
-    toggleTheme() {
-        this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
-
-        if (this.currentTheme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-        }
-
-        localStorage.setItem('theme', this.currentTheme);
-        this.updateThemeButton();
-    }
-
-    /**
-     * 更新主题按钮显示
-     */
-    updateThemeButton() {
-        const toggleBtn = document.getElementById('theme-toggle');
-        if (!toggleBtn) return;
-
-        const icon = toggleBtn.querySelector('.theme-icon');
-        const text = toggleBtn.querySelector('.nav-text');
-
-        if (this.currentTheme === 'dark') {
-            toggleBtn.classList.add('active');
-            if (icon) icon.textContent = '☀️';
-            if (text) text.textContent = '亮色';
-        } else {
-            toggleBtn.classList.remove('active');
-            if (icon) icon.textContent = '🌙';
-            if (text) text.textContent = '暗色';
-        }
     }
 
     closeModal() {
@@ -127,10 +85,25 @@ class ComicHeroApp {
         openModal({
             title: '关于作者',
             content: `
-                <div class="author-info">
-                    <p>漫画英雄 TRPG 车卡器 v${APP_CONFIG.version}</p>
-                    <p>由 <strong>2d6 核心机制</strong> 驱动</p>
-                    <p>致敬所有守护世界的超级英雄！</p>
+                <div class="author-info" style="text-align: center; padding: 10px;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🦸‍♂️</div>
+                    <h3 style="margin-bottom: 15px; text-transform: uppercase;">漫画英雄 TRPG 车卡器</h3>
+                    
+                    <div style="text-align: left; background: var(--gray-100); padding: 15px; border: 2px solid var(--black); margin-bottom: 15px;">
+                        <p style="margin-bottom: 8px;"><strong>制作者：</strong> 不咕鸟（哈基米德）</p>
+                        <p style="margin-bottom: 8px;"><strong>AI辅助：</strong> Antigravity Gemini</p>
+                        <p style="margin-bottom: 8px;"><strong>约团地址：</strong> <a href="https://nogubird.top/schedule" target="_blank">nogubird.top/schedule</a></p>
+                        <p style="margin-bottom: 8px;"><strong>成都秘密基地企鹅：</strong> 691707475</p>
+                        <p style="margin-bottom: 8px;"><strong>不咕鸟TRPG创想俱乐部：</strong> 261751459</p>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <a href="https://ifdian.net/a/nogubird" target="_blank" class="btn btn-primary" style="width: 100%; text-decoration: none;">
+                            🚀 为作者加油 (ifdian.net)
+                        </a>
+                    </div>
+                    
+                    <p style="font-size: 12px; color: var(--text-muted);">版本: v${APP_CONFIG.version} | 基于 2d6 核心机制驱动</p>
                 </div>
             `,
             size: 'small'
@@ -149,17 +122,13 @@ class ComicHeroApp {
         }
     }
 
-    // 下面是一些 legacy 代理方法，为了兼容 HTML 中硬编码的 app.xxx 调用
-    // 在 CreationFlow 和 SavedCharactersView 中已经更新了 onclick="app.xxx.yyy()"
-    // 但为了保险，可以保留一些最常用的
-
     showPowerDetail(name) {
-        showCharacterDetail(null, name); // 在 modal.js 中处理
+        showCharacterDetail(null, name);
     }
 }
 
 // 创建全局应用实例并导出
 const app = new ComicHeroApp();
-window.app = app; // 暴露到全局以便HTML中调用
+window.app = app;
 
 export default app;

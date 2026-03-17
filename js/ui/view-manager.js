@@ -15,20 +15,11 @@ export class ViewManager {
     }
 
     bindEvents() {
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const view = e.currentTarget.dataset.view;
-                if (view === 'theme') {
-                    this.app.toggleTheme();
-                } else if (view === 'create') {
-                    this.switchView('home');
-                    this.showSection('welcome-section');
-                    // 滚动到模式选择区域
-                    const modeSelection = document.querySelector('.mode-selection');
-                    if (modeSelection) {
-                        modeSelection.scrollIntoView({ behavior: 'smooth' });
-                    }
-                } else {
+        const navButtons = document.querySelectorAll('.nav-btn');
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const view = btn.dataset.view;
+                if (view) {
                     this.switchView(view);
                 }
             });
@@ -37,7 +28,7 @@ export class ViewManager {
 
     switchView(viewName) {
         // 更新导航状态
-        document.querySelectorAll('.nav-btn:not(.theme-toggle)').forEach(btn => {
+        document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.view === viewName);
         });
 
@@ -59,11 +50,6 @@ export class ViewManager {
             if (!this.app.creationFlow?.isCreating) {
                 this.showSection('welcome-section');
             }
-        }
-
-        // 如果切离创建页面，重置创建状态（如果未保存）
-        if (viewName !== 'creation' && this.app.creationFlow?.isCreating) {
-            // 这里可以加一个确认逻辑，但为了简单暂且不加
         }
     }
 

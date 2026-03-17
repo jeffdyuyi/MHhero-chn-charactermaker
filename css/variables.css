@@ -1,74 +1,54 @@
 :root {
-    /* 主色调 - 漫威/DC风格 */
-    --primary-color: #1a1a2e;
-    --primary-light: #16213e;
-    --primary-dark: #0f3460;
-
-    /* 强调色 - 超级英雄红 */
-    --accent-color: #e62429;
-    --accent-light: #ff4d4f;
-    --accent-dark: #c11a23;
-
-    /* 辅助色 - 英雄蓝 */
-    --secondary-color: #0066cc;
-    --secondary-light: #3399ff;
-    --secondary-dark: #004c99;
-
-    /* 成功/警告/信息 */
-    --success-color: #27ae60;
-    --success-light: #2ecc71;
-    --warning-color: #ffcc00;
-    --warning-light: #ffd633;
-    --info-color: #17a2b8;
-    --info-light: #5bc0de;
-
-    /* 中性色 */
+    /* 核心色板 - 纯粹的黑白灰 */
     --white: #ffffff;
-    --gray-100: #f8f9fa;
-    --gray-200: #e9ecef;
-    --gray-300: #dee2e6;
-    --gray-400: #ced4da;
-    --gray-500: #adb5bd;
-    --gray-600: #6c757d;
-    --gray-700: #495057;
-    --gray-800: #343a40;
-    --gray-900: #212529;
     --black: #000000;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
 
-    /* 英雄金 */
-    --hero-gold: #ffd700;
-    --hero-gold-light: #ffdf33;
-    --hero-gold-dark: #ccac00;
+    /* 语义化颜色 - 漫画风格 */
+    --primary-color: var(--black);
+    --secondary-color: var(--gray-600);
+    --accent-color: var(--black);
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --danger-color: #c0392b;
+    --info-color: #3498db;
 
-    /* 背景色 */
-    --bg-primary: #f5f7fa;
-    --bg-secondary: #e8ecf1;
-    --bg-card: #ffffff;
-    --bg-dark: #1a1a2e;
+    /* 文本颜色 */
+    --text-primary: var(--black);
+    --text-secondary: var(--gray-700);
+    --text-muted: var(--gray-500);
+    --text-on-primary: var(--white);
 
-    /* 文字色 */
-    --text-primary: #1e293b;
-    --text-secondary: #475569;
-    --text-muted: #64748b;
-    --text-light: #ffffff;
-    --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --text-shadow-light: 0 1px 2px rgba(0, 0, 0, 0.1);
-    --text-shadow-dark: 0 1px 2px rgba(0, 0, 0, 0.5);
+    /* 背景颜色 */
+    --bg-body: var(--gray-100);
+    --bg-card: var(--white);
+    --bg-secondary: var(--gray-200);
+    --bg-header: var(--white);
+    --bg-footer: var(--black);
+
+    /* 漫画特有视觉参数 */
+    --comic-border-width: 3px;
+    --comic-border-color: var(--black);
+    --comic-shadow: 6px 6px 0px var(--black);
+    --comic-shadow-sm: 4px 4px 0px var(--black);
+    --comic-shadow-hover: 10px 10px 0px var(--black);
 
     /* 边框 */
-    --border-color: #e0e6ed;
-    --border-light: #f0f3f7;
-    --border-radius-sm: 4px;
-    --border-radius: 8px;
-    --border-radius-lg: 12px;
-    --border-radius-xl: 16px;
-
-    /* 阴影 */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
-    --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.25);
+    --border-color: var(--black);
+    --border-light: var(--gray-300);
+    --border-radius: 0px;
+    /* 漫画风格使用直角更硬朗 */
+    --border-radius-sm: 0px;
+    --border-radius-lg: 0px;
 
     /* 间距 */
     --spacing-xs: 4px;
@@ -77,100 +57,35 @@
     --spacing-md: 24px;
     --spacing-lg: 32px;
     --spacing-xl: 48px;
-    --spacing-xxl: 64px;
 
-    /* 字体 */
-    --font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
-    --font-mono: 'SF Mono', 'Fira Code', Consolas, monospace;
-
+    /* 字体相关 */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --font-size-xs: 12px;
     --font-size-sm: 14px;
-    --font-size: 16px;
-    --font-size-md: 18px;
-    --font-size-lg: 20px;
-    --font-size-xl: 24px;
-    --font-size-xxl: 32px;
-
+    --font-size-md: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 20px;
+    --font-size-xxl: 28px;
+    --font-size-huge: 40px;
     --font-weight-normal: 400;
-    --font-weight-medium: 500;
-    --font-weight-semibold: 600;
-    --font-weight-bold: 700;
-    --font-weight-black: 900;
+    --font-weight-medium: 600;
+    --font-weight-semibold: 700;
+    --font-weight-bold: 900;
 
-    /* 行高 */
-    --line-height-tight: 1.25;
-    --line-height: 1.5;
-    --line-height-relaxed: 1.75;
+    /* 阴影代理 */
+    --box-shadow: var(--comic-shadow);
+    --shadow-sm: var(--comic-shadow-sm);
+    --shadow-md: var(--comic-shadow);
+    --shadow-lg: var(--comic-shadow-hover);
 
     /* 过渡 */
-    --transition-fast: 150ms ease;
-    --transition: 250ms ease;
-    --transition-slow: 350ms ease;
+    --transition-fast: 0.1s;
+    --transition-normal: 0.2s;
 
-    /* 主题切换过渡 */
-    --theme-transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    --z-index-dropdown: 1000;
+    --z-index-modal: 2000;
+    --z-index-toast: 3000;
 
-    /* Z-index */
-    --z-dropdown: 1000;
-    --z-sticky: 1020;
-    --z-fixed: 1030;
-    --z-modal-backdrop: 1040;
-    --z-modal: 1050;
-    --z-popover: 1060;
-    --z-tooltip: 1070;
-    --z-toast: 1080;
-
-    /* 布局 */
-    --header-height: 64px;
-    --footer-height: 48px;
-    --sidebar-width: 240px;
-    --max-content-width: 1400px;
-
-    /* 能力系颜色 */
-    --alteration-color: #9b59b6;
-    --control-color: #3498db;
-    --defense-color: #27ae60;
-    --mental-color: #e74c3c;
-    --movement-color: #f39c12;
-    --attack-color: #e67e22;
-    --sensory-color: #1abc9c;
-}
-
-/* 暗色主题 */
-[data-theme="dark"] {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-card: #1e293b;
-    --bg-dark: #020617;
-
-    --white: #1e293b;
-    --gray-50: #1e293b;
-    --gray-100: #334155;
-    --gray-200: #475569;
-    --gray-300: #64748b;
-    --gray-400: #94a3b8;
-    --gray-500: #cbd5e1;
-    --gray-600: #e2e8f0;
-    --gray-900: #f8fafc;
-
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-
-    --border-color: #334155;
-    --border-light: #1e293b;
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
-}
-
-/* 打印样式 */
-@media print {
-    :root {
-        --shadow: none;
-        --shadow-md: none;
-        --shadow-lg: none;
-    }
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.7;
 }

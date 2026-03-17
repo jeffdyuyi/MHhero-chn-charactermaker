@@ -50,6 +50,7 @@ export function createEmptyCharacter() {
         },
         powers: [],
         specialties: [],
+        originChoices: {}, // 存储起源带来的选择结果
         qualities: ['', '', ''],
         description: '',
         mode: 'random',
