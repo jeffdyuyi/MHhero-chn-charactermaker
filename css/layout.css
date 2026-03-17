@@ -89,6 +89,15 @@
     padding: var(--spacing-md);
 }
 
+/* 部分样式 */
+.section {
+    animation: fadeIn 0.3s ease;
+}
+
+.section.hidden {
+    display: none;
+}
+
 /* 视图切换 */
 .view {
     display: none;

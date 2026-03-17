@@ -50,159 +50,162 @@
         </header>
 
         <main class="main-content">
-            <!-- 首页视图 -->
-            <section id="home-view" class="view active" aria-labelledby="home-title">
-                <div class="hero-section">
-                    <div class="hero-content">
-                        <h2 id="home-title" class="hero-title">创建你的超级英雄</h2>
-                        <p class="hero-subtitle">基于2d6核心机制的TRPG角色创建系统</p>
-                        <div class="hero-features">
-                            <div class="feature">
-                                <span class="feature-icon">🎲</span>
-                                <span class="feature-text">随机掷骰模式</span>
+            <!-- 主视图 -->
+            <section id="home-view" class="view active" aria-labelledby="main-title">
+                <!-- 首页引导部分 -->
+                <div id="welcome-section" class="section">
+                    <div class="hero-section">
+                        <div class="hero-content">
+                            <h2 id="main-title" class="hero-title">创建你的超级英雄</h2>
+                            <p class="hero-subtitle">基于2d6核心机制的TRPG角色创建系统</p>
+                            <div class="hero-features">
+                                <div class="feature">
+                                    <span class="feature-icon">🎲</span>
+                                    <span class="feature-text">随机掷骰模式</span>
+                                </div>
+                                <div class="feature">
+                                    <span class="feature-icon">🎯</span>
+                                    <span class="feature-text">购点定制模式</span>
+                                </div>
+                                <div class="feature">
+                                    <span class="feature-icon">💾</span>
+                                    <span class="feature-text">本地存储管理</span>
+                                </div>
                             </div>
-                            <div class="feature">
-                                <span class="feature-icon">🎯</span>
-                                <span class="feature-text">购点定制模式</span>
+                        </div>
+                    </div>
+
+                    <div class="mode-selection">
+                        <div class="mode-card" data-mode="random">
+                            <div class="mode-header">
+                                <span class="mode-icon">🎲</span>
+                                <h3>命运之选</h3>
+                                <span class="mode-tag">随机模式</span>
                             </div>
-                            <div class="feature">
-                                <span class="feature-icon">💾</span>
-                                <span class="feature-text">本地存储管理</span>
+                            <div class="mode-body">
+                                <p class="mode-desc">充满未知与惊喜，适合快速开局和肉鸽体验</p>
+                                <ul class="mode-features">
+                                    <li>全程2d6掷骰决定</li>
+                                    <li>六大属性随机生成</li>
+                                    <li>七大系超能力随机抽取</li>
+                                    <li>起源自动决定</li>
+                                </ul>
                             </div>
+                            <div class="mode-footer">
+                                <button class="btn btn-primary btn-large" onclick="app.startCreation('random')">
+                                    开始随机创建
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mode-card" data-mode="point-buy">
+                            <div class="mode-header">
+                                <span class="mode-icon">🎯</span>
+                                <h3>精密构造</h3>
+                                <span class="mode-tag">购点模式</span>
+                            </div>
+                            <div class="mode-body">
+                                <p class="mode-desc">45点自由分配，适合精心构建Build</p>
+                                <ul class="mode-features">
+                                    <li>45点完全自由分配</li>
+                                    <li>精细控制每项数值</li>
+                                    <li>自定义能力组合</li>
+                                    <li>实时点数校验</li>
+                                </ul>
+                            </div>
+                            <div class="mode-footer">
+                                <button class="btn btn-primary btn-large" onclick="app.startCreation('point-buy')">
+                                    开始定制创建
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <h3>快速操作</h3>
+                        <div class="action-grid">
+                            <button class="action-card" onclick="app.loadRandomExample()">
+                                <span class="action-icon">🎲</span>
+                                <span class="action-text">生成示例角色</span>
+                            </button>
+                            <button class="action-card" onclick="app.importCharacter()">
+                                <span class="action-icon">📥</span>
+                                <span class="action-text">导入角色卡</span>
+                            </button>
+                            <button class="action-card" onclick="app.showHelp()">
+                                <span class="action-icon">📖</span>
+                                <span class="action-text">查看规则说明</span>
+                            </button>
+                            <button class="action-card" onclick="app.showAuthorInfo()">
+                                <span class="action-icon">👤</span>
+                                <span class="action-text">作者信息</span>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="mode-selection">
-                    <div class="mode-card" data-mode="random">
-                        <div class="mode-header">
-                            <span class="mode-icon">🎲</span>
-                            <h3>命运之选</h3>
-                            <span class="mode-tag">随机模式</span>
+                <!-- 创建角色部分 -->
+                <div id="creation-section" class="section hidden">
+                    <div class="creation-header">
+                        <div class="creation-title">
+                            <h2>角色创建</h2>
+                            <span id="current-mode-badge" class="mode-badge"></span>
                         </div>
-                        <div class="mode-body">
-                            <p class="mode-desc">充满未知与惊喜，适合快速开局和肉鸽体验</p>
-                            <ul class="mode-features">
-                                <li>全程2d6掷骰决定</li>
-                                <li>六大属性随机生成</li>
-                                <li>七大系超能力随机抽取</li>
-                                <li>起源自动决定</li>
-                            </ul>
-                        </div>
-                        <div class="mode-footer">
-                            <button class="btn btn-primary btn-large" onclick="app.startCreation('random')">
-                                开始随机创建
+                        <div class="creation-actions">
+                            <button class="btn btn-icon" onclick="app.toggleHelp()" title="帮助">
+                                <span>❓</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="app.resetCreation()">
+                                返回首页
                             </button>
                         </div>
                     </div>
 
-                    <div class="mode-card" data-mode="point-buy">
-                        <div class="mode-header">
-                            <span class="mode-icon">🎯</span>
-                            <h3>精密构造</h3>
-                            <span class="mode-tag">购点模式</span>
+                    <div class="step-indicator" role="tablist" aria-label="创建步骤">
+                        <button class="step" data-step="1" role="tab" aria-selected="false">
+                            <span class="step-number">1</span>
+                            <span class="step-label">起源</span>
+                        </button>
+                        <button class="step" data-step="2" role="tab" aria-selected="false">
+                            <span class="step-number">2</span>
+                            <span class="step-label">属性</span>
+                        </button>
+                        <button class="step" data-step="3" role="tab" aria-selected="false">
+                            <span class="step-number">3</span>
+                            <span class="step-label">能力</span>
+                        </button>
+                        <button class="step" data-step="4" role="tab" aria-selected="false">
+                            <span class="step-number">4</span>
+                            <span class="step-label">专长</span>
+                        </button>
+                        <button class="step" data-step="5" role="tab" aria-selected="false">
+                            <span class="step-number">5</span>
+                            <span class="step-label">描述</span>
+                        </button>
+                        <button class="step" data-step="6" role="tab" aria-selected="false">
+                            <span class="step-number">6</span>
+                            <span class="step-label">完成</span>
+                        </button>
+                    </div>
+
+                    <div id="step-content" class="step-content">
+                        <!-- 动态内容 -->
+                    </div>
+
+                    <div class="creation-footer">
+                        <div id="points-display" class="points-display hidden">
+                            <span class="points-label">剩余点数</span>
+                            <span class="points-value">45</span>
+                            <span class="points-total">/ 45</span>
                         </div>
-                        <div class="mode-body">
-                            <p class="mode-desc">45点自由分配，适合精心构建Build</p>
-                            <ul class="mode-features">
-                                <li>45点完全自由分配</li>
-                                <li>精细控制每项数值</li>
-                                <li>自定义能力组合</li>
-                                <li>实时点数校验</li>
-                            </ul>
-                        </div>
-                        <div class="mode-footer">
-                            <button class="btn btn-primary btn-large" onclick="app.startCreation('point-buy')">
-                                开始定制创建
+                        <div class="step-navigation">
+                            <button id="prev-step-btn" class="btn btn-secondary" onclick="app.prevStep()" disabled>
+                                上一步
+                            </button>
+                            <button id="next-step-btn" class="btn btn-primary" onclick="app.nextStep()">
+                                下一步
                             </button>
                         </div>
-                    </div>
-                </div>
-
-                <div class="quick-actions">
-                    <h3>快速操作</h3>
-                    <div class="action-grid">
-                        <button class="action-card" onclick="app.loadRandomExample()">
-                            <span class="action-icon">🎲</span>
-                            <span class="action-text">生成示例角色</span>
-                        </button>
-                        <button class="action-card" onclick="app.importCharacter()">
-                            <span class="action-icon">📥</span>
-                            <span class="action-text">导入角色卡</span>
-                        </button>
-                        <button class="action-card" onclick="app.showHelp()">
-                            <span class="action-icon">📖</span>
-                            <span class="action-text">查看规则说明</span>
-                        </button>
-                        <button class="action-card" onclick="app.showAuthorInfo()">
-                            <span class="action-icon">👤</span>
-                            <span class="action-text">作者信息</span>
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 创建角色视图 -->
-            <section id="create-view" class="view" aria-labelledby="create-title">
-                <div class="creation-header">
-                    <div class="creation-title">
-                        <h2 id="create-title">角色创建</h2>
-                        <span id="current-mode-badge" class="mode-badge"></span>
-                    </div>
-                    <div class="creation-actions">
-                        <button class="btn btn-icon" onclick="app.toggleHelp()" title="帮助">
-                            <span>❓</span>
-                        </button>
-                        <button class="btn btn-secondary" onclick="app.goHome()">
-                            返回首页
-                        </button>
-                    </div>
-                </div>
-
-                <div class="step-indicator" role="tablist" aria-label="创建步骤">
-                    <button class="step" data-step="1" role="tab" aria-selected="false">
-                        <span class="step-number">1</span>
-                        <span class="step-label">起源</span>
-                    </button>
-                    <button class="step" data-step="2" role="tab" aria-selected="false">
-                        <span class="step-number">2</span>
-                        <span class="step-label">属性</span>
-                    </button>
-                    <button class="step" data-step="3" role="tab" aria-selected="false">
-                        <span class="step-number">3</span>
-                        <span class="step-label">能力</span>
-                    </button>
-                    <button class="step" data-step="4" role="tab" aria-selected="false">
-                        <span class="step-number">4</span>
-                        <span class="step-label">专长</span>
-                    </button>
-                    <button class="step" data-step="5" role="tab" aria-selected="false">
-                        <span class="step-number">5</span>
-                        <span class="step-label">描述</span>
-                    </button>
-                    <button class="step" data-step="6" role="tab" aria-selected="false">
-                        <span class="step-number">6</span>
-                        <span class="step-label">完成</span>
-                    </button>
-                </div>
-
-                <div id="step-content" class="step-content">
-                    <!-- 动态内容 -->
-                </div>
-
-                <div class="creation-footer">
-                    <div id="points-display" class="points-display hidden">
-                        <span class="points-label">剩余点数</span>
-                        <span class="points-value">45</span>
-                        <span class="points-total">/ 45</span>
-                    </div>
-                    <div class="step-navigation">
-                        <button id="prev-step-btn" class="btn btn-secondary" onclick="app.prevStep()" disabled>
-                            上一步
-                        </button>
-                        <button id="next-step-btn" class="btn btn-primary" onclick="app.nextStep()">
-                            下一步
-                        </button>
                     </div>
                 </div>
             </section>

@@ -123,7 +123,18 @@ class ComicHeroApp {
         this.updateModeBadge();
         this.updatePointsDisplay();
         this.renderStep();
-        this.switchView('create');
+        this.showSection('creation-section');
+    }
+
+    /**
+     * 显示指定部分
+     * @param {string} sectionId - 部分ID
+     */
+    showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.add('hidden');
+        });
+        document.getElementById(sectionId).classList.remove('hidden');
     }
 
     /**
@@ -751,6 +762,7 @@ class ComicHeroApp {
         this.creationMode = null;
         this.characterGenerator = null;
         this.editingCharacterId = null;
+        this.showSection('welcome-section');
     }
 
     // 已存角色相关方法

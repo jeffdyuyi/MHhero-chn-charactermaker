@@ -180,12 +180,18 @@ export class CharacterGenerator {
     addRandomPower() {
         const categoryRoll = roll2d6();
         const category = getPowerCategoryByRoll(categoryRoll);
-        const d66 = rollD66();
-        const powerData = getPowerByD66(category.id, d66);
+        let powerData = null;
+        
+        // 循环生成d66，直到找到有效的能力
+        while (!powerData) {
+            const d66 = rollD66();
+            powerData = getPowerByD66(category.id, d66);
+        }
+        
         const levelRoll = roll2d6();
         const level = getAttributeLevel(levelRoll);
 
-        const power = createPower(category.id, powerData?.name || '未知能力', level);
+        const power = createPower(category.id, powerData.name, level);
         this.character.powers.push(power);
     }
 
