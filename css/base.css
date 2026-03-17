@@ -20,6 +20,12 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     overflow-x: hidden;
+    transition: var(--theme-transition);
+}
+
+/* 主题切换过渡效果 */
+* {
+    transition: var(--theme-transition);
 }
 
 #app {

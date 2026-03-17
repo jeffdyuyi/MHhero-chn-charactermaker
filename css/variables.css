@@ -107,6 +107,9 @@
     --transition: 250ms ease;
     --transition-slow: 350ms ease;
     
+    /* 主题切换过渡 */
+    --theme-transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    
     /* Z-index */
     --z-dropdown: 1000;
     --z-sticky: 1020;

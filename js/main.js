@@ -41,6 +41,7 @@ class ComicHeroApp {
         this.editingCharacterId = null;
         this.searchQuery = '';
         this.sortBy = 'newest';
+        this.currentTheme = localStorage.getItem('theme') || 'light';
         
         this.init();
     }
@@ -51,6 +52,7 @@ class ComicHeroApp {
     init() {
         this.bindEvents();
         this.loadSavedCharacters();
+        this.initTheme();
         console.log(`${APP_CONFIG.name} v${APP_CONFIG.version} 已加载`);
     }
 
@@ -975,6 +977,53 @@ class ComicHeroApp {
     updatePowerSelect() {
         // 根据类别更新能力选择
         // 简化实现
+    }
+
+    /**
+     * 初始化主题
+     */
+    initTheme() {
+        if (this.currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        this.updateThemeButton();
+    }
+
+    /**
+     * 切换主题
+     */
+    toggleTheme() {
+        this.currentTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+        
+        if (this.currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+        
+        localStorage.setItem('theme', this.currentTheme);
+        this.updateThemeButton();
+    }
+
+    /**
+     * 更新主题按钮显示
+     */
+    updateThemeButton() {
+        const toggleBtn = document.getElementById('theme-toggle');
+        if (!toggleBtn) return;
+        
+        const icon = toggleBtn.querySelector('.theme-icon');
+        const text = toggleBtn.querySelector('.nav-text');
+        
+        if (this.currentTheme === 'dark') {
+            toggleBtn.classList.add('active');
+            icon.textContent = '☀️';
+            text.textContent = '亮色';
+        } else {
+            toggleBtn.classList.remove('active');
+            icon.textContent = '🌙';
+            text.textContent = '暗色';
+        }
     }
 }
 
