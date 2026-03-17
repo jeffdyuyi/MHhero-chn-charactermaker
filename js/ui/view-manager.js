@@ -20,6 +20,14 @@ export class ViewManager {
                 const view = e.currentTarget.dataset.view;
                 if (view === 'theme') {
                     this.app.toggleTheme();
+                } else if (view === 'create') {
+                    this.switchView('home');
+                    this.showSection('welcome-section');
+                    // 滚动到模式选择区域
+                    const modeSelection = document.querySelector('.mode-selection');
+                    if (modeSelection) {
+                        modeSelection.scrollIntoView({ behavior: 'smooth' });
+                    }
                 } else {
                     this.switchView(view);
                 }
@@ -29,7 +37,7 @@ export class ViewManager {
 
     switchView(viewName) {
         // 更新导航状态
-        document.querySelectorAll('.nav-btn').forEach(btn => {
+        document.querySelectorAll('.nav-btn:not(.theme-toggle)').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.view === viewName);
         });
 
@@ -47,8 +55,12 @@ export class ViewManager {
         // 视图特定逻辑
         if (viewName === 'saved') {
             this.app.savedCharactersView.loadCharacters();
+        } else if (viewName === 'home') {
+            if (!this.app.creationFlow?.isCreating) {
+                this.showSection('welcome-section');
+            }
         }
-        
+
         // 如果切离创建页面，重置创建状态（如果未保存）
         if (viewName !== 'creation' && this.app.creationFlow?.isCreating) {
             // 这里可以加一个确认逻辑，但为了简单暂且不加

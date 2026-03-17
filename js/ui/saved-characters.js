@@ -103,9 +103,9 @@ export class SavedCharactersView {
                     ${character.powers.length > 3 ? '<span class="power-tag">...</span>' : ''}
                 </div>
                 <div class="char-actions">
-                    <button class="btn btn-sm btn-secondary" onclick="app.savedCharactersView.viewCharacter(${character.id})">详情</button>
-                    <button class="btn btn-sm btn-secondary" onclick="app.savedCharactersView.editCharacter(${character.id})">编辑</button>
-                    <button class="btn btn-sm btn-danger" onclick="app.savedCharactersView.confirmDelete(${character.id})">删除</button>
+                    <button class="btn btn-sm btn-secondary" onclick="app.savedCharactersView.viewCharacter('${character.id}')">详情</button>
+                    <button class="btn btn-sm btn-secondary" onclick="app.savedCharactersView.editCharacter('${character.id}')">编辑</button>
+                    <button class="btn btn-sm btn-danger" onclick="app.savedCharactersView.confirmDelete('${character.id}')">删除</button>
                 </div>
             </div>
         `;

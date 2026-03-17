@@ -21,7 +21,7 @@ function getModal() {
 export function openModal(options = {}) {
     const modal = getModal();
     if (!modal) return;
-    
+
     const {
         title = '',
         content = '',
@@ -30,11 +30,11 @@ export function openModal(options = {}) {
         closable = true,
         onClose = null
     } = options;
-    
+
     // 设置标题
     const titleEl = modal.querySelector('#modal-title');
     if (titleEl) titleEl.textContent = title;
-    
+
     // 设置内容
     const bodyEl = modal.querySelector('#modal-body');
     if (bodyEl) {
@@ -45,7 +45,7 @@ export function openModal(options = {}) {
             bodyEl.appendChild(content);
         }
     }
-    
+
     // 设置底部
     const footerEl = modal.querySelector('#modal-footer');
     if (footerEl) {
@@ -57,14 +57,14 @@ export function openModal(options = {}) {
             footerEl.style.display = 'none';
         }
     }
-    
+
     // 设置大小
     modal.querySelector('.modal-content').className = `modal-content modal-${size}`;
-    
+
     // 显示模态框
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    
+
     // 关闭按钮
     const closeBtn = modal.querySelector('.modal-close');
     if (closeBtn) {
@@ -73,7 +73,7 @@ export function openModal(options = {}) {
             if (onClose) onClose();
         };
     }
-    
+
     // 点击背景关闭
     if (closable) {
         modal.onclick = (e) => {
@@ -83,7 +83,7 @@ export function openModal(options = {}) {
             }
         };
     }
-    
+
     // ESC键关闭
     const handleKeydown = (e) => {
         if (e.key === 'Escape' && closable) {
@@ -93,7 +93,7 @@ export function openModal(options = {}) {
         }
     };
     document.addEventListener('keydown', handleKeydown);
-    
+
     // 保存引用以便清理
     modal._keydownHandler = handleKeydown;
 }
@@ -104,10 +104,10 @@ export function openModal(options = {}) {
 export function closeModal() {
     const modal = getModal();
     if (!modal) return;
-    
+
     modal.classList.remove('active');
     document.body.style.overflow = '';
-    
+
     // 清理事件监听
     if (modal._keydownHandler) {
         document.removeEventListener('keydown', modal._keydownHandler);
@@ -132,19 +132,19 @@ export function showConfirm(message, onConfirm, onCancel = null) {
         closable: false,
         onClose: onCancel
     });
-    
+
     window.modalConfirm = () => {
         closeModal();
         if (onConfirm) onConfirm();
         cleanup();
     };
-    
+
     window.modalCancel = () => {
         closeModal();
         if (onCancel) onCancel();
         cleanup();
     };
-    
+
     function cleanup() {
         delete window.modalConfirm;
         delete window.modalCancel;
@@ -157,15 +157,15 @@ export function showConfirm(message, onConfirm, onCancel = null) {
  */
 export function showCharacterDetail(character) {
     const content = createCharacterDetailHTML(character);
-    
+
     openModal({
         title: character.name || '未命名英雄',
         content,
         size: 'large',
         footer: `
             <button class="btn btn-secondary" onclick="app.closeModal()">关闭</button>
-            <button class="btn btn-primary" onclick="app.editCharacter(${character.id})">编辑</button>
-            <button class="btn btn-success" onclick="app.exportSingleCharacter(${character.id})">导出</button>
+            <button class="btn btn-primary" onclick="app.editCharacter('${character.id}')">编辑</button>
+            <button class="btn btn-success" onclick="app.exportSingleCharacter('${character.id}')">导出</button>
         `
     });
 }
@@ -277,7 +277,7 @@ function getSpecialtyLevelName(level) {
     return names[level] || level;
 }
 
-window.showPowerDetailInModal = function(powerName) {
+window.showPowerDetailInModal = function (powerName) {
     const description = getPowerDescription(powerName);
     openModal({
         title: powerName,

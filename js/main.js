@@ -143,7 +143,10 @@ class ComicHeroApp {
     }
 
     showCharacterDetail(id) {
-        showCharacterDetail(id);
+        const char = this.getCharacterById(id);
+        if (char) {
+            showCharacterDetail(char);
+        }
     }
 
     // 下面是一些 legacy 代理方法，为了兼容 HTML 中硬编码的 app.xxx 调用
