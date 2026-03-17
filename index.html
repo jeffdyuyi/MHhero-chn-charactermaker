@@ -41,7 +41,7 @@
                         <span class="nav-icon">❓</span>
                         <span class="nav-text">帮助</span>
                     </button>
-                    <button class="nav-btn theme-toggle" id="theme-toggle" onclick="app.toggleTheme()" aria-label="切换主题">
+                    <button class="nav-btn theme-toggle" id="theme-toggle" data-view="theme" aria-label="切换主题">
                         <span class="nav-icon theme-icon">🌙</span>
                         <span class="nav-text">暗色</span>
                     </button>
@@ -92,7 +92,7 @@
                                 </ul>
                             </div>
                             <div class="mode-footer">
-                                <button class="btn btn-primary btn-large" onclick="app.startCreation('random')">
+                                <button class="btn btn-primary btn-large" onclick="app.creationFlow.start('random')">
                                     开始随机创建
                                 </button>
                             </div>
@@ -114,7 +114,7 @@
                                 </ul>
                             </div>
                             <div class="mode-footer">
-                                <button class="btn btn-primary btn-large" onclick="app.startCreation('point-buy')">
+                                <button class="btn btn-primary btn-large" onclick="app.creationFlow.start('point-buy')">
                                     开始定制创建
                                 </button>
                             </div>
@@ -124,15 +124,16 @@
                     <div class="quick-actions">
                         <h3>快速操作</h3>
                         <div class="action-grid">
-                            <button class="action-card" onclick="app.loadRandomExample()">
+                            <button class="action-card" onclick="app.creationFlow.start('random')">
                                 <span class="action-icon">🎲</span>
                                 <span class="action-text">生成示例角色</span>
                             </button>
-                            <button class="action-card" onclick="app.importCharacter()">
+                            <button class="action-card" id="import-characters-btn">
                                 <span class="action-icon">📥</span>
                                 <span class="action-text">导入角色卡</span>
+                                <input type="file" id="import-file-input" class="hidden" accept=".json">
                             </button>
-                            <button class="action-card" onclick="app.showHelp()">
+                            <button class="action-card" onclick="app.viewManager.switchView('help')">
                                 <span class="action-icon">📖</span>
                                 <span class="action-text">查看规则说明</span>
                             </button>
@@ -155,7 +156,7 @@
                             <button class="btn btn-icon" onclick="app.toggleHelp()" title="帮助">
                                 <span>❓</span>
                             </button>
-                            <button class="btn btn-secondary" onclick="app.resetCreation()">
+                            <button class="btn btn-secondary" onclick="app.viewManager.switchView('home')">
                                 返回首页
                             </button>
                         </div>
@@ -199,10 +200,10 @@
                             <span class="points-total">/ 45</span>
                         </div>
                         <div class="step-navigation">
-                            <button id="prev-step-btn" class="btn btn-secondary" onclick="app.prevStep()" disabled>
+                            <button id="prev-step-btn" class="btn btn-secondary" disabled>
                                 上一步
                             </button>
-                            <button id="next-step-btn" class="btn btn-primary" onclick="app.nextStep()">
+                            <button id="next-step-btn" class="btn btn-primary">
                                 下一步
                             </button>
                         </div>
@@ -215,10 +216,10 @@
                 <div class="section-header">
                     <h2 id="saved-title">已存角色</h2>
                     <div class="section-actions">
-                        <button class="btn btn-secondary" onclick="app.exportAllCharacters()">
+                        <button class="btn btn-secondary" onclick="app.savedCharactersView.exportAll()">
                             <span>📤</span> 导出全部
                         </button>
-                        <button class="btn btn-secondary" onclick="app.importCharacter()">
+                        <button class="btn btn-secondary" onclick="document.getElementById('import-file-input').click()">
                             <span>📥</span> 导入
                         </button>
                     </div>
@@ -226,10 +227,10 @@
 
                 <div class="filter-bar">
                     <div class="search-box">
-                        <input type="text" id="character-search" placeholder="搜索角色..." oninput="app.filterCharacters()">
+                        <input type="text" id="search-characters" placeholder="搜索角色...">
                         <span class="search-icon">🔍</span>
                     </div>
-                    <select id="sort-select" onchange="app.sortCharacters()">
+                    <select id="sort-characters">
                         <option value="newest">最新创建</option>
                         <option value="oldest">最早创建</option>
                         <option value="name">名称排序</option>

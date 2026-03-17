@@ -99,19 +99,21 @@ export class CharacterGenerator {
      * 生成属性
      */
     generateAttributes() {
-        getAttributeKeys().forEach(key => {
-            const roll = roll2d6();
-            this.character.attributes[key] = getAttributeLevel(roll);
-        });
+        let attempts = 0;
+        const maxAttempts = 50;
 
-        // 应用起源加成
-        this.applyOriginStatBoost();
+        do {
+            getAttributeKeys().forEach(key => {
+                const roll = roll2d6();
+                this.character.attributes[key] = getAttributeLevel(roll);
+            });
 
-        // 检查保底
-        if (!checkAttributeMinimum(this.character.attributes)) {
-            // 重新生成
-            this.generateAttributes();
-        }
+            // 应用起源加成
+            this.applyOriginStatBoost();
+
+            attempts++;
+            // 检查保底，若不通过则重试
+        } while (!checkAttributeMinimum(this.character.attributes) && attempts < maxAttempts);
     }
 
     /**
@@ -182,13 +184,13 @@ export class CharacterGenerator {
         const categoryRoll = roll2d6();
         const category = getPowerCategoryByRoll(categoryRoll);
         let powerData = null;
-        
+
         // 循环生成d66，直到找到有效的能力
         while (!powerData) {
             const d66 = rollD66();
             powerData = getPowerByD66(category.id, d66);
         }
-        
+
         const levelRoll = roll2d6();
         const level = getAttributeLevel(levelRoll);
 
@@ -225,6 +227,7 @@ export class CharacterGenerator {
     updatePowerLevel(index, level) {
         if (index >= 0 && index < this.character.powers.length) {
             this.character.powers[index].level = Math.max(1, Math.min(10, level));
+            this.updateDerivedStats();
         }
     }
 
