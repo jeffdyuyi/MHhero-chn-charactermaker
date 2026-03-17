@@ -707,3 +707,40 @@
 .empty-state-desc {
     font-size: var(--font-size);
 }
+
+/* 作者信息 */
+.author-info {
+    padding: var(--spacing-md);
+}
+
+.author-section {
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: linear-gradient(135deg, var(--gray-100) 0%, var(--white) 100%);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.author-section h4 {
+    margin: 0 0 var(--spacing-xs) 0;
+    color: var(--primary-color);
+    font-weight: var(--font-weight-semibold);
+}
+
+.author-section p {
+    margin: 0;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.author-section a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+    transition: color var(--transition-fast);
+}
+
+.author-section a:hover {
+    color: var(--secondary-light);
+    text-decoration: underline;
+}

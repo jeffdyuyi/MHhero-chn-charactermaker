@@ -918,6 +918,41 @@ class ComicHeroApp {
         }
     }
 
+    showAuthorInfo() {
+        openModal({
+            title: '作者信息',
+            content: `
+                <div class="author-info">
+                    <div class="author-section">
+                        <h4>制作者</h4>
+                        <p>不咕鸟（哈基米德）</p>
+                    </div>
+                    <div class="author-section">
+                        <h4>AI辅助</h4>
+                        <p>Antigravity Gemini</p>
+                    </div>
+                    <div class="author-section">
+                        <h4>成都秘密基地约团</h4>
+                        <p><a href="https://nogubird.top/schedule" target="_blank">nogubird.top/schedule</a></p>
+                    </div>
+                    <div class="author-section">
+                        <h4>成都秘密基地企鹅</h4>
+                        <p>691707475</p>
+                    </div>
+                    <div class="author-section">
+                        <h4>不咕鸟TRPG创想俱乐部</h4>
+                        <p>261751459</p>
+                    </div>
+                    <div class="author-section">
+                        <h4>为作者加油</h4>
+                        <p><a href="https://ifdian.net/a/nogubird" target="_blank">ifdian.net/a/nogubird</a></p>
+                    </div>
+                </div>
+            `,
+            size: 'medium'
+        });
+    }
+
     showPowerDetail(powerName) {
         const description = getPowerDescription(powerName);
         openModal({
