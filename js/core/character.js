@@ -126,44 +126,47 @@ export class CharacterGenerator {
      * 应用起源属性加成
      */
     applyOriginStatBoost() {
-        if (!this.character.origin || !this.character.origin.mechanics.statBoost) {
+        const origin = this.character.origin;
+        if (!origin || !origin.mechanics) {
             return;
         }
 
-        const boost = this.character.origin.mechanics.statBoost;
+        const mech = origin.mechanics;
+        const boost = mech.statBoost;
         const keys = getAttributeKeys();
         const choices = this.character.originChoices;
 
         // 如果是 Mutants，需要先看玩家选的是不是 boost
-        if (this.character.origin.mechanics.choice === 'power_or_boost' && choices.mutantChoice !== 'boost') {
+        if (mech.choice === 'power_or_boost' && choices.mutantChoice !== 'boost') {
             return;
         }
 
-        // 如果是固定项，直接应用。如果是‘any’类，等候玩家选择
-        switch (boost.target) {
-            case 'strength':
-                this.character.attributes.strength = Math.min(10, this.character.attributes.strength + boost.value);
-                break;
-            case 'mental':
-                // 默认随机选一个，但玩家可以后续手动更改
-                if (!choices.statBoost) {
-                    const mentalKeys = ['intellect', 'awareness', 'willpower'];
-                    const targetKey = mentalKeys[Math.floor(Math.random() * mentalKeys.length)];
-                    choices.statBoost = targetKey;
-                }
-                break;
-            case 'any_one':
-                if (!choices.statBoost) {
-                    const randomKey = keys[Math.floor(Math.random() * keys.length)];
-                    choices.statBoost = randomKey;
-                }
-                break;
-            case 'any_two':
-                if (!choices.statBoosts) {
-                    const shuffled = [...keys].sort(() => 0.5 - Math.random());
-                    choices.statBoosts = shuffled.slice(0, 2);
-                }
-                break;
+        // 应用固定属性加成
+        if (boost) {
+            switch (boost.target) {
+                case 'strength':
+                    this.character.attributes.strength = Math.min(10, this.character.attributes.strength + boost.value);
+                    break;
+                case 'mental':
+                    if (!choices.statBoost) {
+                        const mentalKeys = ['intellect', 'awareness', 'willpower'];
+                        const targetKey = mentalKeys[Math.floor(Math.random() * mentalKeys.length)];
+                        choices.statBoost = targetKey;
+                    }
+                    break;
+                case 'any_one':
+                    if (!choices.statBoost) {
+                        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+                        choices.statBoost = randomKey;
+                    }
+                    break;
+                case 'any_two':
+                    if (!choices.statBoosts) {
+                        const shuffled = [...keys].sort(() => 0.5 - Math.random());
+                        choices.statBoosts = shuffled.slice(0, 2);
+                    }
+                    break;
+            }
         }
 
         // 处理固定获得的超凡能力

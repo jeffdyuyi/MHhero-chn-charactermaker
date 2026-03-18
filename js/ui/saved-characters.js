@@ -11,7 +11,9 @@ import {
     exportAllCharacters,
     downloadFile,
     readFile,
-    importCharacters
+    importCharacters,
+    importCharacterFromImage,
+    saveCharacter
 } from '../core/storage.js';
 
 import { showSuccess, showError, showInfo } from './toast.js';
@@ -58,6 +60,13 @@ export class SavedCharactersView {
             importBtn.addEventListener('click', () => importFileInput.click());
             importFileInput.addEventListener('change', (e) => this.handleImport(e));
         }
+
+        const importImgBtn = document.getElementById('import-image-btn');
+        const importImgFile = document.getElementById('import-image-file');
+        if (importImgBtn && importImgFile) {
+            importImgBtn.addEventListener('click', () => importImgFile.click());
+            importImgFile.addEventListener('change', (e) => this.handleImageImport(e));
+        }
     }
 
     loadCharacters() {
@@ -91,24 +100,50 @@ export class SavedCharactersView {
         return `
             <div class="character-card">
                 <div class="char-header">
-                    <h4>${character.name || '未命名英雄'}</h4>
-                    <span class="char-mode-badge ${character.mode}">${character.mode === 'random' ? '🎲' : '🎯'}</span>
+                    <div class="char-avatar-mini">
+                        ${character.avatar ? `<img src="${character.avatar}" alt="Avatar">` : '🦸'}
+                    </div>
+                    <div class="char-title-group">
+                        <h4>${character.name || '未命名英雄'}</h4>
+                        <div class="char-subtitle">
+                           <span class="char-origin badge-xs">${character.origin?.name || '未知起源'}</span>
+                           <span class="char-mode-badge ${character.mode}">${character.mode === 'random' ? '🎲' : '🎯'}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="char-info">
-                    <span class="char-origin">${character.origin?.name || '未知起源'}</span>
-                    <span class="char-stats">耐力: ${character.stamina} | 决意: ${character.resolve}</span>
+                <div class="char-info-row">
+                    <span class="stat-pill">耐力 ${character.stamina}</span>
+                    <span class="stat-pill">决意 ${character.resolve}</span>
                 </div>
                 <div class="char-powers-preview">
                     ${(character.powers || []).slice(0, 3).map(p => `<span class="power-tag">${p ? p.name : '未知'}</span>`).join('')}
                     ${(character.powers || []).length > 3 ? '<span class="power-tag">...</span>' : ''}
                 </div>
                 <div class="char-actions">
-                    <button class="btn btn-sm btn-secondary" onclick="app.savedCharactersView.viewCharacter('${character.id}')">详情</button>
-                    <button class="btn btn-sm btn-secondary" onclick="app.editCharacter('${character.id}')">编辑</button>
-                    <button class="btn btn-sm btn-danger" onclick="app.savedCharactersView.confirmDelete('${character.id}')">删除</button>
+                    <button class="btn btn-xs btn-secondary" onclick="app.savedCharactersView.viewCharacter('${character.id}')">详情</button>
+                    <button class="btn btn-xs btn-secondary" onclick="app.editCharacter('${character.id}')">编辑</button>
+                    <button class="btn btn-xs btn-info" onclick="app.savedCharactersView.exportCharacterImage('${character.id}')">🖼️ 图片</button>
+                    <button class="btn btn-xs btn-danger" onclick="app.savedCharactersView.confirmDelete('${character.id}')">删除</button>
                 </div>
             </div>
         `;
+    }
+
+    async exportCharacterImage(id) {
+        const character = this.app.getCharacterById(id);
+        if (!character) return;
+
+        // 临时渲染一个不可见的Sheet来截图
+        showInfo('准备生成英雄卡图片...');
+
+        // 切换到编辑器视图并加载该角色，然后截图
+        this.app.creationFlow.start(character.mode, id);
+        this.app.viewManager.switchView('editor');
+
+        // 给一点点渲染时间
+        setTimeout(async () => {
+            await this.app.creationFlow.exportAsImage();
+        }, 300);
     }
 
     viewCharacter(id) {

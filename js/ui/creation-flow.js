@@ -16,7 +16,7 @@ import { getAttributeKeys } from '../data/attributes.js';
 import { POINT_BUY_CONFIG } from '../data/index.js';
 import { CharacterGenerator } from '../core/character.js';
 import { showSuccess, showError, showInfo } from './toast.js';
-import { saveCharacter } from '../core/storage.js';
+import { saveCharacter, exportCharacterAsImage } from '../core/storage.js';
 import { openModal, closeModal } from './modal.js';
 import { POWER_EXTRAS, POWER_FLAWS } from '../data/modifiers.js';
 
@@ -38,6 +38,25 @@ export class CreationFlow {
         this.editingCharacterId = null;
 
         this.init();
+    }
+
+    handleAvatarUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.size > 1024 * 1024) { // 限制 1MB
+            showError('头像文件过大，请选择 1MB 以内的图片。');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const base64 = e.target.result;
+            this.characterGenerator.character.avatar = base64;
+            this.renderFullSheet();
+            showSuccess('头像已上传！');
+        };
+        reader.readAsDataURL(file);
     }
 
     init() {
@@ -90,30 +109,50 @@ export class CreationFlow {
             const char = this.characterGenerator.getCharacter();
             const isPB = this.creationMode === 'point-buy';
 
-            container.innerHTML = `
-                ${this.renderIdentitySection(char)}
-                ${this.renderCombatSection(char, isPB)}
-                ${this.renderOriginSection(char, isPB)}
-                ${this.renderAttributesSection(char, isPB)}
-                ${this.renderPowersSection(char, isPB)}
-                ${this.renderSpecialtiesSection(char, isPB)}
-                ${this.renderEquipmentSection(char)}
-                ${this.renderBioSection(char)}
-            `;
+            // 清空并按顺序渲染各区块
+            container.innerHTML = '';
+
+            const sections = [
+                this.renderIdentitySection(char),
+                this.renderCombatSection(char, isPB),
+                this.renderOriginSection(char, isPB),
+                this.renderAttributesSection(char, isPB),
+                this.renderPowersSection(char, isPB),
+                this.renderSpecialtiesSection(char, isPB),
+                this.renderEquipmentSection(char),
+                this.renderBioSection(char)
+            ];
+
+            container.innerHTML = sections.join('');
+
+            // 重新绑定可能的动态事件或初始化提示
+            this.initPowerTooltips();
         } catch (error) {
             console.error('Rendering failed:', error);
             showError('同步角色档案时遇到技术故障，请重新载入。');
         }
     }
 
+    initPowerTooltips() {
+        // 后续可以通过 Tippy.js 或自定义实现更酷的提示，目前使用原生 title 的增强版
+    }
+
     renderIdentitySection(char) {
         return `
             <div class="sheet-section section-identity">
                 <div class="step-num">STEP 1</div>
-                <div class="identity-header">
-                    <input type="text" id="sheet-name" value="${char.name || ''}" 
-                           oninput="app.creationFlow.updateBasicInfo('name', this.value)" 
-                           placeholder="输入英雄代号 (NAME)...">
+                <div class="identity-layout">
+                    <div class="avatar-upload-container">
+                        <div class="avatar-preview" id="avatar-preview-box" onclick="document.getElementById('avatar-input').click()">
+                            ${char.avatar ? `<img src="${char.avatar}" alt="Avatar">` : '<span class="avatar-placeholder">上传头像</span>'}
+                        </div>
+                        <input type="file" id="avatar-input" hidden accept="image/*" onchange="app.creationFlow.handleAvatarUpload(event)">
+                    </div>
+                    <div class="identity-header">
+                        <input type="text" id="sheet-name" value="${char.name || ''}" 
+                               oninput="app.creationFlow.updateBasicInfo('name', this.value)" 
+                               placeholder="输入英雄代号 (NAME)...">
+                    </div>
                 </div>
                 <div class="qualities-grid">
                     <div class="q-box">
@@ -293,8 +332,9 @@ export class CreationFlow {
     }
 
     renderPowerItem(power, index, isPB) {
+        const desc = getPowerDescription(power.name) || '暂无详细说明';
         return `
-            <div class="power-panel-card">
+            <div class="power-panel-card" title="${desc.replace(/"/g, '&quot;')}">
                 <div class="card-top">
                     <span class="p-name" onclick="app.showPowerDetail('${power.name}')">${power.name}</span>
                     <span class="p-cat">(${power.category})</span>
@@ -697,6 +737,22 @@ export class CreationFlow {
             this.app.viewManager.switchView('saved');
         } else {
             showError('保存失败，请检查浏览器存储空间。');
+        }
+    }
+
+    async exportAsImage() {
+        const sheet = document.getElementById('character-sheet');
+        if (!sheet) return;
+
+        const char = this.characterGenerator.getCharacter();
+        showInfo('正在生成英雄卡图片，请稍候...');
+
+        try {
+            await exportCharacterAsImage(sheet, char);
+            showSuccess('英雄卡图片生成成功！数据已嵌入图片中。');
+        } catch (error) {
+            showError('生成图片失败，请重试。');
+            console.error(error);
         }
     }
 }

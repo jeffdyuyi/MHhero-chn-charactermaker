@@ -29,12 +29,12 @@ export function getSavedCharacters() {
 export function saveCharacter(character) {
     try {
         const characters = getSavedCharacters();
-        
+
         // 检查是否已存在
         const existingIndex = characters.findIndex(c => c.id === character.id);
-        
+
         character.updatedAt = new Date().toISOString();
-        
+
         if (existingIndex >= 0) {
             // 更新现有角色
             characters[existingIndex] = character;
@@ -45,7 +45,7 @@ export function saveCharacter(character) {
             }
             characters.push(character);
         }
-        
+
         localStorage.setItem(STORAGE_KEY, JSON.stringify(characters));
         return true;
     } catch (error) {
@@ -89,9 +89,9 @@ export function getCharacterById(id) {
 export function searchCharacters(query) {
     const characters = getSavedCharacters();
     if (!query || query.trim() === '') return characters;
-    
+
     const lowerQuery = query.toLowerCase();
-    return characters.filter(c => 
+    return characters.filter(c =>
         c.name?.toLowerCase().includes(lowerQuery) ||
         c.origin?.name?.toLowerCase().includes(lowerQuery) ||
         c.description?.toLowerCase().includes(lowerQuery)
@@ -106,7 +106,7 @@ export function searchCharacters(query) {
  */
 export function sortCharacters(characters, sortBy = 'newest') {
     const sorted = [...characters];
-    
+
     switch (sortBy) {
         case 'newest':
             sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -126,7 +126,7 @@ export function sortCharacters(characters, sortBy = 'newest') {
         default:
             break;
     }
-    
+
     return sorted;
 }
 
@@ -147,20 +147,20 @@ export function exportAllCharacters() {
 export function importCharacters(json) {
     try {
         const data = JSON.parse(json);
-        
+
         // 支持单角色或角色数组
         const characters = Array.isArray(data) ? data : [data];
-        
+
         let imported = 0;
         let failed = 0;
-        
+
         characters.forEach(character => {
             // 验证角色数据
             if (character.attributes && character.powers && character.specialties) {
                 // 生成新ID避免冲突
                 character.id = Date.now() + Math.random();
                 character.createdAt = new Date().toISOString();
-                
+
                 if (saveCharacter(character)) {
                     imported++;
                 } else {
@@ -170,7 +170,7 @@ export function importCharacters(json) {
                 failed++;
             }
         });
-        
+
         return { success: true, imported, failed };
     } catch (error) {
         console.error('导入角色失败:', error);
@@ -199,7 +199,7 @@ export function clearAllCharacters() {
 export function getStorageStats() {
     const characters = getSavedCharacters();
     const totalSize = new Blob([JSON.stringify(characters)]).size;
-    
+
     return {
         count: characters.length,
         totalSize: totalSize,
@@ -229,7 +229,7 @@ export function backupData() {
 export function restoreData(json) {
     try {
         const data = JSON.parse(json);
-        
+
         if (data.characters && Array.isArray(data.characters)) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data.characters));
             return true;
@@ -250,14 +250,14 @@ export function restoreData(json) {
 export function downloadFile(content, filename, type = 'application/json') {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
 }
 
@@ -272,5 +272,80 @@ export function readFile(file) {
         reader.onload = (e) => resolve(e.target.result);
         reader.onerror = (e) => reject(e);
         reader.readAsText(file);
+    });
+}
+
+/**
+ * 将角色导出为包含JSON数据的图片
+ * @param {HTMLElement} element - 要截图的DOM元素
+ * @param {Object} character - 角色对象
+ */
+export async function exportCharacterAsImage(element, character) {
+    if (typeof html2canvas === 'undefined') {
+        throw new Error('未加载 html2canvas 库');
+    }
+
+    try {
+        const canvas = await html2canvas(element, {
+            backgroundColor: '#ffffff',
+            scale: 2, // 提升清晰度
+            useCORS: true,
+            logging: false
+        });
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const jsonString = JSON.stringify(character);
+        const marker = 'CHAR_DATA:';
+
+        // 创建包含图片和JSON数据的混合Blob
+        const finalBlob = new Blob([blob, marker, jsonString], { type: 'image/png' });
+
+        const filename = `hero-${character.name || 'unnamed'}-${new Date().getTime()}.png`;
+        const url = URL.createObjectURL(finalBlob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+
+        URL.revokeObjectURL(url);
+        return true;
+    } catch (error) {
+        console.error('导出图片失败:', error);
+        throw error;
+    }
+}
+
+/**
+ * 从含有嵌入数据的图片中恢复角色
+ * @param {File} file - 图片文件
+ * @returns {Promise<Object>} 角色对象
+ */
+export function importCharacterFromImage(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const arrayBuffer = e.target.result;
+                const uint8Array = new Uint8Array(arrayBuffer);
+                const decoder = new TextDecoder();
+                const text = decoder.decode(uint8Array);
+
+                const marker = 'CHAR_DATA:';
+                const markerIndex = text.lastIndexOf(marker);
+
+                if (markerIndex === -1) {
+                    throw new Error('该图片不包含有效的英雄档案数据');
+                }
+
+                const jsonPart = text.substring(markerIndex + marker.length);
+                const character = JSON.parse(jsonPart);
+                resolve(character);
+            } catch (error) {
+                reject(error);
+            }
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
     });
 }

@@ -51,6 +51,7 @@ export function createEmptyCharacter() {
         powers: [],
         specialties: [],
         equipment: [], // 新增：装备资料库
+        avatar: null, // 新增：英雄头像 (Base64)
         originChoices: {}, // 存储起源带来的选择结果
         qualities: ['', '', ''],
         description: '',

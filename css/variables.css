@@ -13,14 +13,22 @@
     --gray-800: #1f2937;
     --gray-900: #111827;
 
+    /* 漫画活力色板 - 经典美漫配色 */
+    --comic-red: #ff3e3e;
+    --comic-blue: #2d5eff;
+    --comic-yellow: #ffd000;
+    --comic-orange: #ff8c00;
+    --comic-purple: #9d00ff;
+    --comic-green: #00c853;
+
     /* 语义化颜色 - 漫画风格 */
     --primary-color: var(--black);
-    --secondary-color: var(--gray-600);
-    --accent-color: var(--black);
-    --success-color: var(--black);
-    --warning-color: var(--gray-600);
-    --danger-color: var(--black);
-    --info-color: var(--gray-400);
+    --secondary-color: var(--comic-blue);
+    --accent-color: var(--comic-red);
+    --success-color: var(--comic-green);
+    --warning-color: var(--comic-yellow);
+    --danger-color: var(--comic-red);
+    --info-color: var(--comic-purple);
 
     /* 文本颜色 */
     --text-primary: var(--black);
@@ -88,4 +96,9 @@
 
     --line-height-normal: 1.5;
     --line-height-relaxed: 1.7;
+
+    /* 纹理 */
+    --halftone-size: 8px;
+    --halftone-dot: radial-gradient(var(--gray-300) 1px, transparent 1px);
+    --halftone-bg: radial-gradient(circle, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
 }
