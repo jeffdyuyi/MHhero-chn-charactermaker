@@ -99,12 +99,12 @@ export class SavedCharactersView {
                     <span class="char-stats">耐力: ${character.stamina} | 决意: ${character.resolve}</span>
                 </div>
                 <div class="char-powers-preview">
-                    ${character.powers.slice(0, 3).map(p => `<span class="power-tag">${p.name}</span>`).join('')}
-                    ${character.powers.length > 3 ? '<span class="power-tag">...</span>' : ''}
+                    ${(character.powers || []).slice(0, 3).map(p => `<span class="power-tag">${p ? p.name : '未知'}</span>`).join('')}
+                    ${(character.powers || []).length > 3 ? '<span class="power-tag">...</span>' : ''}
                 </div>
                 <div class="char-actions">
                     <button class="btn btn-sm btn-secondary" onclick="app.savedCharactersView.viewCharacter('${character.id}')">详情</button>
-                    <button class="btn btn-sm btn-secondary" onclick="app.savedCharactersView.editCharacter('${character.id}')">编辑</button>
+                    <button class="btn btn-sm btn-secondary" onclick="app.editCharacter('${character.id}')">编辑</button>
                     <button class="btn btn-sm btn-danger" onclick="app.savedCharactersView.confirmDelete('${character.id}')">删除</button>
                 </div>
             </div>

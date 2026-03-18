@@ -116,6 +116,10 @@ export class CharacterGenerator {
 
             attempts++;
         } while (!checkAttributeMinimum(this.character.attributes) && attempts < maxAttempts);
+
+        if (attempts >= maxAttempts) {
+            console.warn('Attribute generation reached max attempts, proceeding with current values.');
+        }
     }
 
     /**
@@ -252,10 +256,18 @@ export class CharacterGenerator {
         const category = getPowerCategoryByRoll(categoryRoll);
         let powerData = null;
 
-        // 循环生成d66，直到找到有效的能力
-        while (!powerData) {
+        // 循环生成d66，直到找到有效的能力 (增加上限防止死循环)
+        let attempts = 0;
+        while (!powerData && attempts < 100) {
             const d66 = rollD66();
             powerData = getPowerByD66(category.id, d66);
+            attempts++;
+        }
+
+        // 如果实在没抽到，退而求其次选择该分类下的第一个
+        if (!powerData) {
+            const allInCat = POWERS[category.id]?.powers || [];
+            powerData = allInCat[0] || { name: '未知能力' };
         }
 
         const levelRoll = roll2d6();
