@@ -235,9 +235,10 @@ export class CharacterGenerator {
 
         // 应用装置限制
         if (this.character.origin?.mechanics.deviceLimit) {
+            const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
             this.character.powers.forEach(power => {
-                if (!power.flaws.includes('装置')) {
-                    power.flaws.push('装置');
+                if (!power.flaws.some(f => f.id === 'device')) {
+                    power.flaws.push(deviceFlaw);
                 }
             });
         }

@@ -1,124 +1,120 @@
 /* 一页式竖版角色卡视图样式 */
-
 .one-page-app {
-    padding-top: 10px;
-    padding-bottom: 50px;
+    padding-top: 20px;
+    padding-bottom: 80px;
 }
 
 .sheet-container {
     display: flex;
     flex-direction: column;
     gap: 0;
-    min-height: 1000px;
-}
-
-/* 头部面板 */
-.section-identity {
-    border-bottom: 4px solid var(--black);
-    padding: 20px;
     background: var(--white);
+    border: 4px solid var(--black);
+    box-shadow: 12px 12px 0px var(--black);
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.identity-grid input[type="text"] {
-    width: 100%;
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-bold);
-    border: none;
-    border-bottom: 3px solid var(--black);
-    padding: 8px 0;
-    margin-bottom: 15px;
+/* 步骤编号 */
+.step-num {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background: var(--black);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 900;
+    padding: 2px 6px;
+    z-index: 10;
+}
+
+.sheet-section {
+    padding: 25px;
+    border-bottom: 2px solid var(--black);
+    position: relative;
+}
+
+.sheet-section:last-child {
+    border-bottom: none;
+}
+
+/* 模块标题 */
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px double var(--black);
+}
+
+.panel-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 900;
     text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
-.qualities-inputs {
+/* 01: 身份 */
+.identity-header input {
+    width: 100%;
+    font-size: 32px;
+    font-weight: 900;
+    border: none;
+    border-bottom: 4px solid var(--black);
+    padding: 10px 0;
+    margin-bottom: 20px;
+    background: transparent;
+}
+
+.qualities-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
 }
 
-.qualities-inputs input {
-    font-size: var(--font-size-sm);
-    padding: 5px;
-    border: 2px solid var(--black);
-}
-
-/* 数值气泡 */
-.section-stats {
-    background: var(--black);
-    color: var(--white);
-    padding: 15px;
-}
-
-.stats-row {
-    display: flex;
-    justify-content: space-around;
-    gap: 20px;
-}
-
-.stat-bubble {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.stat-bubble .label {
+.q-box label {
+    display: block;
     font-size: 10px;
     font-weight: 900;
-    opacity: 0.8;
-}
-
-.stat-bubble .value {
-    font-size: var(--font-size-xxl);
-    font-weight: 900;
-}
-
-.stat-bubble.points .value {
-    color: var(--white);
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-}
-
-/* 面板通用标题 */
-.panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    border-left: 8px solid var(--black);
-    padding-left: 10px;
-}
-
-.panel-header h3 {
-    margin: 0;
-    font-size: var(--font-size-md);
-    font-weight: 900;
+    margin-bottom: 5px;
     text-transform: uppercase;
 }
 
-/* 起源卡片 */
-.origin-content {
+.q-box input {
+    width: 100%;
+    border: 2px solid var(--black);
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* 02: 起源 */
+.origin-display {
+    background: var(--gray-50);
     border: 2px solid var(--black);
     padding: 15px;
-    background: var(--gray-50);
+}
+
+.origin-desc {
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.6;
 }
 
 .origin-config-row {
-    margin-top: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--black);
     display: flex;
     gap: 10px;
 }
 
-.origin-config-row select {
-    flex: 1;
-    padding: 5px;
-    border: 2px solid var(--black);
-    font-weight: bold;
-}
-
-/* 属性网格 */
-.attributes-grid {
+/* 03: 属性 */
+.attributes-stack {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
 
@@ -126,14 +122,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 8px 12px;
     border: 2px solid var(--black);
     background: var(--white);
 }
 
 .attr-name {
     font-weight: 900;
-    text-transform: uppercase;
+    font-size: 14px;
 }
 
 .attr-value-box {
@@ -142,24 +138,23 @@
     gap: 10px;
 }
 
-.val {
-    font-size: var(--font-size-lg);
+.attr-value-box .val {
+    font-size: 18px;
     font-weight: 900;
     min-width: 20px;
     text-align: center;
 }
 
-/* 能力卡面板 */
-.powers-vertical-list {
+/* 04: 能力 */
+.powers-stack {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
 }
 
 .power-panel-card {
-    border: 3px solid var(--black);
-    padding: 15px;
-    position: relative;
+    border: 2px solid var(--black);
+    padding: 12px;
     background: var(--white);
     box-shadow: 4px 4px 0px var(--black);
 }
@@ -168,19 +163,159 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
 }
 
 .p-name {
     font-weight: 900;
-    font-size: var(--font-size-md);
+    font-size: 16px;
     text-decoration: underline;
     cursor: pointer;
 }
 
-.p-cat {
+.p-mods {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* 05: 专长 */
+.specialties-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.spec-tag-card {
+    border: 2px solid var(--black);
+    padding: 5px 10px;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 900;
+    font-size: 13px;
+}
+
+/* 06: 实战数值 */
+.section-combat {
+    background: var(--black);
+    color: var(--white);
+}
+
+.combat-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.combat-main-box {
+    display: flex;
+    gap: 40px;
+}
+
+.c-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.c-stat .label {
     font-size: 10px;
-    opacity: 0.6;
+    font-weight: 900;
+    opacity: 0.8;
+}
+
+.c-stat .val.large {
+    font-size: 40px;
+    font-weight: 900;
+}
+
+.combat-points-box {
+    text-align: right;
+    border-left: 2px solid var(--white);
+    padding-left: 20px;
+}
+
+.point-val {
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.point-val.negative {
+    color: #ff0000;
+}
+
+/* 07: 传记 */
+.bio-container label {
+    display: block;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.bio-container textarea {
+    width: 100%;
+    min-height: 120px;
+    border: 3px solid var(--black);
+    padding: 15px;
+    font-size: 14px;
+    line-height: 1.8;
+    background: var(--white);
+    resize: none;
+}
+
+/* 空状态提示 */
+.empty-hint {
+    padding: 20px;
+    border: 2px dashed var(--gray-400);
+    text-align: center;
+    color: var(--gray-500);
+    font-style: italic;
+}
+
+/* 通用组件补全 */
+.btn-step {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--black);
+    background: var(--white);
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.btn-step:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+.tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--black);
+    font-weight: 900;
+}
+
+.tag.extra {
+    background: var(--gray-100);
+}
+
+.tag.flaw {
+    background: var(--black);
+    color: var(--white);
+}
+
+.btn-add-tag {
+    border: 1px dashed var(--black);
+    background: none;
+    padding: 2px 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 900;
 }
 
 .p-controls {
@@ -194,65 +329,7 @@
     background: var(--black);
     color: var(--white);
     padding: 2px 6px;
-}
-
-.mod-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-}
-
-/* 专长行列表 */
-.specialties-row-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.spec-tag-card {
-    border: 2px solid var(--black);
-    padding: 4px 8px;
-    background: var(--white);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: bold;
-    font-size: var(--font-size-sm);
-}
-
-.s-level {
-    color: var(--gray-600);
-}
-
-/* 传记输入线 */
-.section-desc textarea {
-    width: 100%;
-    min-height: 100px;
-    border: 3px solid var(--black);
-    padding: 10px;
-    font-family: inherit;
-    resize: vertical;
-    background: var(--white);
-    line-height: 1.5em;
-    font-weight: 600;
-}
-
-/* 步块按钮 */
-.btn-step {
-    width: 24px;
-    height: 24px;
-    border: 2px solid var(--black);
-    background: var(--white);
-    font-weight: 900;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-step:hover {
-    background: var(--black);
-    color: var(--white);
+    font-size: 12px;
 }
 
 .btn-icon-del {
@@ -268,29 +345,4 @@
 
 .btn-icon-del:hover {
     opacity: 1;
-}
-
-.tag {
-    font-size: 10px;
-    padding: 2px 6px;
-    border: 1px solid var(--black);
-    font-weight: 900;
-    cursor: pointer;
-}
-
-.tag.extra {
-    background: var(--white);
-}
-
-.tag.flaw {
-    background: var(--black);
-    color: var(--white);
-}
-
-.btn-add-tag {
-    border: 1px dashed var(--black);
-    background: none;
-    padding: 2px 8px;
-    font-size: 12px;
-    cursor: pointer;
 }

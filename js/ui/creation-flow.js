@@ -90,97 +90,121 @@ export class CreationFlow {
         const isPB = this.creationMode === 'point-buy';
 
         container.innerHTML = `
-            <!-- 头部：身份与核心属性 -->
+            <!-- STEP 1: 英雄代号 & 核心特质 -->
             <div class="sheet-section section-identity">
-                <div class="identity-grid">
-                    <div class="input-panel">
-                        <label>英雄真名</label>
-                        <input type="text" id="sheet-name" value="${char.name || ''}" 
-                               oninput="app.creationFlow.updateBasicInfo('name', this.value)" placeholder="例如：夜鸦">
-                        <label>核心特质</label>
-                        <div class="qualities-inputs">
-                            <input type="text" value="${char.qualities[0] || ''}" oninput="app.creationFlow.updateQuality(0, this.value)" placeholder="身份">
-                            <input type="text" value="${char.qualities[1] || ''}" oninput="app.creationFlow.updateQuality(1, this.value)" placeholder="动机">
-                            <input type="text" value="${char.qualities[2] || ''}" oninput="app.creationFlow.updateQuality(2, this.value)" placeholder="羁绊">
-                        </div>
+                <div class="step-num">STEP 1</div>
+                <div class="identity-header">
+                    <input type="text" id="sheet-name" value="${char.name || ''}" 
+                           oninput="app.creationFlow.updateBasicInfo('name', this.value)" 
+                           placeholder="输入英雄代号 (NAME)...">
+                </div>
+                <div class="qualities-grid">
+                    <div class="q-box">
+                        <label>身份 (IDENTITY)</label>
+                        <input type="text" value="${char.qualities[0] || ''}" 
+                               oninput="app.creationFlow.updateQuality(0, this.value)" placeholder="如：退役特工">
+                    </div>
+                    <div class="q-box">
+                        <label>动机 (MOTIVATION)</label>
+                        <input type="text" value="${char.qualities[1] || ''}" 
+                               oninput="app.creationFlow.updateQuality(1, this.value)" placeholder="如：寻找真相">
+                    </div>
+                    <div class="q-box">
+                        <label>羁绊 (BOND)</label>
+                        <input type="text" value="${char.qualities[2] || ''}" 
+                               oninput="app.creationFlow.updateQuality(2, this.value)" placeholder="如：唯一的伙伴">
                     </div>
                 </div>
             </div>
 
-            <!-- 核心数值面板 -->
-            <div class="sheet-section section-stats">
-                <div class="stats-row">
-                    <div class="stat-bubble primary">
-                        <span class="label">耐力 (STAMINA)</span>
-                        <span class="value">${char.stamina}</span>
-                    </div>
-                    <div class="stat-bubble resolve">
-                        <span class="label">决意 (RESOLVE)</span>
-                        <span class="value">${char.resolve}</span>
-                    </div>
-                    ${isPB ? `
-                    <div class="stat-bubble points">
-                        <span class="label">剩余点数 (POINTS)</span>
-                        <span class="value ${this.characterGenerator.getRemainingPoints() < 0 ? 'text-danger' : ''}">${this.characterGenerator.getRemainingPoints()}</span>
-                    </div>
-                    ` : ''}
-                </div>
-            </div>
-
-            <!-- 起源面板 -->
+            <!-- STEP 2: 能力起源 -->
             <div class="sheet-section section-origin">
+                <div class="step-num">STEP 2</div>
                 <div class="panel-header">
                     <h3>能力起源 (ORIGIN)</h3>
-                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollOrigin()">🎲 随机重置</button>` : ''}
+                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollOrigin()">🎲 随机重骰</button>` : ''}
                 </div>
-                <div class="origin-content card-bg">
-                    <div class="origin-info">
-                        <strong>${char.origin?.name || '未知'}</strong>
-                        <p>${char.origin?.description || '尚未决定英雄的来源。'}</p>
+                <div class="origin-display">
+                    <div class="origin-type-card">
+                        <span class="badge badge-primary">${char.origin?.name || '未知'}</span>
+                        <p class="origin-desc">${char.origin?.description || '起源定义了角色的能力背景和潜力。'}</p>
                     </div>
                     ${this.renderOriginMechanicsConfig(char)}
                 </div>
             </div>
 
-            <!-- 基础属性面板 -->
+            <!-- STEP 3: 关键属性 -->
             <div class="sheet-section section-attributes">
+                <div class="step-num">STEP 3</div>
                 <div class="panel-header">
-                    <h3>基础属性 (ATTRIBUTES)</h3>
-                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机重置</button>` : ''}
+                    <h3>关键属性 (ATTRIBUTES)</h3>
+                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机重骰</button>` : ''}
                 </div>
-                <div class="attributes-grid">
+                <div class="attributes-stack">
                     ${getAttributeKeys().map(key => this.renderAttributeItem(key, char.attributes[key], isPB)).join('')}
                 </div>
             </div>
 
-            <!-- 特殊能力面板 -->
+            <!-- STEP 4: 超凡能力 -->
             <div class="sheet-section section-powers">
+                <div class="step-num">STEP 4</div>
                 <div class="panel-header">
-                    <h3>特殊能力 (POWERS)</h3>
-                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机重置</button>` :
-                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddPowerModal()">➕ 添加能力</button>`}
+                    <h3>超凡能力 (POWERS)</h3>
+                    <div class="p-actions">
+                        ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机重骰</button>` :
+                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddPowerModal()">➕ 手动添加</button>`}
+                    </div>
                 </div>
-                <div class="powers-vertical-list">
-                    ${char.powers.length > 0 ? char.powers.map((p, i) => this.renderPowerItem(p, i, isPB)).join('') : '<p class="empty-hint">暂无超凡之力...</p>'}
+                <div class="powers-stack">
+                    ${char.powers.length > 0 ? char.powers.map((p, i) => this.renderPowerItem(p, i, isPB)).join('') : '<div class="empty-hint">暂未获得超常能力...</div>'}
                 </div>
             </div>
 
-            <!-- 专长面板 -->
+            <!-- STEP 5: 生活专长 -->
             <div class="sheet-section section-specialties">
+                <div class="step-num">STEP 5</div>
                 <div class="panel-header">
-                    <h3>专长技能 (SPECIALTIES)</h3>
-                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollSpecialties()">🎲 随机重置</button>` :
-                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddSpecialtyModal()">➕ 添加专长</button>`}
+                    <h3>生活专长 (SPECIALTIES)</h3>
+                    <div class="s-actions">
+                        ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollSpecialties()">🎲 随机重骰</button>` :
+                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddSpecialtyModal()">➕ 手动添加</button>`}
+                    </div>
                 </div>
-                <div class="specialties-row-list">
-                    ${char.specialties.length > 0 ? char.specialties.map((s, i) => this.renderSpecialtyItem(s, i, isPB)).join('') : '<p class="empty-hint">世俗技能尚未磨炼...</p>'}
+                <div class="specialties-flex">
+                    ${char.specialties.length > 0 ? char.specialties.map((s, i) => this.renderSpecialtyItem(s, i, isPB)).join('') : '<div class="empty-hint">暂无特殊生活专长...</div>'}
                 </div>
             </div>
 
-            <!-- 底部描述 -->
-            <div class="sheet-section section-desc">
-                 <label>英雄传记</label>
-                 <textarea oninput="app.creationFlow.updateBasicInfo('description', this.value)" placeholder="书写你的故事...">${char.description || ''}</textarea>
+            <!-- STEP 6: 实战总结 -->
+            <div class="sheet-section section-combat">
+                <div class="step-num">RESULT</div>
+                <div class="combat-grid">
+                    <div class="combat-main-box">
+                        <div class="c-stat">
+                            <span class="label">耐力 (STAMINA)</span>
+                            <span class="val large">${char.stamina}</span>
+                        </div>
+                        <div class="c-stat">
+                            <span class="label">决意 (RESOLVE)</span>
+                            <span class="val large">${char.resolve}</span>
+                        </div>
+                    </div>
+                    ${isPB ? `
+                        <div class="combat-points-box">
+                            <span class="label">购点余额 (REMAINING)</span>
+                            <span class="val point-val ${this.characterGenerator.getRemainingPoints() < 0 ? 'negative' : ''}">${this.characterGenerator.getRemainingPoints()} / ${POINT_BUY_CONFIG.totalPoints}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+
+            <!-- FINAL: 传记详情 -->
+            <div class="sheet-section section-bio">
+                 <div class="bio-container">
+                    <label>英雄档案说明 (BIOGRAPHY)</label>
+                    <textarea oninput="app.creationFlow.updateBasicInfo('description', this.value)" 
+                              placeholder="在正义被召唤时，这里将记述你的故事...">${char.description || ''}</textarea>
+                 </div>
             </div>
         `;
     }

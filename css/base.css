@@ -114,6 +114,15 @@ th {
     display: none !important;
 }
 
+/* 视图系统 */
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+}
+
 /* 滚动条 - 简约黑白 */
 ::-webkit-scrollbar {
     width: 10px;
