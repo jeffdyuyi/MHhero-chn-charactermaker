@@ -6,7 +6,7 @@
 export class ViewManager {
     constructor(app) {
         this.app = app;
-        this.currentView = 'home';
+        this.currentView = 'editor';
         this.init();
     }
 
@@ -46,20 +46,19 @@ export class ViewManager {
         // 视图特定逻辑
         if (viewName === 'saved') {
             this.app.savedCharactersView.loadCharacters();
-        } else if (viewName === 'home') {
-            if (!this.app.creationFlow?.isCreating) {
-                this.showSection('welcome-section');
+        } else if (viewName === 'editor') {
+            if (this.app.creationFlow) {
+                this.app.creationFlow.renderFullSheet();
             }
         }
     }
 
-    showSection(sectionId) {
-        document.querySelectorAll('.section').forEach(section => {
-            section.classList.add('hidden');
-        });
-        const targetSection = document.getElementById(sectionId);
-        if (targetSection) {
-            targetSection.classList.remove('hidden');
+    showSection(id) {
+        // 在一页式布局中，section 切换可能不再需要
+        // 但为了兼容性保留空实现或精简逻辑
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.remove('hidden');
         }
     }
 }

@@ -292,3 +292,18 @@
     display: inline-block;
     text-transform: uppercase;
 }
+
+/* 通用列表展示 */
+.grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* 空状态 */
+.empty-state {
+    grid-column: 1 / -1;
+    padding: 60px 20px;
+    text-align: center;
+    border: 3px dashed var(--gray-400);
+}

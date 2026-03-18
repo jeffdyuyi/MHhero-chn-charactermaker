@@ -17,10 +17,10 @@
     --primary-color: var(--black);
     --secondary-color: var(--gray-600);
     --accent-color: var(--black);
-    --success-color: #27ae60;
-    --warning-color: #f39c12;
-    --danger-color: #c0392b;
-    --info-color: #3498db;
+    --success-color: var(--black);
+    --warning-color: var(--gray-600);
+    --danger-color: var(--black);
+    --info-color: var(--gray-400);
 
     /* 文本颜色 */
     --text-primary: var(--black);

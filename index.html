@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="漫画英雄TRPG车卡器 - 基于2d6核心机制的超级英雄角色创建系统">
+    <meta name="description" content="漫画英雄TRPG车卡器 - 一页式竖版角色卡生成系统">
     <meta name="theme-color" content="#000000">
     <title>漫画英雄 TRPG 车卡器</title>
     <link rel="manifest" href="manifest.json">
@@ -16,6 +16,54 @@
     <link rel="stylesheet" href="css/views.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/animations.css">
+    <style>
+        /* 一页式专用布局补丁 */
+        .one-page-app {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .sheet-container {
+            background: var(--white);
+            border: 4px solid var(--black);
+            box-shadow: 12px 12px 0px var(--black);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sheet-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(var(--gray-300) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .sheet-section {
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .controls-overlay {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border: 2px solid var(--black);
+        }
+    </style>
 </head>
 
 <body>
@@ -24,370 +72,114 @@
             <div class="header-content">
                 <div class="logo" id="logo" title="点击查看作者信息" style="cursor: pointer;">
                     <span class="logo-icon">🦸</span>
-                    <h1>漫画英雄 <span class="subtitle">TRPG车卡器</span></h1>
+                    <h1>漫画英雄 <span class="subtitle">卡片锻造炉</span></h1>
                 </div>
                 <nav class="main-nav">
-                    <button class="nav-btn active" data-view="home" aria-label="首页">
-                        <span class="nav-icon">🏠</span>
-                        <span class="nav-text">首页</span>
-                    </button>
-                    <button class="nav-btn" data-view="create" aria-label="创建角色">
-                        <span class="nav-icon">✨</span>
-                        <span class="nav-text">创建角色</span>
+                    <button class="nav-btn active" data-view="editor" aria-label="角色编辑">
+                        <span class="nav-icon">✍️</span>
+                        <span class="nav-text">编辑角色</span>
                     </button>
                     <button class="nav-btn" data-view="saved" aria-label="已存角色">
                         <span class="nav-icon">📋</span>
-                        <span class="nav-text">已存角色</span>
+                        <span class="nav-text">英雄名录</span>
                     </button>
-                    <button class="nav-btn" data-view="help" aria-label="帮助">
-                        <span class="nav-icon">❓</span>
-                        <span class="nav-text">帮助</span>
+                    <button class="nav-btn" data-view="help" aria-label="规则">
+                        <span class="nav-icon">📖</span>
+                        <span class="nav-text">规则手册</span>
                     </button>
-
                 </nav>
             </div>
         </header>
 
-        <main class="main-content">
-            <!-- 主视图 -->
-            <section id="home-view" class="view active" aria-labelledby="main-title">
-                <!-- 首页引导部分 -->
-                <div id="welcome-section" class="section">
-                    <div class="hero-section">
-                        <div class="hero-content">
-                            <h2 id="main-title" class="hero-title">创建你的超级英雄</h2>
-                            <p class="hero-subtitle">基于2d6核心机制的TRPG角色创建系统</p>
-                            <div class="hero-features">
-                                <div class="feature">
-                                    <span class="feature-icon">🎲</span>
-                                    <span class="feature-text">随机掷骰模式</span>
-                                </div>
-                                <div class="feature">
-                                    <span class="feature-icon">🎯</span>
-                                    <span class="feature-text">购点定制模式</span>
-                                </div>
-                                <div class="feature">
-                                    <span class="feature-icon">💾</span>
-                                    <span class="feature-text">本地存储管理</span>
-                                </div>
-                            </div>
-                        </div>
+        <main class="main-content one-page-app">
+            <!-- 一页式角色卡编辑器 -->
+            <section id="editor-view" class="view active">
+                <div class="controls-overlay">
+                    <div class="mode-switcher btn-group">
+                        <button class="btn btn-sm btn-active" id="mode-random-btn"
+                            onclick="app.creationFlow.setMode('random')">🎲 随机生成</button>
+                        <button class="btn btn-sm" id="mode-pointbuy-btn"
+                            onclick="app.creationFlow.setMode('point-buy')">🎯 购点定制</button>
                     </div>
-
-                    <div class="mode-selection">
-                        <div class="mode-card" data-mode="random">
-                            <div class="mode-header">
-                                <span class="mode-icon">🎲</span>
-                                <h3>命运之选</h3>
-                                <span class="mode-tag">随机模式</span>
-                            </div>
-                            <div class="mode-body">
-                                <p class="mode-desc">充满未知与惊喜，适合快速开局和肉鸽体验</p>
-                                <ul class="mode-features">
-                                    <li>全程2d6掷骰决定</li>
-                                    <li>六大属性随机生成</li>
-                                    <li>七大系超能力随机抽取</li>
-                                    <li>起源自动决定</li>
-                                </ul>
-                            </div>
-                            <div class="mode-footer">
-                                <button class="btn btn-primary btn-large" onclick="app.creationFlow.start('random')">
-                                    开始随机创建
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="mode-card" data-mode="point-buy">
-                            <div class="mode-header">
-                                <span class="mode-icon">🎯</span>
-                                <h3>精密构造</h3>
-                                <span class="mode-tag">购点模式</span>
-                            </div>
-                            <div class="mode-body">
-                                <p class="mode-desc">45点自由分配，适合精心构建Build</p>
-                                <ul class="mode-features">
-                                    <li>45点完全自由分配</li>
-                                    <li>精细控制每项数值</li>
-                                    <li>自定义能力组合</li>
-                                    <li>实时点数校验</li>
-                                </ul>
-                            </div>
-                            <div class="mode-footer">
-                                <button class="btn btn-primary btn-large" onclick="app.creationFlow.start('point-buy')">
-                                    开始定制创建
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="quick-actions">
-                        <h3>快速操作</h3>
-                        <div class="action-grid">
-                            <button class="action-card" onclick="app.creationFlow.start('random')">
-                                <span class="action-icon">🎲</span>
-                                <span class="action-text">生成示例角色</span>
-                            </button>
-                            <button class="action-card" id="import-characters-btn">
-                                <span class="action-icon">📥</span>
-                                <span class="action-text">导入角色卡</span>
-                                <input type="file" id="import-file-input" class="hidden" accept=".json">
-                            </button>
-                            <button class="action-card" onclick="app.viewManager.switchView('help')">
-                                <span class="action-icon">📖</span>
-                                <span class="action-text">查看规则说明</span>
-                            </button>
-                        </div>
+                    <div class="action-btns" style="margin-left: auto; display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-primary" onclick="app.creationFlow.quickGenerate()">✨
+                            一键生成</button>
+                        <button class="btn btn-sm btn-success" onclick="app.creationFlow.saveCurrentCharacter()">💾
+                            保存英雄</button>
                     </div>
                 </div>
 
-                <!-- 创建角色部分 -->
-                <div id="creation-section" class="section hidden">
-                    <div class="creation-header">
-                        <div class="creation-title">
-                            <h2>角色创建</h2>
-                            <span id="current-mode-badge" class="mode-badge"></span>
-                        </div>
-                        <div class="creation-actions">
-                            <button class="btn btn-icon" onclick="app.toggleHelp()" title="帮助">
-                                <span>❓</span>
-                            </button>
-                            <button class="btn btn-secondary" onclick="app.viewManager.switchView('home')">
-                                返回首页
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="step-indicator" role="tablist" aria-label="创建步骤">
-                        <button class="step" data-step="1" role="tab" aria-selected="false">
-                            <span class="step-number">1</span>
-                            <span class="step-label">起源</span>
-                        </button>
-                        <button class="step" data-step="2" role="tab" aria-selected="false">
-                            <span class="step-number">2</span>
-                            <span class="step-label">属性</span>
-                        </button>
-                        <button class="step" data-step="3" role="tab" aria-selected="false">
-                            <span class="step-number">3</span>
-                            <span class="step-label">能力</span>
-                        </button>
-                        <button class="step" data-step="4" role="tab" aria-selected="false">
-                            <span class="step-number">4</span>
-                            <span class="step-label">专长</span>
-                        </button>
-                        <button class="step" data-step="5" role="tab" aria-selected="false">
-                            <span class="step-number">5</span>
-                            <span class="step-label">描述</span>
-                        </button>
-                        <button class="step" data-step="6" role="tab" aria-selected="false">
-                            <span class="step-number">6</span>
-                            <span class="step-label">完成</span>
-                        </button>
-                    </div>
-
-                    <div id="step-content" class="step-content">
-                        <!-- 动态内容 -->
-                    </div>
-
-                    <div class="creation-footer">
-                        <div id="points-display" class="points-display hidden">
-                            <span class="points-label">剩余点数</span>
-                            <span class="points-value">45</span>
-                            <span class="points-total">/ 45</span>
-                        </div>
-                        <div class="step-navigation">
-                            <button id="prev-step-btn" class="btn btn-secondary" disabled>
-                                上一步
-                            </button>
-                            <button id="next-step-btn" class="btn btn-primary">
-                                下一步
-                            </button>
-                        </div>
+                <div id="character-sheet" class="sheet-container fade-in">
+                    <!-- 动态生成一页式内容 -->
+                    <div class="loading-state">
+                        <p>正在同步英雄档案...</p>
                     </div>
                 </div>
             </section>
 
-            <!-- 已存角色视图 -->
-            <section id="saved-view" class="view" aria-labelledby="saved-title">
+            <!-- 已存角色名录 -->
+            <section id="saved-view" class="view">
                 <div class="section-header">
-                    <h2 id="saved-title">已存角色</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-secondary" onclick="app.savedCharactersView.exportAll()">
-                            <span>📤</span> 导出全部
-                        </button>
-                        <button class="btn btn-secondary"
-                            onclick="document.getElementById('import-file-input').click()">
-                            <span>📥</span> 导入
-                        </button>
+                    <h2>英雄名录</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-sm btn-outline" onclick="app.savedCharactersView.exportAll()">📤
+                            备份全部</button>
                     </div>
                 </div>
 
-                <div class="filter-bar">
-                    <div class="search-box">
-                        <input type="text" id="search-characters" placeholder="搜索角色...">
-                        <span class="search-icon">🔍</span>
-                    </div>
-                    <select id="sort-characters">
-                        <option value="newest">最新创建</option>
-                        <option value="oldest">最早创建</option>
+                <div class="filter-bar" style="margin-bottom: 20px; display: flex; gap: 10px;">
+                    <input type="text" id="search-characters" placeholder="搜索英雄..."
+                        style="flex: 1; padding: 8px; border: 2px solid var(--black);">
+                    <select id="sort-characters"
+                        style="padding: 8px; border: 2px solid var(--black); font-weight: 900;">
+                        <option value="newest">最近创建</option>
                         <option value="name">名称排序</option>
-                        <option value="power">能力数量</option>
                     </select>
                 </div>
 
-                <div id="saved-characters-list" class="saved-characters-list">
-                    <!-- 动态内容 -->
-                </div>
+                <div id="saved-characters-list" class="saved-characters-list grid-list"></div>
             </section>
 
-            <!-- 帮助视图 -->
-            <section id="help-view" class="view" aria-labelledby="help-title">
+            <!-- 规则手册 -->
+            <section id="help-view" class="view">
                 <div class="section-header">
-                    <h2 id="help-title">帮助与规则</h2>
+                    <h2>规则手册 (RULEBOOK)</h2>
                 </div>
-                <div class="help-content">
-                    <div class="help-section">
-                        <h3>创建流程</h3>
-                        <div class="help-cards">
-                            <div class="help-card">
-                                <h4>1. 能力起源</h4>
-                                <p>决定英雄力量的来源，影响初始数值和特殊规则</p>
-                            </div>
-                            <div class="help-card">
-                                <h4>2. 属性测定</h4>
-                                <p>六大基础属性：勇猛、协调、力量、智力、感知、意志</p>
-                            </div>
-                            <div class="help-card">
-                                <h4>3. 特殊能力</h4>
-                                <p>七大系超能力：变形、控制、防御、精神、运动、攻击、感官</p>
-                            </div>
-                            <div class="help-card">
-                                <h4>4. 专长</h4>
-                                <p>世俗技能，分为基础(+1)、专家(+2)、大师(+3)三级</p>
-                            </div>
-                            <div class="help-card">
-                                <h4>5. 描述说明</h4>
-                                <p>填写英雄名称、特质和背景描述</p>
-                            </div>
-                            <div class="help-card">
-                                <h4>6. 完成创建</h4>
-                                <p>预览角色卡并保存到本地</p>
-                            </div>
-                        </div>
+                <div class="help-content grid-list"
+                    style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                    <div class="card card-bg p-md">
+                        <h4 style="text-decoration: underline;">基础机制</h4>
+                        <p>所有行动检定均使用 <strong>2d6 + 属性等级</strong>。目标通常为 7（中等难度）。</p>
                     </div>
-
-                    <div class="help-section">
-                        <h3>衍生属性</h3>
-                        <div class="formula-cards">
-                            <div class="formula-card">
-                                <h4>耐力 (Stamina)</h4>
-                                <p class="formula">力量 + 意志</p>
-                                <p class="description">角色的生命值，承受伤害的能力</p>
-                            </div>
-                            <div class="formula-card">
-                                <h4>决意 (Resolve)</h4>
-                                <p class="formula">6 - 特殊能力数量</p>
-                                <p class="description">英雄点数，用于重掷和发动特质（最低1点）</p>
-                            </div>
-                        </div>
+                    <div class="card card-bg p-md">
+                        <h4 style="text-decoration: underline;">耐力 (STAMINA)</h4>
+                        <p>力量 + 意志。代表承受伤害的能力。降至 0 则昏迷或处于危险中。</p>
                     </div>
-
-                    <div class="help-section">
-                        <h3>属性等级</h3>
-                        <table class="level-table">
-                            <thead>
-                                <tr>
-                                    <th>掷骰</th>
-                                    <th>等级</th>
-                                    <th>描述</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>2</td>
-                                    <td>1级</td>
-                                    <td>资质驽钝</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>2级</td>
-                                    <td>相形见绌</td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>3级</td>
-                                    <td>平庸之辈</td>
-                                </tr>
-                                <tr>
-                                    <td>5-6</td>
-                                    <td>4级</td>
-                                    <td>天赋尚可</td>
-                                </tr>
-                                <tr>
-                                    <td>7-8</td>
-                                    <td>5级</td>
-                                    <td>高人一等</td>
-                                </tr>
-                                <tr>
-                                    <td>9-10</td>
-                                    <td>6级</td>
-                                    <td>超乎常人</td>
-                                </tr>
-                                <tr>
-                                    <td>11</td>
-                                    <td>7级</td>
-                                    <td>出类拔萃</td>
-                                </tr>
-                                <tr>
-                                    <td>12</td>
-                                    <td>8级</td>
-                                    <td>卓尔不凡</td>
-                                </tr>
-                                <tr>
-                                    <td>-</td>
-                                    <td>9级</td>
-                                    <td>望尘莫及（需加成）</td>
-                                </tr>
-                                <tr>
-                                    <td>-</td>
-                                    <td>10级</td>
-                                    <td>登峰造极（需加成）</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="card card-bg p-md">
+                        <h4 style="text-decoration: underline;">决意 (RESOLVE)</h4>
+                        <p>6 - 能力数量。用于重掷 1d6，或发动某些特质。最低 1 点。</p>
                     </div>
                 </div>
             </section>
         </main>
 
         <footer class="app-footer">
-            <p>漫画英雄 TRPG 车卡器 | 基于2d6核心机制 | 纯前端应用</p>
+            <p>漫画英雄 TRPG 车卡器 | 一页式极简版 | 制作者：不咕鸟</p>
         </footer>
     </div>
 
-    <!-- 模态框 -->
-    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <!-- 模态框 & Toast 同前 -->
+    <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modal-title"></h3>
-                <button class="modal-close" onclick="app.closeModal()" aria-label="关闭">
-                    <span>&times;</span>
-                </button>
+                <h3 id="modal-title"></h3><button class="modal-close" onclick="app.closeModal()">&times;</button>
             </div>
             <div id="modal-body" class="modal-body"></div>
             <div id="modal-footer" class="modal-footer"></div>
         </div>
     </div>
+    <div id="toast-container" class="toast-container"></div>
 
-    <!-- 提示消息 -->
-    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
-
-    <!-- 加载遮罩 -->
-    <div id="loading-overlay" class="loading-overlay hidden">
-        <div class="loading-spinner"></div>
-        <p>加载中...</p>
-    </div>
-
-    <!-- 模块脚本 -->
     <script type="module" src="js/main.js"></script>
 </body>
 

@@ -36,5 +36,5 @@ export function getExtraById(id) {
  * 根据ID获取限制信息
  */
 export function getFlawById(id) {
-    return POWER_FLAWS.find(f => f.id === f.id) || null;
+    return POWER_FLAWS.find(f => f.id === id) || null;
 }

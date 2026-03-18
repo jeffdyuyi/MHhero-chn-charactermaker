@@ -67,8 +67,10 @@ export function createEmptyCharacter() {
 export function calculateDerivedStats(character) {
     const stamina = (character.attributes?.strength || 1) + (character.attributes?.willpower || 1);
 
-    // 基础决意: 6 - 能力数量 (最低为1)
-    let resolve = Math.max(1, 6 - (character.powers?.length || 0));
+    // 基础决意: 6 - 有效能力数量 (最低为1)
+    // 根据规则，“能力提升”不计入决意等级判定
+    const effectivePowers = (character.powers || []).filter(p => p.name !== '能力提升');
+    let resolve = Math.max(1, 6 - effectivePowers.length);
 
     // 检查是否有“概率控制”能力
     const probControl = character.powers?.find(p => p.name === '概率控制');

@@ -1,6 +1,6 @@
 /**
  * 漫画英雄 TRPG 车卡器
- * 主应用入口
+ * 主应用入口 - 一页式竖版极简核心
  */
 
 import {
@@ -8,7 +8,7 @@ import {
     downloadFile
 } from './core/storage.js';
 
-import { APP_CONFIG } from './data/index.js';
+import { APP_CONFIG, POINT_BUY_CONFIG } from './data/index.js';
 import { ViewManager } from './ui/view-manager.js';
 import { CreationFlow } from './ui/creation-flow.js';
 import { SavedCharactersView } from './ui/saved-characters.js';
@@ -19,8 +19,6 @@ import { openModal, closeModal, showCharacterDetail } from './ui/modal.js';
  */
 class ComicHeroApp {
     constructor() {
-        // 漫画风格固定单主题，移除主题切换逻辑
-
         // 初始化各个模块
         this.viewManager = new ViewManager(this);
         this.creationFlow = new CreationFlow(this);
@@ -29,31 +27,21 @@ class ComicHeroApp {
         this.init();
     }
 
-    /**
-     * 初始化应用
-     */
     init() {
-        console.log(`${APP_CONFIG.name} v${APP_CONFIG.version} 已加载`);
+        console.log(`${APP_CONFIG.name} v${APP_CONFIG.version} (一页式) 已加载`);
 
         // 绑定全局按钮事件
         this.bindGlobalEvents();
+
+        // 默认开启创建流程 (随机模式)
+        this.creationFlow.start('random');
     }
 
     bindGlobalEvents() {
-        // LOGO 点击显示作者信息
         const logo = document.getElementById('logo');
         if (logo) {
-            logo.addEventListener('click', () => this.showAuthorInfo());
+            logo.onclick = () => this.showAuthorInfo();
         }
-
-        // 开始创建按钮
-        document.querySelectorAll('.start-creation-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const mode = e.currentTarget.dataset.mode;
-                this.creationFlow.start(mode);
-                this.viewManager.switchView('creation');
-            });
-        });
     }
 
     closeModal() {
@@ -61,7 +49,15 @@ class ComicHeroApp {
     }
 
     editCharacter(id) {
-        this.savedCharactersView.editCharacter(id);
+        const char = this.getCharacterById(id);
+        if (char) {
+            this.creationFlow.start(char.mode, id);
+            // 填充数据
+            this.creationFlow.characterGenerator.character = JSON.parse(JSON.stringify(char));
+            this.creationFlow.renderFullSheet();
+            this.viewManager.switchView('editor');
+            window.scrollTo(0, 0);
+        }
         this.closeModal();
     }
 
@@ -73,32 +69,24 @@ class ComicHeroApp {
         }
     }
 
-    toggleHelp() {
-        this.viewManager.switchView('help');
-    }
-
-    showHelp() {
-        this.viewManager.switchView('help');
-    }
-
     showAuthorInfo() {
         openModal({
             title: '关于作者',
             content: `
                 <div class="author-info" style="text-align: center; padding: 10px;">
                     <div style="font-size: 48px; margin-bottom: 15px;">🦸‍♂️</div>
-                    <h3 style="margin-bottom: 15px; text-transform: uppercase;">漫画英雄 TRPG 车卡器</h3>
+                    <h3 style="margin-bottom: 15px; text-transform: uppercase; font-weight: 900;">漫画英雄 TRPG 车卡器</h3>
                     
-                    <div style="text-align: left; background: var(--gray-100); padding: 15px; border: 2px solid var(--black); margin-bottom: 15px;">
+                    <div style="text-align: left; background: var(--gray-100); padding: 15px; border: var(--comic-border-width) solid var(--black); margin-bottom: 15px; box-shadow: var(--comic-shadow-sm);">
                         <p style="margin-bottom: 8px;"><strong>制作者：</strong> 不咕鸟（哈基米德）</p>
                         <p style="margin-bottom: 8px;"><strong>AI辅助：</strong> Antigravity Gemini</p>
                         <p style="margin-bottom: 8px;"><strong>约团地址：</strong> <a href="https://nogubird.top/schedule" target="_blank">nogubird.top/schedule</a></p>
-                        <p style="margin-bottom: 8px;"><strong>成都秘密基地企鹅：</strong> 691707475</p>
-                        <p style="margin-bottom: 8px;"><strong>不咕鸟TRPG创想俱乐部：</strong> 261751459</p>
+                        <p style="margin-bottom: 8px;"><strong>企鹅群(成都)：</strong> 691707475</p>
+                        <p style="margin-bottom: 8px;"><strong>创想俱乐部：</strong> 261751459</p>
                     </div>
 
                     <div style="margin-bottom: 20px;">
-                        <a href="https://ifdian.net/a/nogubird" target="_blank" class="btn btn-primary" style="width: 100%; text-decoration: none;">
+                        <a href="https://ifdian.net/a/nogubird" target="_blank" class="btn btn-primary" style="width: 100%; text-decoration: none; display: inline-block; padding: 10px;">
                             🚀 为作者加油 (ifdian.net)
                         </a>
                     </div>
@@ -110,27 +98,8 @@ class ComicHeroApp {
         });
     }
 
-    // 辅助方法，暴露给模块使用
     getCharacterById(id) {
         return getCharacterById(id);
-    }
-
-    // 验证角色点数计算
-    validateCharacter(character) {
-        const errors = [];
-        let usedPoints = 0;
-
-        (character.powers || []).forEach(power => {
-            usedPoints += power.level;
-            usedPoints += (power.extras?.length || 0);
-            usedPoints -= (power.flaws?.length || 0);
-        });
-        (character.specialties || []).forEach(specialty => usedPoints += specialty.level);
-
-        if (usedPoints > POINT_BUY_CONFIG.totalPoints) {
-            errors.push(`购点模式下总点数超过了 ${POINT_BUY_CONFIG.totalPoints} (当前: ${usedPoints})`);
-        }
-        return errors;
     }
 
     showCharacterDetail(id) {
@@ -139,13 +108,9 @@ class ComicHeroApp {
             showCharacterDetail(char);
         }
     }
-
-    showPowerDetail(name) {
-        window.showPowerDetailInModal(name);
-    }
 }
 
-// 创建全局应用实例并导出
+// 创建全局应用实例
 const app = new ComicHeroApp();
 window.app = app;
 

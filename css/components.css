@@ -64,6 +64,43 @@
     font-size: var(--font-size-md);
 }
 
+.btn-xs {
+    padding: 2px 6px;
+    font-size: 10px;
+    box-shadow: 2px 2px 0px var(--black);
+}
+
+.btn-outline {
+    background: transparent;
+    border-style: dashed;
+    box-shadow: none;
+}
+
+.btn-outline:hover {
+    border-style: solid;
+    background: var(--gray-50);
+}
+
+.btn-active {
+    background: var(--black);
+    color: var(--white);
+}
+
+.btn-success {
+    background: var(--gray-100);
+    border-color: var(--black);
+}
+
+.btn-success:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
 /* 卡片组件 */
 .card {
     background: var(--white);
@@ -103,6 +140,64 @@
 .badge-primary {
     background: var(--black);
     color: var(--white);
+}
+
+/* 角色模式徽章 */
+.char-mode-badge {
+    display: inline-flex;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 900;
+    border: 2px solid var(--black);
+    text-transform: uppercase;
+}
+
+.char-mode-badge.random {
+    background: var(--white);
+    color: var(--black);
+}
+
+.char-mode-badge.point-buy {
+    background: var(--black);
+    color: var(--white);
+}
+
+/* 角色列表项目样式 */
+.character-card {
+    background: var(--white);
+    border: 3px solid var(--black);
+    box-shadow: 6px 6px 0px var(--black);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.char-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.char-info {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray-600);
+}
+
+.power-tag {
+    display: inline-block;
+    background: var(--gray-100);
+    border: 1px solid var(--black);
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.char-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
 }
 
 /* 模态框 - 复古漫画风格 */
@@ -201,6 +296,63 @@
     border-top-color: var(--black);
     border-radius: 0;
     /* 对，甚至是旋转器也弄成方的 */
+}
+
+/* 修饰项选择按钮 */
+.btn-mod-pick {
+    border: 2px solid var(--black);
+    background: var(--white);
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.1s;
+}
+
+.btn-mod-pick:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px var(--black);
+}
+
+.btn-mod-pick.extra {
+    background: var(--gray-50);
+}
+
+.btn-mod-pick.flaw {
+    background: var(--gray-100);
+}
+
+.mod-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.mod-group h5 {
+    border-bottom: 2px solid var(--black);
+    margin-bottom: 10px;
+    font-weight: 900;
+}
+
+.mod-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.add-power-modal,
+.add-spec-modal {
+    padding: 20px;
+}
+
+.add-power-modal select,
+.add-spec-modal select {
+    width: 100%;
+    padding: 10px;
+    border: 3px solid var(--black);
+    font-weight: 900;
+    font-size: 16px;
 }
 
 @keyframes modalIn {

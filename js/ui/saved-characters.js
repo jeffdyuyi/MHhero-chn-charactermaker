@@ -77,8 +77,8 @@ export class SavedCharactersView {
         if (characters.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
-                    <p>${this.searchQuery ? '没有找到符合条件的角色' : '还没有保存任何角色'}</p>
-                    <button class="btn btn-primary" onclick="app.viewManager.switchView('home')">去创建一个</button>
+                    <p>${this.searchQuery ? '没有找到符合条件的角色' : '名录空空如也'}</p>
+                    <button class="btn btn-primary" onclick="app.viewManager.switchView('editor')">前往锻造新英雄</button>
                 </div>
             `;
             return;
@@ -122,11 +122,10 @@ export class SavedCharactersView {
         const character = this.app.getCharacterById(id);
         if (character) {
             this.app.creationFlow.start(character.mode, id);
-            // 填充已有数据
-            this.app.creationFlow.characterGenerator.character = JSON.parse(JSON.stringify(character));
-            this.app.creationFlow.currentStep = 1;
-            this.app.viewManager.switchView('creation');
-            this.app.creationFlow.renderStep();
+            // 模式已经由 start 处理，数据也已导入
+            this.app.viewManager.switchView('editor');
+            this.app.creationFlow.renderFullSheet();
+            showInfo(`正在重构「${character.name}」的英雄档案...`);
         }
     }
 

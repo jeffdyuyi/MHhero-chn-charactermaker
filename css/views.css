@@ -1,352 +1,296 @@
-/* 被漫画感加持的所有视图样式 */
+/* 一页式竖版角色卡视图样式 */
 
-/* 通用漫画修饰 */
-.origin-card,
-.attribute-card,
-.power-card,
-.specialty-card,
-.character-sheet,
-.character-card {
-    background: var(--white);
-    border: var(--comic-border-width) solid var(--black);
-    box-shadow: var(--comic-shadow-sm);
-    box-sizing: border-box;
-    margin-bottom: var(--spacing);
+.one-page-app {
+    padding-top: 10px;
+    padding-bottom: 50px;
 }
 
-/* 起源选择视图 */
-.origin-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
-}
-
-.origin-card {
-    padding: var(--spacing-lg);
-    cursor: pointer;
-    text-align: left;
-}
-
-.origin-card.selected {
-    background: var(--black);
-    color: var(--white);
-}
-
-.origin-card.selected h4,
-.origin-card.selected .origin-desc {
-    color: var(--white);
-}
-
-.origin-card h4 {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    margin-bottom: var(--spacing-sm);
-}
-
-.origin-roll {
-    display: inline-block;
-    padding: 2px 8px;
-    background: var(--black);
-    color: var(--white);
-    font-weight: var(--font-weight-bold);
-    margin-bottom: var(--spacing-sm);
-}
-
-.origin-card.selected .origin-roll {
-    background: var(--white);
-    color: var(--black);
-}
-
-.origin-effects {
-    margin-top: var(--spacing);
-    padding-top: var(--spacing);
-    border-top: 2px dashed var(--black);
-    font-size: var(--font-size-sm);
-}
-
-.origin-card.selected .origin-effects {
-    border-top-color: var(--gray-600);
-}
-
-/* 属性视图 */
-.attributes-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-lg);
-}
-
-.attribute-card {
-    padding: var(--spacing-md);
-    text-align: center;
-    position: relative;
-    overflow: visible;
-}
-
-.attribute-card.boosted {
-    background: var(--gray-100);
-    border-color: var(--black);
-}
-
-.boost-badge {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: var(--black);
-    color: var(--white);
-    padding: 4px 8px;
-    font-weight: var(--font-weight-bold);
-    transform: rotate(15deg);
-    border: 2px solid var(--white);
-    pointer-events: none;
-}
-
-.attribute-header h4 {
-    text-transform: uppercase;
-    font-size: var(--font-size-sm);
-    color: var(--text-secondary);
-}
-
-.attribute-value {
-    font-size: var(--font-size-huge);
-    font-weight: var(--font-weight-bold);
-    color: var(--black);
-}
-
-/* 能力与专长卡片 */
-.power-card,
-.specialty-card {
-    padding: var(--spacing-md);
+.sheet-container {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
+    gap: 0;
+    min-height: 1000px;
 }
 
-.power-header,
-.specialty-header {
+/* 头部面板 */
+.section-identity {
+    border-bottom: 4px solid var(--black);
+    padding: 20px;
+    background: var(--white);
+}
+
+.identity-grid input[type="text"] {
+    width: 100%;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    border: none;
+    border-bottom: 3px solid var(--black);
+    padding: 8px 0;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.qualities-inputs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.qualities-inputs input {
+    font-size: var(--font-size-sm);
+    padding: 5px;
+    border: 2px solid var(--black);
+}
+
+/* 数值气泡 */
+.section-stats {
+    background: var(--black);
+    color: var(--white);
+    padding: 15px;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.stat-bubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-bubble .label {
+    font-size: 10px;
+    font-weight: 900;
+    opacity: 0.8;
+}
+
+.stat-bubble .value {
+    font-size: var(--font-size-xxl);
+    font-weight: 900;
+}
+
+.stat-bubble.points .value {
+    color: var(--white);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+/* 面板通用标题 */
+.panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: var(--comic-border-width) solid var(--black);
-    padding-bottom: var(--spacing-xs);
+    margin-bottom: 15px;
+    border-left: 8px solid var(--black);
+    padding-left: 10px;
 }
 
-.power-name,
-.specialty-name {
-    font-weight: var(--font-weight-bold);
+.panel-header h3 {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+/* 起源卡片 */
+.origin-content {
+    border: 2px solid var(--black);
+    padding: 15px;
+    background: var(--gray-50);
+}
+
+.origin-config-row {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.origin-config-row select {
+    flex: 1;
+    padding: 5px;
+    border: 2px solid var(--black);
+    font-weight: bold;
+}
+
+/* 属性网格 */
+.attributes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.attr-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 2px solid var(--black);
+    background: var(--white);
+}
+
+.attr-name {
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.attr-value-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.val {
     font-size: var(--font-size-lg);
+    font-weight: 900;
+    min-width: 20px;
+    text-align: center;
 }
 
-.power-category {
-    font-size: var(--font-size-xs);
+/* 能力卡面板 */
+.powers-vertical-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.power-panel-card {
+    border: 3px solid var(--black);
+    padding: 15px;
+    position: relative;
+    background: var(--white);
+    box-shadow: 4px 4px 0px var(--black);
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.p-name {
+    font-weight: 900;
+    font-size: var(--font-size-md);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.p-cat {
+    font-size: 10px;
+    opacity: 0.6;
+}
+
+.p-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.p-level {
+    font-weight: 900;
     background: var(--black);
     color: var(--white);
     padding: 2px 6px;
 }
 
-.power-description,
-.specialty-description {
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-relaxed);
-    padding: var(--spacing-sm);
-    background: var(--gray-100);
-}
-
-/* 角色档案表 (完成页) */
-.character-sheet {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.sheet-header {
-    background: var(--black);
-    color: var(--white);
-    padding: var(--spacing-xl);
-    text-align: center;
-}
-
-.sheet-header h2 {
-    font-size: var(--font-size-huge);
-    letter-spacing: -2px;
-}
-
-.sheet-section {
-    padding: var(--spacing-lg);
-    border-bottom: var(--comic-border-width) solid var(--black);
-}
-
-.sheet-section h4 {
-    text-transform: uppercase;
-    font-weight: var(--font-weight-bold);
-    margin-bottom: var(--spacing-md);
-    text-decoration: underline;
-}
-
-.sheet-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: var(--spacing);
-}
-
-.sheet-item {
-    text-align: center;
-    padding: var(--spacing-sm);
-    border: 2px solid var(--black);
-}
-
-.sheet-item-label {
-    font-size: 10px;
-    display: block;
-    color: var(--text-secondary);
-}
-
-.sheet-item-value {
-    font-weight: var(--font-weight-bold);
-    font-size: var(--font-size-xl);
-}
-
-/* 已存角色列表项 */
-.character-card {
+.mod-list {
     display: flex;
-    padding: var(--spacing-md);
-    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* 专长行列表 */
+.specialties-row-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.spec-tag-card {
+    border: 2px solid var(--black);
+    padding: 4px 8px;
+    background: var(--white);
+    display: flex;
     align-items: center;
+    gap: 6px;
+    font-weight: bold;
+    font-size: var(--font-size-sm);
 }
 
-.character-card:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: var(--comic-shadow);
+.s-level {
+    color: var(--gray-600);
 }
 
-.character-avatar {
-    width: 60px;
-    height: 60px;
-    background: var(--black);
-    color: var(--white);
+/* 传记输入线 */
+.section-desc textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 3px solid var(--black);
+    padding: 10px;
+    font-family: inherit;
+    resize: vertical;
+    background: var(--white);
+    line-height: 1.5em;
+    font-weight: 600;
+}
+
+/* 步块按钮 */
+.btn-step {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--black);
+    background: var(--white);
+    font-weight: 900;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
-    border: 3px solid var(--black);
 }
 
-.character-name {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
-}
-
-.character-meta {
-    font-size: var(--font-size-sm);
-    color: var(--text-secondary);
-}
-
-/* 修饰项选择 */
-.modifier-item {
-    border: var(--comic-border-width) solid var(--black);
-    padding: var(--spacing);
-    margin-bottom: var(--spacing);
-}
-
-.modifier-item:hover {
+.btn-step:hover {
     background: var(--black);
     color: var(--white);
 }
 
-.mod-badge {
+.btn-icon-del {
+    background: none;
+    border: none;
+    color: var(--black);
+    font-weight: 900;
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.btn-icon-del:hover {
+    opacity: 1;
+}
+
+.tag {
     font-size: 10px;
+    padding: 2px 6px;
     border: 1px solid var(--black);
-    padding: 1px 4px;
-    margin-right: 4px;
+    font-weight: 900;
+    cursor: pointer;
 }
 
-.mod-badge.extra {
-    background: var(--gray-100);
+.tag.extra {
+    background: var(--white);
 }
 
-.mod-badge.flaw {
+.tag.flaw {
     background: var(--black);
     color: var(--white);
 }
 
-/* 复古网点效果 (Halftone Dots Simulation) */
-.hero-section {
-    background-image: radial-gradient(var(--gray-300) 1px, transparent 0);
-    background-size: 10px 10px;
-}
-
-/* 起源选择项 & 能力修饰 */
-.origin-choice-box,
-.power-modifiers {
-    border: var(--comic-border-width) solid var(--black);
-    padding: var(--spacing);
-    margin: var(--spacing) 0;
-    background: var(--white);
-}
-
-.choice-row {
-    margin-bottom: var(--spacing-sm);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing);
-}
-
-.choice-row select {
-    border: 2px solid var(--black);
-    padding: 4px 8px;
-    font-weight: var(--font-weight-bold);
-}
-
-.checkbox-group {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-sm);
-}
-
-.mod-tag {
-    display: inline-block;
-    border: 2px solid var(--black);
+.btn-add-tag {
+    border: 1px dashed var(--black);
+    background: none;
     padding: 2px 8px;
-    margin-right: 4px;
-    cursor: pointer;
     font-size: 12px;
-    font-weight: var(--font-weight-bold);
-}
-
-.mod-tag.extra {
-    background: var(--white);
-}
-
-.mod-tag.flaw {
-    background: var(--black);
-    color: var(--white);
-}
-
-.mod-tag:hover {
-    text-decoration: line-through;
-    opacity: 0.7;
-}
-
-.btn-add-mod {
-    border: 2px dashed var(--black);
-    padding: 2px 8px;
     cursor: pointer;
-}
-
-.modifier-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--spacing);
-}
-
-.modifier-item h6 {
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    margin-bottom: 4px;
-}
-
-.power-mods-list {
-    margin-top: 4px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
 }

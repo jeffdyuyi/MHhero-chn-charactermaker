@@ -1,13 +1,22 @@
-/* 响应式布局 - 漫画风格适配 */
-@media (max-width: 1200px) {
-    .main-content {
-        padding: var(--spacing);
+/* 响应式布局 - 一页式角色卡适配 */
+
+@media (max-width: 900px) {
+    .one-page-app {
+        padding: 10px;
+    }
+
+    .sheet-container {
+        padding: 15px;
     }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 768px) {
+    .logo-icon {
+        font-size: 24px;
+    }
+
     .logo h1 {
-        font-size: var(--font-size-md);
+        font-size: 1.2rem;
     }
 
     .logo .subtitle {
@@ -18,52 +27,47 @@
         display: none;
     }
 
-    .hero-title {
-        font-size: var(--font-size-xxl);
-    }
-
-    .mode-selection {
+    .qualities-inputs {
         grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .attributes-grid {
-        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
 
-    .step-indicator {
+    .stats-row {
         flex-wrap: wrap;
+        gap: 10px;
     }
 
-    .step {
+    .stat-bubble {
         flex: 1 1 40%;
-        margin-bottom: 4px;
     }
 
-    .hero-section {
-        padding: var(--spacing-lg);
+    .attributes-grid {
+        grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 480px) {
-    .attributes-grid {
-        grid-template-columns: 1fr;
+    .sheet-container {
+        box-shadow: 6px 6px 0px var(--black);
     }
 
-    .hero-title {
+    .header-content {
+        padding: 10px;
+    }
+
+    .stat-bubble .value {
         font-size: var(--font-size-xl);
-    }
-
-    .nav-btn {
-        padding: 8px;
     }
 }
 
-/* 移除所有倾向于系统的深色模式覆盖，确保单主题一致性 */
+/* 强制单色主题一致性 */
 @media (prefers-color-scheme: dark) {
     body {
         background: var(--bg-body) !important;
         color: var(--text-primary) !important;
+    }
+
+    #app {
+        background: var(--white);
     }
 }
