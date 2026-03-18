@@ -441,7 +441,10 @@ export class CreationFlow {
 
     handleMutantChoice(val) {
         this.characterGenerator.setOriginChoice('mutantChoice', val);
-        if (val === 'power') this.characterGenerator.generatePowers();
+        // 随机模式下重新生成一次能力列表，确保数量正确
+        if (val === 'power' && this.creationMode === 'random') {
+            this.characterGenerator.generatePowers();
+        }
         this.renderFullSheet();
     }
 

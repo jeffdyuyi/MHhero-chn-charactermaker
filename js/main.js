@@ -108,6 +108,10 @@ class ComicHeroApp {
             showCharacterDetail(char);
         }
     }
+
+    showPowerDetail(powerName) {
+        window.showPowerDetailInModal(powerName);
+    }
 }
 
 // 创建全局应用实例
