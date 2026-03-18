@@ -201,4 +201,31 @@ export class SavedCharactersView {
             event.target.value = ''; // 重置input
         }
     }
+
+    async handleImageImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        showInfo('正在识别图片中的英雄档案...');
+
+        try {
+            const character = await importCharacterFromImage(file);
+            if (character) {
+                // 导入数据处理
+                character.id = Date.now() + Math.random();
+                character.createdAt = new Date().toISOString();
+                if (saveCharacter(character)) {
+                    showSuccess(`成功从图片导入英雄「${character.name}」！`);
+                    this.loadCharacters();
+                } else {
+                    showError('保存失败');
+                }
+            }
+        } catch (error) {
+            showError('导入失败: ' + error.message);
+            console.error(error);
+        } finally {
+            event.target.value = '';
+        }
+    }
 }
