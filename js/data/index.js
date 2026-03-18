@@ -50,6 +50,7 @@ export function createEmptyCharacter() {
         },
         powers: [],
         specialties: [],
+        equipment: [], // 新增：装备资料库
         originChoices: {}, // 存储起源带来的选择结果
         qualities: ['', '', ''],
         description: '',

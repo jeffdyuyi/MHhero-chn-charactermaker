@@ -13,6 +13,11 @@ import { ViewManager } from './ui/view-manager.js';
 import { CreationFlow } from './ui/creation-flow.js';
 import { SavedCharactersView } from './ui/saved-characters.js';
 import { openModal, closeModal, showCharacterDetail } from './ui/modal.js';
+import { getEquipmentById, getAllEquipment } from './data/equipment.js';
+
+// 注入全局装备库
+window.getEquipmentById = getEquipmentById;
+window.getAllEquipment = getAllEquipment;
 
 /**
  * 应用主类

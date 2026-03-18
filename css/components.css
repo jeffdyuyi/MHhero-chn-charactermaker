@@ -300,22 +300,128 @@
 
 /* 修饰项选择按钮 */
 .btn-mod-pick {
-    border: 2px solid var(--black);
+    border: 3px solid var(--black);
     background: var(--white);
-    padding: 8px;
-    font-size: 12px;
-    font-weight: 900;
+    padding: 12px;
     cursor: pointer;
     text-align: left;
     transition: all 0.1s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
 }
 
 .btn-mod-pick:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 4px 4px 0px var(--black);
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0px var(--black);
 }
 
-.btn-mod-pick.extra {
+.m-name {
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+/* 起源交换提示 */
+.origin-exchange-notice {
+    grid-column: 1 / -1;
+    background: var(--gray-100);
+    padding: 10px;
+    border: 2px dashed var(--black);
+    margin-top: 10px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 装备资料库 */
+.section-equipment {
+    background: var(--white);
+}
+
+.equipment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.eq-item-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: 3px solid var(--black);
+    background: var(--gray-50);
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.eq-item-card:hover {
+    background: var(--white);
+    transform: translateX(4px);
+    box-shadow: -4px 4px 0px var(--black);
+}
+
+.eq-info {
+    flex: 1;
+}
+
+.eq-stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.eq-controls {
+    display: flex;
+    gap: 15px;
+    padding-left: 15px;
+    border-left: 1px dashed var(--gray-300);
+}
+
+.edit-eq-modal .form-group {
+    margin-bottom: 15px;
+}
+
+.edit-eq-modal label {
+    display: block;
+    font-weight: 900;
+    font-size: 11px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.edit-eq-modal input,
+.edit-eq-modal textarea {
+    padding: 8px;
+    border: 2px solid var(--black);
+    font-family: inherit;
+    font-weight: 900;
+}
+
+.m-cost {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--black);
+    color: var(--white);
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.m-desc {
+    font-size: 11px;
+    color: var(--gray-600);
+    line-height: 1.4;
+    display: block;
+    margin-top: 4px;
+}
+
+.btn-mod-pick.extra:hover {
     background: var(--gray-50);
 }
 
@@ -323,10 +429,17 @@
     background: var(--gray-100);
 }
 
+.group-hint {
+    font-size: 12px;
+    color: var(--gray-500);
+    margin-bottom: 12px;
+    font-style: italic;
+}
+
 .mod-modal-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 30px;
 }
 
 .mod-group h5 {

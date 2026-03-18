@@ -152,7 +152,7 @@ export class CharacterGenerator {
                     choices.statBoost = targetKey;
                 }
                 break;
-            case 'any':
+            case 'any_one':
                 if (!choices.statBoost) {
                     const randomKey = keys[Math.floor(Math.random() * keys.length)];
                     choices.statBoost = randomKey;
@@ -166,7 +166,28 @@ export class CharacterGenerator {
                 break;
         }
 
+        // 处理固定获得的超凡能力
+        if (mech.guaranteedPower) {
+            this.addPowerDirectly(mech.guaranteedPower);
+        }
+
         this.applyOriginChoices();
+    }
+
+    /**
+     * 直接添加特定能力（不通过随机池，如人工生命的维系生命）
+     */
+    addPowerDirectly(powerName) {
+        if (!this.character.powers.some(p => p.name === powerName)) {
+            const power = createPower(powerName);
+            if (power) {
+                // 如果随机模式，随机决定等级
+                if (this.mode === 'random') {
+                    power.level = roll2d6();
+                }
+                this.character.powers.push(power);
+            }
+        }
     }
 
     setOriginChoice(type, value) {
@@ -222,19 +243,23 @@ export class CharacterGenerator {
         let count = getPowerCountByRoll(roll);
         const mech = this.character.origin?.mechanics;
 
-        // 起源额外能力
         if (mech) {
             if (mech.bonusPower && !mech.choice) {
-                // 固定增加的能力 (如人工生命)
+                // 普通加成
                 count++;
             } else if (mech.choice === 'power_or_boost' && this.character.originChoices.mutantChoice === 'power') {
-                // 选择增加的能力 (如天赋异禀)
+                // 天赋异禀选择能力
                 count++;
             }
         }
 
         for (let i = 0; i < count; i++) {
             this.addRandomPower();
+        }
+
+        // 处理由于起源获得固定能力（如维系生命），不占用掷骰次数
+        if (mech?.guaranteedPower) {
+            this.addPowerDirectly(mech.guaranteedPower);
         }
 
         // 应用装置限制
@@ -245,6 +270,30 @@ export class CharacterGenerator {
                     power.flaws.push(deviceFlaw);
                 }
             });
+        }
+    }
+
+    /**
+     * 装备管理
+     */
+    addEquipment(id) {
+        const item = getEquipmentById(id);
+        if (item) {
+            this.character.equipment.push({
+                ...item,
+                instanceId: Date.now() + Math.random().toString(36).substr(2, 5)
+            });
+        }
+    }
+
+    removeEquipment(instanceId) {
+        this.character.equipment = this.character.equipment.filter(e => e.instanceId !== instanceId);
+    }
+
+    updateEquipment(instanceId, newData) {
+        const item = this.character.equipment.find(e => e.instanceId === instanceId);
+        if (item) {
+            Object.assign(item, newData);
         }
     }
 
@@ -340,15 +389,18 @@ export class CharacterGenerator {
 
     /**
      * 生成专长
+     * @param {number} extraCount - 额外增加的数量
      */
-    generateSpecialties() {
-        this.character.specialties = [];
+    generateSpecialties(extraCount = 0) {
+        if (extraCount === 0) {
+            this.character.specialties = [];
+        }
 
         const roll = roll2d6();
-        let count = getSpecialtyCountByRoll(roll);
+        let count = (extraCount === 0) ? getSpecialtyCountByRoll(roll) : extraCount;
 
-        // 起源额外专长
-        if (this.character.origin?.mechanics.bonusSpecialties) {
+        // 起源额外专长 (仅在非额外生成时计算)
+        if (extraCount === 0 && this.character.origin?.mechanics.bonusSpecialties) {
             count += this.character.origin.mechanics.bonusSpecialties;
         }
 

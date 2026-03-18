@@ -197,10 +197,11 @@
     font-size: 13px;
 }
 
-/* 06: 实战数值 */
+/* 06: 实战数值 (CORE) */
 .section-combat {
     background: var(--black);
     color: var(--white);
+    margin: 10px 0;
 }
 
 .combat-grid {
@@ -221,13 +222,14 @@
 }
 
 .c-stat .label {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 900;
-    opacity: 0.8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .c-stat .val.large {
-    font-size: 40px;
+    font-size: 44px;
     font-weight: 900;
 }
 
@@ -243,7 +245,10 @@
 }
 
 .point-val.negative {
-    color: #ff0000;
+    background: var(--white);
+    color: var(--black);
+    padding: 2px 10px;
+    box-shadow: 4px 4px 0px var(--gray-400);
 }
 
 /* 07: 传记 */

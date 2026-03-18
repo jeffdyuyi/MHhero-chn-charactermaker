@@ -86,11 +86,28 @@ export class CreationFlow {
         const container = document.getElementById('character-sheet');
         if (!container) return;
 
-        const char = this.characterGenerator.getCharacter();
-        const isPB = this.creationMode === 'point-buy';
+        try {
+            const char = this.characterGenerator.getCharacter();
+            const isPB = this.creationMode === 'point-buy';
 
-        container.innerHTML = `
-            <!-- STEP 1: 英雄代号 & 核心特质 -->
+            container.innerHTML = `
+                ${this.renderIdentitySection(char)}
+                ${this.renderCombatSection(char, isPB)}
+                ${this.renderOriginSection(char, isPB)}
+                ${this.renderAttributesSection(char, isPB)}
+                ${this.renderPowersSection(char, isPB)}
+                ${this.renderSpecialtiesSection(char, isPB)}
+                ${this.renderEquipmentSection(char)}
+                ${this.renderBioSection(char)}
+            `;
+        } catch (error) {
+            console.error('Rendering failed:', error);
+            showError('同步角色档案时遇到技术故障，请重新载入。');
+        }
+    }
+
+    renderIdentitySection(char) {
+        return `
             <div class="sheet-section section-identity">
                 <div class="step-num">STEP 1</div>
                 <div class="identity-header">
@@ -116,68 +133,13 @@ export class CreationFlow {
                     </div>
                 </div>
             </div>
+        `;
+    }
 
-            <!-- STEP 2: 能力起源 -->
-            <div class="sheet-section section-origin">
-                <div class="step-num">STEP 2</div>
-                <div class="panel-header">
-                    <h3>能力起源 (ORIGIN)</h3>
-                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollOrigin()">🎲 随机重骰</button>` : ''}
-                </div>
-                <div class="origin-display">
-                    <div class="origin-type-card">
-                        <span class="badge badge-primary">${char.origin?.name || '未知'}</span>
-                        <p class="origin-desc">${char.origin?.description || '起源定义了角色的能力背景和潜力。'}</p>
-                    </div>
-                    ${this.renderOriginMechanicsConfig(char)}
-                </div>
-            </div>
-
-            <!-- STEP 3: 关键属性 -->
-            <div class="sheet-section section-attributes">
-                <div class="step-num">STEP 3</div>
-                <div class="panel-header">
-                    <h3>关键属性 (ATTRIBUTES)</h3>
-                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机重骰</button>` : ''}
-                </div>
-                <div class="attributes-stack">
-                    ${getAttributeKeys().map(key => this.renderAttributeItem(key, char.attributes[key], isPB)).join('')}
-                </div>
-            </div>
-
-            <!-- STEP 4: 超凡能力 -->
-            <div class="sheet-section section-powers">
-                <div class="step-num">STEP 4</div>
-                <div class="panel-header">
-                    <h3>超凡能力 (POWERS)</h3>
-                    <div class="p-actions">
-                        ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机重骰</button>` :
-                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddPowerModal()">➕ 手动添加</button>`}
-                    </div>
-                </div>
-                <div class="powers-stack">
-                    ${char.powers.length > 0 ? char.powers.map((p, i) => this.renderPowerItem(p, i, isPB)).join('') : '<div class="empty-hint">暂未获得超常能力...</div>'}
-                </div>
-            </div>
-
-            <!-- STEP 5: 生活专长 -->
-            <div class="sheet-section section-specialties">
-                <div class="step-num">STEP 5</div>
-                <div class="panel-header">
-                    <h3>生活专长 (SPECIALTIES)</h3>
-                    <div class="s-actions">
-                        ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollSpecialties()">🎲 随机重骰</button>` :
-                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddSpecialtyModal()">➕ 手动添加</button>`}
-                    </div>
-                </div>
-                <div class="specialties-flex">
-                    ${char.specialties.length > 0 ? char.specialties.map((s, i) => this.renderSpecialtyItem(s, i, isPB)).join('') : '<div class="empty-hint">暂无特殊生活专长...</div>'}
-                </div>
-            </div>
-
-            <!-- STEP 6: 实战总结 -->
+    renderCombatSection(char, isPB) {
+        return `
             <div class="sheet-section section-combat">
-                <div class="step-num">RESULT</div>
+                <div class="step-num">CORE</div>
                 <div class="combat-grid">
                     <div class="combat-main-box">
                         <div class="c-stat">
@@ -197,14 +159,122 @@ export class CreationFlow {
                     ` : ''}
                 </div>
             </div>
+        `;
+    }
 
-            <!-- FINAL: 传记详情 -->
+    renderOriginSection(char, isPB) {
+        return `
+            <div class="sheet-section section-origin">
+                <div class="step-num">STEP 2</div>
+                <div class="panel-header">
+                    <h3>能力起源 (ORIGIN)</h3>
+                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollOrigin()">🎲 随机重骰</button>` : ''}
+                </div>
+                <div class="origin-display">
+                    <div class="origin-type-card">
+                        <span class="badge badge-primary">${char.origin?.name || '未知'}</span>
+                        <p class="origin-desc">${char.origin?.description || '起源定义了角色的能力背景和潜力。'}</p>
+                    </div>
+                    ${this.renderOriginMechanicsConfig(char)}
+                </div>
+            </div>
+        `;
+    }
+
+    renderAttributesSection(char, isPB) {
+        return `
+            <div class="sheet-section section-attributes">
+                <div class="step-num">STEP 3</div>
+                <div class="panel-header">
+                    <h3>关键属性 (ATTRIBUTES)</h3>
+                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机重骰</button>` : ''}
+                </div>
+                <div class="attributes-stack">
+                    ${getAttributeKeys().map(key => this.renderAttributeItem(key, char.attributes[key], isPB)).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    renderPowersSection(char, isPB) {
+        return `
+            <div class="sheet-section section-powers">
+                <div class="step-num">STEP 4</div>
+                <div class="panel-header">
+                    <h3>超凡能力 (POWERS)</h3>
+                    <div class="p-actions">
+                        ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机重骰</button>` :
+                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddPowerModal()">➕ 手动添加</button>`}
+                    </div>
+                </div>
+                <div class="powers-stack">
+                    ${char.powers.length > 0 ? char.powers.map((p, i) => this.renderPowerItem(p, i, isPB)).join('') : '<div class="empty-hint">暂未获得超常能力...</div>'}
+                </div>
+            </div>
+        `;
+    }
+
+    renderSpecialtiesSection(char, isPB) {
+        return `
+            <div class="sheet-section section-specialties">
+                <div class="step-num">STEP 5</div>
+                <div class="panel-header">
+                    <h3>生活专长 (SPECIALTIES)</h3>
+                    <div class="s-actions">
+                        ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollSpecialties()">🎲 随机重骰</button>` :
+                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddSpecialtyModal()">➕ 手动添加</button>`}
+                    </div>
+                </div>
+                <div class="specialties-flex">
+                    ${char.specialties.length > 0 ? char.specialties.map((s, i) => this.renderSpecialtyItem(s, i, isPB)).join('') : '<div class="empty-hint">暂无特殊生活专长...</div>'}
+                </div>
+            </div>
+        `;
+    }
+
+    renderBioSection(char) {
+        return `
             <div class="sheet-section section-bio">
                  <div class="bio-container">
                     <label>英雄档案说明 (BIOGRAPHY)</label>
                     <textarea oninput="app.creationFlow.updateBasicInfo('description', this.value)" 
                               placeholder="在正义被召唤时，这里将记述你的故事...">${char.description || ''}</textarea>
                  </div>
+            </div>
+        `;
+    }
+
+    renderEquipmentSection(char) {
+        const eqList = char.equipment || [];
+        return `
+            <div class="sheet-section section-equipment">
+                <div class="step-num">GEAR</div>
+                <div class="panel-header">
+                    <h3>装备与装置 (EQUIPMENT)</h3>
+                    <button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddEquipmentModal()">➕ 添加装备</button>
+                </div>
+                <div class="equipment-list">
+                    ${eqList.length > 0 ? eqList.map(item => `
+                        <div class="eq-item-card">
+                            <div class="eq-info" onclick="app.creationFlow.openEditEquipmentModal('${item.instanceId}')">
+                                <span class="eq-name">${item.name}</span>
+                                <span class="eq-cat">(${item.categoryName})</span>
+                                <p class="eq-desc">${item.description || ''}</p>
+                                <div class="eq-stats-row">
+                                    ${item.level ? `<span class="eq-stat">LV ${item.level}</span>` : ''}
+                                    ${item.speed ? `<span class="eq-stat">SPD ${item.speed}</span>` : ''}
+                                    ${item.body ? `<span class="eq-stat">BODY ${item.body}</span>` : ''}
+                                    ${item.handling ? `<span class="eq-stat">OP ${item.handling}</span>` : ''}
+                                    ${item.armor ? `<span class="eq-stat">ARMOR ${item.armor}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="eq-controls">
+                                <button class="btn-icon-del" onclick="app.creationFlow.openEditEquipmentModal('${item.instanceId}')">✎</button>
+                                <button class="btn-icon-del" onclick="app.creationFlow.removeEquipment('${item.instanceId}')">✕</button>
+                            </div>
+                        </div>
+                    `).join('') : '<div class="empty-hint">尚未携带任何装备...</div>'}
+                </div>
             </div>
         `;
     }
@@ -282,6 +352,31 @@ export class CreationFlow {
                     <option value="">选择增幅属性</option>
                     ${getAttributeKeys().map(k => `<option value="${k}" ${char.originChoices.statBoost === k ? 'selected' : ''}>${ATTRIBUTE_NAMES[k]}</option>`).join('')}
                 </select>
+            `;
+        }
+
+        if (mech.guaranteedPower === '维系生命') {
+            html += `
+                <div class="origin-exchange-notice">
+                    获得「维系生命」能力。
+                    <button class="btn btn-xs btn-outline" onclick="app.creationFlow.sacrificePowerForLifeSupport()">舍弃一项能力提升至10级</button>
+                </div>
+            `;
+        }
+
+        if (mech.optionalExchange === 'power_for_specialties_plus_2') {
+            html += `
+                <div class="origin-exchange-notice">
+                    <button class="btn btn-xs btn-outline" onclick="app.creationFlow.sacrificePowerForSpecialties()">用1项能力交换2项额外专长</button>
+                </div>
+            `;
+        }
+
+        if (mech.optionalExchange === 'double_roll_origins') {
+            html += `
+                <div class="origin-exchange-notice">
+                    <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAlienOrigins()">选择随机双起源 (替代+2加成)</button>
+                </div>
             `;
         }
 
@@ -407,19 +502,33 @@ export class CreationFlow {
     openModifierModal(powerIndex) {
         const power = this.characterGenerator.character.powers[powerIndex];
         openModal({
-            title: `为 "${power.name}" 添加修饰`,
+            title: `为能力「${power.name}」配置修饰`,
             content: `
                 <div class="mod-modal-grid">
                     <div class="mod-group">
-                        <h5>增益 (Extras)</h5>
+                        <h5>✅ 额外增益 (Extras)</h5>
+                        <p class="group-hint">增强能力的效果，但会增加点数成本。</p>
                         <div class="mod-list">
-                            ${POWER_EXTRAS.map(e => `<button class="btn-mod-pick extra" onclick="app.creationFlow.applyMod(${powerIndex}, 'extra', '${e.id}')">${e.name}</button>`).join('')}
+                            ${POWER_EXTRAS.map(e => `
+                                <button class="btn-mod-pick extra" onclick="app.creationFlow.applyMod(${powerIndex}, 'extra', '${e.id}')">
+                                    <span class="m-name">${e.name}</span>
+                                    <span class="m-cost">${e.cost}</span>
+                                    <small class="m-desc">${e.description}</small>
+                                </button>
+                            `).join('')}
                         </div>
                     </div>
                     <div class="mod-group">
-                        <h5>限制 (Flaws)</h5>
+                        <h5>⚠️ 能力限制 (Flaws)</h5>
+                        <p class="group-hint">限制能力的发挥，可以返还点数用于其他方面。</p>
                         <div class="mod-list">
-                            ${POWER_FLAWS.map(f => `<button class="btn-mod-pick flaw" onclick="app.creationFlow.applyMod(${powerIndex}, 'flaw', '${f.id}')">${f.name}</button>`).join('')}
+                            ${POWER_FLAWS.map(f => `
+                                <button class="btn-mod-pick flaw" onclick="app.creationFlow.applyMod(${powerIndex}, 'flaw', '${f.id}')">
+                                    <span class="m-name">${f.name}</span>
+                                    <span class="m-cost">${f.cost}</span>
+                                    <small class="m-desc">${f.description}</small>
+                                </button>
+                            `).join('')}
                         </div>
                     </div>
                 </div>
@@ -428,10 +537,16 @@ export class CreationFlow {
     }
 
     applyMod(pIndex, type, modId) {
-        const mod = (type === 'extra' ? POWER_EXTRAS : POWER_FLAWS).find(m => m.id === modId);
-        this.characterGenerator.addPowerModifier(pIndex, type, mod);
-        this.renderFullSheet();
-        closeModal();
+        try {
+            const mod = (type === 'extra' ? POWER_EXTRAS : POWER_FLAWS).find(m => m.id === modId);
+            this.characterGenerator.addPowerModifier(pIndex, type, mod);
+            this.renderFullSheet();
+        } catch (error) {
+            console.error('Modifier application failed:', error);
+            showError('添加修饰项时出错，请重试。');
+        } finally {
+            closeModal();
+        }
     }
 
     removeModifier(pIndex, type, modId) {
@@ -453,6 +568,123 @@ export class CreationFlow {
         this.renderFullSheet();
     }
 
+    openAddEquipmentModal() {
+        const allEq = window.getAllEquipment();
+        openModal({
+            title: '从资料库添加装备/载具',
+            content: `
+                <div class="add-eq-modal">
+                    <p class="group-hint">选择预设模板，添加后可进行自定义修改</p>
+                    <select id="modal-eq-select" class="full-width">
+                        ${allEq.map(e => `<option value="${e.id}">${e.categoryName}: ${e.name}</option>`).join('')}
+                    </select>
+                </div>
+            `,
+            footer: `<button class="btn btn-primary" onclick="app.creationFlow.confirmAddEquipment()">确认添加</button>`
+        });
+    }
+
+    openEditEquipmentModal(instanceId) {
+        const char = this.characterGenerator.character;
+        const item = char.equipment.find(e => e.instanceId === instanceId);
+        if (!item) return;
+
+        openModal({
+            title: '自定义装备信息',
+            content: `
+                <div class="edit-eq-modal">
+                    <div class="form-group">
+                        <label>装备名称</label>
+                        <input type="text" id="edit-eq-name" value="${item.name}" class="full-width">
+                    </div>
+                    <div class="form-group">
+                        <label>描述与备注</label>
+                        <textarea id="edit-eq-desc" class="full-width" style="height: 80px;">${item.description || ''}</textarea>
+                    </div>
+                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label>等级 (Level)</label>
+                            <input type="number" id="edit-eq-level" value="${item.level || 0}" class="full-width">
+                        </div>
+                        <div class="form-group">
+                            <label>速度 (Speed)</label>
+                            <input type="number" id="edit-eq-speed" value="${item.speed || 0}" class="full-width">
+                        </div>
+                        <div class="form-group">
+                            <label>构造 (Body)</label>
+                            <input type="number" id="edit-eq-body" value="${item.body || 0}" class="full-width">
+                        </div>
+                        <div class="form-group">
+                            <label>操控 (Handling)</label>
+                            <input type="number" id="edit-eq-handling" value="${item.handling || 0}" class="full-width">
+                        </div>
+                        <div class="form-group">
+                            <label>护甲 (Armor)</label>
+                            <input type="number" id="edit-eq-armor" value="${item.armor || 0}" class="full-width">
+                        </div>
+                    </div>
+                </div>
+            `,
+            footer: `<button class="btn btn-primary" onclick="app.creationFlow.confirmEditEquipment('${instanceId}')">保存修改</button>`
+        });
+    }
+
+    confirmEditEquipment(instanceId) {
+        const newData = {
+            name: document.getElementById('edit-eq-name').value,
+            description: document.getElementById('edit-eq-desc').value,
+            level: parseInt(document.getElementById('edit-eq-level').value) || 0,
+            speed: parseInt(document.getElementById('edit-eq-speed').value) || 0,
+            body: parseInt(document.getElementById('edit-eq-body').value) || 0,
+            handling: parseInt(document.getElementById('edit-eq-handling').value) || 0,
+            armor: parseInt(document.getElementById('edit-eq-armor').value) || 0
+        };
+
+        this.characterGenerator.updateEquipment(instanceId, newData);
+        this.renderFullSheet();
+        closeModal();
+    }
+
+    confirmAddEquipment() {
+        const id = document.getElementById('modal-eq-select').value;
+        if (id) {
+            this.characterGenerator.addEquipment(id);
+            this.renderFullSheet();
+            closeModal();
+        }
+    }
+
+    removeEquipment(instanceId) {
+        this.characterGenerator.removeEquipment(instanceId);
+        this.renderFullSheet();
+    }
+
+    sacrificePowerForLifeSupport() {
+        showInfo('请在能力列表中点击 ✕ 舍弃一项能力，系统将自动升级维系生命。');
+        this._pendingExchange = 'life_support';
+    }
+
+    sacrificePowerForSpecialties() {
+        showInfo('请在能力列表中点击 ✕ 舍弃一项能力，系统将为您增加2项随机专长。');
+        this._pendingExchange = 'specialties';
+    }
+
+    removePower(index) {
+        if (this._pendingExchange) {
+            if (this._pendingExchange === 'life_support') {
+                const ls = this.characterGenerator.character.powers.find(p => p.name === '维系生命');
+                if (ls) ls.level = 10;
+                showSuccess('已舍弃能力，维系生命升至10级！');
+            } else if (this._pendingExchange === 'specialties') {
+                this.characterGenerator.generateSpecialties(2); // 额外加2项
+                showSuccess('已舍弃能力，获得2项额外专长！');
+            }
+            this._pendingExchange = null;
+        }
+        this.characterGenerator.removePower(index);
+        this.renderFullSheet();
+    }
+
     saveCurrentCharacter() {
         const char = this.characterGenerator.getCharacter();
         if (!char.name) {
@@ -461,6 +693,8 @@ export class CreationFlow {
         }
         if (saveCharacter(char)) {
             showSuccess(`英雄 "${char.name}" 已保存至名录！`);
+            this.app.savedCharactersView.loadCharacters();
+            this.app.viewManager.switchView('saved');
         } else {
             showError('保存失败，请检查浏览器存储空间。');
         }
