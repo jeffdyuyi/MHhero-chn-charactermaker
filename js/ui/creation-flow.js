@@ -36,6 +36,9 @@ export class CreationFlow {
         this.characterGenerator = null;
         this.isCreating = false;
         this.editingCharacterId = null;
+        this.currentStep = 1; // 当前步骤
+        this.totalSteps = 5; // 总步骤数
+        this.completedSteps = [false, false, false, false, false]; // 记录各步骤是否完成
 
         this.init();
     }
@@ -63,42 +66,45 @@ export class CreationFlow {
         // 全局初始化
     }
 
-    start(mode, editingId = null) {
-        this.creationMode = mode;
+    start(editingId = null) {
+        this.creationMode = 'random';
         this.isCreating = true;
         this.editingCharacterId = editingId;
 
         // 初始化生成器
-        this.characterGenerator = new CharacterGenerator(mode);
+        this.characterGenerator = new CharacterGenerator('random');
 
         if (editingId) {
             const char = this.app.getCharacterById(editingId);
             if (char) this.characterGenerator.character = JSON.parse(JSON.stringify(char));
         } else {
-            if (mode === 'random') {
-                this.characterGenerator.generateRandom();
-            } else {
-                this.characterGenerator.generatePointBuy();
-            }
+            // 只生成基础结构，不生成具体内容
+            this.characterGenerator.character = {
+                name: '',
+                description: '',
+                qualities: ['', '', ''],
+                origin: null,
+                attributes: {
+                    brawn: 0,
+                    coordination: 0,
+                    strength: 0,
+                    intellect: 0,
+                    awareness: 0,
+                    willpower: 0
+                },
+                powers: [],
+                specialties: [],
+                equipment: [],
+                stamina: 0,
+                resolve: 0,
+                originChoices: {},
+                mode: 'random',
+                id: Date.now(),
+                createdAt: new Date().toISOString()
+            };
         }
 
         this.renderFullSheet();
-        this.updateModeUI();
-    }
-
-    setMode(mode) {
-        if (this.creationMode === mode) return;
-        this.creationMode = mode;
-        this.start(mode); // 切换模式即重置
-    }
-
-    updateModeUI() {
-        const randomBtn = document.getElementById('mode-random-btn');
-        const pointBuyBtn = document.getElementById('mode-pointbuy-btn');
-        if (randomBtn && pointBuyBtn) {
-            randomBtn.classList.toggle('btn-active', this.creationMode === 'random');
-            pointBuyBtn.classList.toggle('btn-active', this.creationMode === 'point-buy');
-        }
     }
 
     renderFullSheet() {
@@ -107,29 +113,114 @@ export class CreationFlow {
 
         try {
             const char = this.characterGenerator.getCharacter();
-            const isPB = this.creationMode === 'point-buy';
 
-            // 清空并按顺序渲染各区块
+            // 清空并渲染当前步骤的内容
             container.innerHTML = '';
 
-            const sections = [
-                this.renderIdentitySection(char),
-                this.renderCombatSection(char, isPB),
-                this.renderOriginSection(char, isPB),
-                this.renderAttributesSection(char, isPB),
-                this.renderPowersSection(char, isPB),
-                this.renderSpecialtiesSection(char, isPB),
-                this.renderEquipmentSection(char),
-                this.renderBioSection(char)
-            ];
+            // 渲染步骤导航
+            container.innerHTML += this.renderStepNavigation();
 
-            container.innerHTML = sections.join('');
+            // 根据当前步骤渲染对应内容
+            let sectionContent = '';
+            switch (this.currentStep) {
+                case 1:
+                    sectionContent = this.renderOriginSection(char) + this.renderCombatSection(char);
+                    break;
+                case 2:
+                    sectionContent = this.renderAttributesSection(char);
+                    break;
+                case 3:
+                    sectionContent = this.renderPowersSection(char);
+                    break;
+                case 4:
+                    sectionContent = this.renderSpecialtiesSection(char) + this.renderEquipmentSection(char);
+                    break;
+                case 5:
+                    sectionContent = this.renderIdentitySection(char) + this.renderBioSection(char);
+                    break;
+            }
+
+            container.innerHTML += sectionContent;
 
             // 重新绑定可能的动态事件或初始化提示
             this.initPowerTooltips();
         } catch (error) {
             console.error('Rendering failed:', error);
             showError('同步角色档案时遇到技术故障，请重新载入。');
+        }
+    }
+
+    renderStepNavigation() {
+        return `
+            <div class="step-navigation">
+                <div class="step-indicators">
+                    ${Array.from({ length: this.totalSteps }, (_, i) => {
+                        const step = i + 1;
+                        const isClickable = step === this.currentStep || this.completedSteps[step - 1];
+                        return `
+                            <div class="step-indicator ${step === this.currentStep ? 'active' : step < this.currentStep ? 'completed' : ''} ${!isClickable ? 'disabled' : ''}" ${isClickable ? `onclick="app.creationFlow.goToStep(${step})"` : ''}>
+                                ${step < this.currentStep ? '✓' : step}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="step-buttons">
+                    <button class="btn btn-secondary ${this.currentStep === 1 ? 'disabled' : ''}" onclick="app.creationFlow.prevStep()" ${this.currentStep === 1 ? 'disabled' : ''}>
+                        ← 上一步
+                    </button>
+                    <button class="btn btn-primary ${this.currentStep === this.totalSteps ? 'disabled' : ''}" onclick="app.creationFlow.nextStep()" ${this.currentStep === this.totalSteps ? 'disabled' : ''}>
+                        下一步 →
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    goToStep(step) {
+        // 只允许访问当前步骤或已完成的步骤
+        if (step >= 1 && step <= this.totalSteps && (step === this.currentStep || this.completedSteps[step - 1])) {
+            this.currentStep = step;
+            this.renderFullSheet();
+        }
+    }
+
+    prevStep() {
+        if (this.currentStep > 1) {
+            this.currentStep--;
+            this.renderFullSheet();
+        }
+    }
+
+    nextStep() {
+        // 检查当前步骤是否完成
+        if (!this.isStepCompleted()) {
+            showInfo('请先完成当前步骤的内容');
+            return;
+        }
+        
+        if (this.currentStep < this.totalSteps) {
+            // 标记当前步骤为已完成
+            this.completedSteps[this.currentStep - 1] = true;
+            this.currentStep++;
+            this.renderFullSheet();
+        }
+    }
+
+    isStepCompleted() {
+        const char = this.characterGenerator.getCharacter();
+        switch (this.currentStep) {
+            case 1: // 起源
+                return char.origin !== null;
+            case 2: // 属性
+                return Object.values(char.attributes).every(val => val > 0);
+            case 3: // 能力
+                return char.powers.length > 0;
+            case 4: // 专长
+                return char.specialties.length > 0;
+            case 5: // 英雄信息
+                return char.name && char.qualities.some(q => q);
+            default:
+                return true;
         }
     }
 
@@ -175,7 +266,7 @@ export class CreationFlow {
         `;
     }
 
-    renderCombatSection(char, isPB) {
+    renderCombatSection(char) {
         return `
             <div class="sheet-section section-combat">
                 <div class="step-num">CORE</div>
@@ -190,24 +281,18 @@ export class CreationFlow {
                             <span class="val large">${char.resolve}</span>
                         </div>
                     </div>
-                    ${isPB ? `
-                        <div class="combat-points-box">
-                            <span class="label">购点余额 (REMAINING)</span>
-                            <span class="val point-val ${this.characterGenerator.getRemainingPoints() < 0 ? 'negative' : ''}">${this.characterGenerator.getRemainingPoints()} / ${POINT_BUY_CONFIG.totalPoints}</span>
-                        </div>
-                    ` : ''}
                 </div>
             </div>
         `;
     }
 
-    renderOriginSection(char, isPB) {
+    renderOriginSection(char) {
         return `
             <div class="sheet-section section-origin">
                 <div class="step-num">STEP 2</div>
                 <div class="panel-header">
                     <h3>能力起源 (ORIGIN)</h3>
-                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollOrigin()">🎲 随机重骰</button>` : ''}
+                    <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollOrigin()">🎲 随机生成</button>
                 </div>
                 <div class="origin-display">
                     <div class="origin-type-card">
@@ -220,52 +305,52 @@ export class CreationFlow {
         `;
     }
 
-    renderAttributesSection(char, isPB) {
+    renderAttributesSection(char) {
         return `
             <div class="sheet-section section-attributes">
                 <div class="step-num">STEP 3</div>
                 <div class="panel-header">
                     <h3>关键属性 (ATTRIBUTES)</h3>
-                    ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机重骰</button>` : ''}
+                    <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机生成</button>
                 </div>
                 <div class="attributes-stack">
-                    ${getAttributeKeys().map(key => this.renderAttributeItem(key, char.attributes[key], isPB)).join('')}
+                    ${getAttributeKeys().map(key => this.renderAttributeItem(key, char.attributes[key])).join('')}
                 </div>
             </div>
         `;
     }
 
-    renderPowersSection(char, isPB) {
+    renderPowersSection(char) {
         return `
             <div class="sheet-section section-powers">
                 <div class="step-num">STEP 4</div>
                 <div class="panel-header">
                     <h3>超凡能力 (POWERS)</h3>
                     <div class="p-actions">
-                        ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机重骰</button>` :
-                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddPowerModal()">➕ 手动添加</button>`}
+                        <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机生成</button>
+                        <button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddPowerModal()">➕ 手动添加</button>
                     </div>
                 </div>
                 <div class="powers-stack">
-                    ${char.powers.length > 0 ? char.powers.map((p, i) => this.renderPowerItem(p, i, isPB)).join('') : '<div class="empty-hint">暂未获得超常能力...</div>'}
+                    ${char.powers.length > 0 ? char.powers.map((p, i) => this.renderPowerItem(p, i)).join('') : '<div class="empty-hint">暂未获得超常能力...</div>'}
                 </div>
             </div>
         `;
     }
 
-    renderSpecialtiesSection(char, isPB) {
+    renderSpecialtiesSection(char) {
         return `
             <div class="sheet-section section-specialties">
                 <div class="step-num">STEP 5</div>
                 <div class="panel-header">
                     <h3>生活专长 (SPECIALTIES)</h3>
                     <div class="s-actions">
-                        ${!isPB ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollSpecialties()">🎲 随机重骰</button>` :
-                `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddSpecialtyModal()">➕ 手动添加</button>`}
+                        <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollSpecialties()">🎲 随机生成</button>
+                        <button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddSpecialtyModal()">➕ 手动添加</button>
                     </div>
                 </div>
                 <div class="specialties-flex">
-                    ${char.specialties.length > 0 ? char.specialties.map((s, i) => this.renderSpecialtyItem(s, i, isPB)).join('') : '<div class="empty-hint">暂无特殊生活专长...</div>'}
+                    ${char.specialties.length > 0 ? char.specialties.map((s, i) => this.renderSpecialtyItem(s, i)).join('') : '<div class="empty-hint">暂无特殊生活专长...</div>'}
                 </div>
             </div>
         `;
@@ -318,20 +403,18 @@ export class CreationFlow {
         `;
     }
 
-    renderAttributeItem(key, val, isPB) {
+    renderAttributeItem(key, val) {
         return `
             <div class="attr-row">
                 <span class="attr-name">${ATTRIBUTE_NAMES[key]}</span>
                 <div class="attr-value-box">
-                    ${isPB ? `<button class="btn-step" onclick="app.creationFlow.adjustAttribute('${key}', -1)">-</button>` : ''}
                     <span class="val">${val}</span>
-                    ${isPB ? `<button class="btn-step" onclick="app.creationFlow.adjustAttribute('${key}', 1)">+</button>` : ''}
                 </div>
             </div>
         `;
     }
 
-    renderPowerItem(power, index, isPB) {
+    renderPowerItem(power, index) {
         const desc = getPowerDescription(power.name) || '暂无详细说明';
         return `
             <div class="power-panel-card" title="${desc.replace(/"/g, '&quot;')}">
@@ -339,12 +422,8 @@ export class CreationFlow {
                     <span class="p-name" onclick="app.showPowerDetail('${power.name}')">${power.name}</span>
                     <span class="p-cat">(${power.category})</span>
                     <div class="p-controls">
-                        ${isPB ? `
-                            <button class="btn-step" onclick="app.creationFlow.adjustPowerLevel(${index}, -1)">-</button>
-                            <span class="p-level">Lvl ${power.level}</span>
-                            <button class="btn-step" onclick="app.creationFlow.adjustPowerLevel(${index}, 1)">+</button>
-                            <button class="btn-icon-del" onclick="app.creationFlow.removePower(${index})">✕</button>
-                        ` : `<span class="p-level">Lvl ${power.level}</span>`}
+                        <span class="p-level">Lvl ${power.level}</span>
+                        <button class="btn-icon-del" onclick="app.creationFlow.removePower(${index})">✕</button>
                     </div>
                 </div>
                 <div class="p-mods">
@@ -358,16 +437,13 @@ export class CreationFlow {
         `;
     }
 
-    renderSpecialtyItem(specialty, index, isPB) {
+    renderSpecialtyItem(specialty, index) {
         const levels = { 1: '基础', 2: '专家', 3: '大师' };
         return `
             <div class="spec-tag-card">
                 <span class="s-name">${specialty.name}</span>
                 <span class="s-level">${levels[specialty.level]}</span>
-                ${isPB ? `
-                    <button class="btn-step" onclick="app.creationFlow.adjustSpecialtyLevel(${index}, 1)">+</button>
-                    <button class="btn-icon-del" onclick="app.creationFlow.removeSpecialty(${index})">✕</button>
-                ` : ''}
+                <button class="btn-icon-del" onclick="app.creationFlow.removeSpecialty(${index})">✕</button>
             </div>
         `;
     }
@@ -427,60 +503,63 @@ export class CreationFlow {
     // 更新信息
     updateBasicInfo(key, val) {
         this.characterGenerator.character[key] = val;
+        // 检查英雄信息步骤是否完成
+        if (this.currentStep === 5) {
+            this.completedSteps[4] = this.isStepCompleted();
+        }
     }
 
     updateQuality(index, val) {
         this.characterGenerator.character.qualities[index] = val;
+        // 检查英雄信息步骤是否完成
+        if (this.currentStep === 5) {
+            this.completedSteps[4] = this.isStepCompleted();
+        }
     }
 
     // 重新掷骰
     rerollOrigin() {
         this.characterGenerator.generateOrigin();
         this.renderFullSheet();
+        // 标记起源步骤为已完成
+        this.completedSteps[0] = true;
     }
 
     rerollAttributes() {
         this.characterGenerator.generateAttributes();
         this.renderFullSheet();
+        // 标记属性步骤为已完成
+        this.completedSteps[1] = true;
     }
 
     rerollPowers() {
         this.characterGenerator.generatePowers();
         this.renderFullSheet();
+        // 标记能力步骤为已完成
+        this.completedSteps[2] = true;
     }
 
     rerollSpecialties() {
         this.characterGenerator.generateSpecialties();
         this.renderFullSheet();
+        // 标记专长步骤为已完成
+        this.completedSteps[3] = true;
     }
 
-    quickGenerate() {
-        this.characterGenerator.generateRandom();
-        this.renderFullSheet();
-        showSuccess('英雄档案已随机重塑！');
-    }
 
-    // 调整数值
-    adjustAttribute(key, delta) {
-        const char = this.characterGenerator.getCharacter();
-        this.characterGenerator.updateAttribute(key, char.attributes[key] + delta);
-        this.renderFullSheet();
-    }
-
-    adjustPowerLevel(index, delta) {
-        const char = this.characterGenerator.getCharacter();
-        this.characterGenerator.updatePowerLevel(index, char.powers[index].level + delta);
-        this.renderFullSheet();
-    }
-
-    adjustSpecialtyLevel(index, delta) {
-        const char = this.characterGenerator.getCharacter();
-        const next = (char.specialties[index].level % 3) + 1;
-        this.characterGenerator.updateSpecialtyLevel(index, next);
-        this.renderFullSheet();
-    }
 
     removePower(index) {
+        if (this._pendingExchange) {
+            if (this._pendingExchange === 'life_support') {
+                const ls = this.characterGenerator.character.powers.find(p => p.name === '维系生命');
+                if (ls) ls.level = 10;
+                showSuccess('已舍弃能力，维系生命升至10级！');
+            } else if (this._pendingExchange === 'specialties') {
+                this.characterGenerator.generateSpecialties(2); // 额外加2项
+                showSuccess('已舍弃能力，获得2项额外专长！');
+            }
+            this._pendingExchange = null;
+        }
         this.characterGenerator.removePower(index);
         this.renderFullSheet();
     }
@@ -707,22 +786,6 @@ export class CreationFlow {
     sacrificePowerForSpecialties() {
         showInfo('请在能力列表中点击 ✕ 舍弃一项能力，系统将为您增加2项随机专长。');
         this._pendingExchange = 'specialties';
-    }
-
-    removePower(index) {
-        if (this._pendingExchange) {
-            if (this._pendingExchange === 'life_support') {
-                const ls = this.characterGenerator.character.powers.find(p => p.name === '维系生命');
-                if (ls) ls.level = 10;
-                showSuccess('已舍弃能力，维系生命升至10级！');
-            } else if (this._pendingExchange === 'specialties') {
-                this.characterGenerator.generateSpecialties(2); // 额外加2项
-                showSuccess('已舍弃能力，获得2项额外专长！');
-            }
-            this._pendingExchange = null;
-        }
-        this.characterGenerator.removePower(index);
-        this.renderFullSheet();
     }
 
     saveCurrentCharacter() {

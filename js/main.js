@@ -5,12 +5,15 @@
 
 import {
     getCharacterById,
-    downloadFile
+    downloadFile,
+    saveCharacter,
+    deleteCharacter
 } from './core/storage.js';
 
 import { APP_CONFIG, POINT_BUY_CONFIG } from './data/index.js';
 import { ViewManager } from './ui/view-manager.js';
 import { CreationFlow } from './ui/creation-flow.js';
+import { GuidedCreationFlow } from './ui/guided-creation-flow.js';
 import { SavedCharactersView } from './ui/saved-characters.js';
 import { openModal, closeModal, showCharacterDetail } from './ui/modal.js';
 import { getEquipmentById, getAllEquipment } from './data/equipment.js';
@@ -27,6 +30,7 @@ class ComicHeroApp {
         // 初始化各个模块
         this.viewManager = new ViewManager(this);
         this.creationFlow = new CreationFlow(this);
+        this.guidedCreationFlow = new GuidedCreationFlow(this);
         this.savedCharactersView = new SavedCharactersView(this);
 
         this.init();
@@ -38,8 +42,17 @@ class ComicHeroApp {
         // 绑定全局按钮事件
         this.bindGlobalEvents();
 
-        // 默认开启创建流程 (随机模式)
-        this.creationFlow.start('random');
+        // 初始化核心模块
+        this.core = {
+            storage: {
+                getCharacterById,
+                saveCharacter,
+                deleteCharacter
+            }
+        };
+
+        // 默认开启创建流程
+        this.creationFlow.start();
     }
 
     bindGlobalEvents() {

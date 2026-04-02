@@ -89,7 +89,6 @@ export function openModal(options = {}) {
         if (e.key === 'Escape' && closable) {
             closeModal();
             if (onClose) onClose();
-            document.removeEventListener('keydown', handleKeydown);
         }
     };
     document.addEventListener('keydown', handleKeydown);

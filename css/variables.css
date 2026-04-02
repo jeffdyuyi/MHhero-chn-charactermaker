@@ -36,12 +36,12 @@
     --text-muted: var(--gray-500);
     --text-on-primary: var(--white);
 
-    /* 背景颜色 */
-    --bg-body: var(--gray-100);
+    /* 背景颜色 - 统一为白色 */
+    --bg-body: var(--white);
     --bg-card: var(--white);
-    --bg-secondary: var(--gray-200);
+    --bg-secondary: var(--white);
     --bg-header: var(--white);
-    --bg-footer: var(--black);
+    --bg-footer: var(--white);
 
     /* 漫画特有视觉参数 */
     --comic-border-width: 3px;

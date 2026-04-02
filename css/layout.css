@@ -90,13 +90,14 @@
 
 /* 页脚 */
 .app-footer {
-    background: var(--black);
-    color: var(--white);
+    background: var(--white);
+    color: var(--black);
     text-align: center;
     padding: var(--spacing-md);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
+    border-top: var(--comic-border-width) solid var(--black);
 }
 
 /* 首页布局 - 复古漫画格 */

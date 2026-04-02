@@ -97,16 +97,8 @@
             <!-- 一页式角色卡编辑器 -->
             <section id="editor-view" class="view active">
                 <div class="controls-overlay">
-                    <div class="mode-switcher btn-group">
-                        <button class="btn btn-sm btn-active" id="mode-random-btn"
-                            onclick="app.creationFlow.setMode('random')">🎲 随机生成</button>
-                        <button class="btn btn-sm" id="mode-pointbuy-btn"
-                            onclick="app.creationFlow.setMode('point-buy')">🎯 购点定制</button>
-                    </div>
                     <div class="action-btns" style="margin-left: auto; display: flex; gap: 8px;">
                         <button class="btn btn-sm btn-info" onclick="app.creationFlow.exportAsImage()">🖼️ 导出图片</button>
-                        <button class="btn btn-sm btn-primary" onclick="app.creationFlow.quickGenerate()">✨
-                            一键生成</button>
                         <button class="btn btn-sm btn-success" onclick="app.creationFlow.saveCurrentCharacter()">💾
                             保存英雄</button>
                     </div>

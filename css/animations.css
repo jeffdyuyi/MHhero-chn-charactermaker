@@ -54,6 +54,33 @@
 
 .btn,
 .nav-btn,
-.origin-card {
-    transition: transform 0.05s, box-shadow 0.05s !important;
+.origin-card,
+#step-content {
+    transition: transform 0.05s, box-shadow 0.05s, opacity 0.3s !important;
+}
+
+/* 步骤过渡动画 */
+.step-transition {
+    animation: stepTransition 0.3s ease-in-out;
+}
+
+@keyframes stepTransition {
+    0% { opacity: 1; transform: translateX(0); }
+    50% { opacity: 0; transform: translateX(20px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+/* 加载状态动画 */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
