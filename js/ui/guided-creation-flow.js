@@ -379,11 +379,7 @@ class ModeSelectionStep extends Step {
                         <p>45点自由分配，精细控制角色构建</p>
                     </div>
                 </div>
-                <div class="rule-hint">
-                    <h4>规则说明</h4>
-                    <p>随机模式：全程使用2d6掷骰决定所有属性和能力</p>
-                    <p>购点模式：总点数45点，属性范围1-10，能力和专长也需要消耗点数</p>
-                </div>
+
             </div>
         `;
     }
@@ -420,10 +416,7 @@ class OriginSelectionStep extends Step {
                         </div>
                     `).join('')}
                 </div>
-                <div class="rule-hint">
-                    <h4>规则说明</h4>
-                    <p>不同起源会影响角色的能力获取和发展方向</p>
-                </div>
+
             </div>
         `;
     }
@@ -464,11 +457,7 @@ class AttributesStep extends Step {
                         </div>
                     `).join('')}
                 </div>
-                <div class="rule-hint">
-                    <h4>规则说明</h4>
-                    <p>购点模式：每项属性初始值为1，每提升1点消耗1点</p>
-                    <p>随机模式：通过掷骰决定属性值</p>
-                </div>
+
             </div>
         `;
     }
@@ -501,10 +490,7 @@ class PowersStep extends Step {
                     </div>
                     <button class="btn btn-secondary" onclick="app.guidedCreationFlow.openAddPowerModal()">添加能力</button>
                 </div>
-                <div class="rule-hint">
-                    <h4>规则说明</h4>
-                    <p>不同能力有不同的点数消耗</p>
-                </div>
+
             </div>
         `;
     }
@@ -535,10 +521,7 @@ class SpecialtiesStep extends Step {
                     </div>
                     <button class="btn btn-secondary" onclick="app.guidedCreationFlow.openAddSpecialtyModal()">添加专长</button>
                 </div>
-                <div class="rule-hint">
-                    <h4>规则说明</h4>
-                    <p>专长代表角色在生活中的特殊技能</p>
-                </div>
+
             </div>
         `;
     }

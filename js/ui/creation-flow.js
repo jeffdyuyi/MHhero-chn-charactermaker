@@ -136,8 +136,8 @@ export class CreationFlow {
                     sectionContent = this.renderSpecialtiesSection(char) + this.renderEquipmentSection(char);
                     break;
                 case 5:
-                    sectionContent = this.renderIdentitySection(char) + this.renderBioSection(char);
-                    break;
+                sectionContent = this.renderIdentitySection(char) + this.renderCombatSection(char) + this.renderBioSection(char);
+                break;
             }
 
             container.innerHTML += sectionContent;
@@ -301,6 +301,9 @@ export class CreationFlow {
     }
 
     renderOriginSection(char) {
+        // 生成起源增益提示
+        const originBonusHint = char.origin ? this.renderOriginBonusHint(char.origin) : '';
+        
         return `
             <div class="sheet-section section-origin">
                 <div class="step-num">STEP 2</div>
@@ -313,13 +316,67 @@ export class CreationFlow {
                         <span class="badge badge-primary">${char.origin?.name || '未知'}</span>
                         <p class="origin-desc">${char.origin?.description || '起源定义了角色的能力背景和潜力。'}</p>
                     </div>
+                    ${originBonusHint}
                     ${this.renderOriginMechanicsConfig(char)}
                 </div>
             </div>
         `;
     }
+    
+    renderOriginBonusHint(origin) {
+        if (!origin || !origin.mechanics) return '';
+        
+        const hints = [];
+        const mech = origin.mechanics;
+        
+        if (mech.bonusSpecialties) {
+            hints.push(`额外获得 ${mech.bonusSpecialties} 项专长`);
+        }
+        if (mech.statBoost) {
+            let target = '';
+            switch (mech.statBoost.target) {
+                case 'strength':
+                    target = '力量';
+                    break;
+                case 'mental':
+                    target = '一项精神属性';
+                    break;
+                case 'any_one':
+                    target = '一项能力';
+                    break;
+                case 'any_two':
+                    target = '两项能力';
+                    break;
+            }
+            hints.push(`${target} +${mech.statBoost.value} 级`);
+        }
+        if (mech.bonusPower) {
+            hints.push('额外获得1项特殊能力');
+        }
+        if (mech.deviceLimit) {
+            hints.push('所有能力带上"装置"限制');
+        }
+        if (mech.guaranteedPower) {
+            hints.push(`获得「${mech.guaranteedPower}」能力`);
+        }
+        
+        if (hints.length > 0) {
+            return `
+                <div class="origin-bonus-hint">
+                    <h4>起源增益</h4>
+                    <ul>
+                        ${hints.map(hint => `<li>${hint}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+        return '';
+    }
 
     renderAttributesSection(char) {
+        // 生成起源属性增益提示
+        const originAttributeHint = this.renderOriginAttributeHint(char);
+        
         return `
             <div class="sheet-section section-attributes">
                 <div class="step-num">STEP 3</div>
@@ -327,14 +384,51 @@ export class CreationFlow {
                     <h3>关键属性 (ATTRIBUTES)</h3>
                     <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机生成</button>
                 </div>
+                ${originAttributeHint}
                 <div class="attributes-stack">
                     ${getAttributeKeys().map(key => this.renderAttributeItem(key, char.attributes[key])).join('')}
                 </div>
             </div>
         `;
     }
+    
+    renderOriginAttributeHint(char) {
+        if (!char.origin || !char.origin.mechanics) return '';
+        
+        const mech = char.origin.mechanics;
+        if (!mech.statBoost) return '';
+        
+        let hint = '';
+        switch (mech.statBoost.target) {
+            case 'strength':
+                hint = '起源增益：力量 +2 级';
+                break;
+            case 'mental':
+                hint = '起源增益：选择一项精神属性 +2 级';
+                break;
+            case 'any_one':
+                hint = '起源增益：选择一项能力 +2 级';
+                break;
+            case 'any_two':
+                hint = '起源增益：选择两项能力 +2 级';
+                break;
+        }
+        
+        if (hint) {
+            return `
+                <div class="origin-step-hint">
+                    <span class="hint-icon">💡</span>
+                    <span class="hint-text">${hint}</span>
+                </div>
+            `;
+        }
+        return '';
+    }
 
     renderPowersSection(char) {
+        // 生成起源能力增益提示
+        const originPowerHint = this.renderOriginPowerHint(char);
+        
         return `
             <div class="sheet-section section-powers">
                 <div class="step-num">STEP 4</div>
@@ -345,14 +439,45 @@ export class CreationFlow {
                         <button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddPowerModal()">➕ 手动添加</button>
                     </div>
                 </div>
+                ${originPowerHint}
                 <div class="powers-stack">
                     ${char.powers.length > 0 ? char.powers.map((p, i) => this.renderPowerItem(p, i)).join('') : '<div class="empty-hint">暂未获得超常能力...</div>'}
                 </div>
             </div>
         `;
     }
+    
+    renderOriginPowerHint(char) {
+        if (!char.origin || !char.origin.mechanics) return '';
+        
+        const mech = char.origin.mechanics;
+        const hints = [];
+        
+        if (mech.bonusPower) {
+            hints.push('起源增益：额外获得1项特殊能力');
+        }
+        if (mech.guaranteedPower) {
+            hints.push(`起源增益：获得「${mech.guaranteedPower}」能力`);
+        }
+        if (mech.deviceLimit) {
+            hints.push('起源限制：所有能力带上"装置"限制');
+        }
+        
+        if (hints.length > 0) {
+            return `
+                <div class="origin-step-hint">
+                    <span class="hint-icon">💡</span>
+                    <span class="hint-text">${hints.join(' | ')}</span>
+                </div>
+            `;
+        }
+        return '';
+    }
 
     renderSpecialtiesSection(char) {
+        // 生成起源专长增益提示
+        const originSpecialtyHint = this.renderOriginSpecialtyHint(char);
+        
         return `
             <div class="sheet-section section-specialties">
                 <div class="step-num">STEP 5</div>
@@ -363,9 +488,24 @@ export class CreationFlow {
                         <button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddSpecialtyModal()">➕ 手动添加</button>
                     </div>
                 </div>
+                ${originSpecialtyHint}
                 <div class="specialties-flex">
                     ${char.specialties.length > 0 ? char.specialties.map((s, i) => this.renderSpecialtyItem(s, i)).join('') : '<div class="empty-hint">暂无特殊生活专长...</div>'}
                 </div>
+            </div>
+        `;
+    }
+    
+    renderOriginSpecialtyHint(char) {
+        if (!char.origin || !char.origin.mechanics) return '';
+        
+        const mech = char.origin.mechanics;
+        if (!mech.bonusSpecialties) return '';
+        
+        return `
+            <div class="origin-step-hint">
+                <span class="hint-icon">💡</span>
+                <span class="hint-text">起源增益：额外获得 ${mech.bonusSpecialties} 项专长</span>
             </div>
         `;
     }
@@ -467,6 +607,7 @@ export class CreationFlow {
         const mech = char.origin.mechanics;
         let html = '<div class="origin-config-row">';
 
+        // 天赋异禀：选择额外能力或属性增幅
         if (mech.choice === 'power_or_boost') {
             html += `
                 <select onchange="app.creationFlow.handleMutantChoice(this.value)">
@@ -476,15 +617,40 @@ export class CreationFlow {
             `;
         }
 
-        if (mech.statBoost?.target === 'any' || (mech.choice === 'power_or_boost' && char.originChoices.mutantChoice === 'boost')) {
+        // 选择增幅属性
+        if (mech.statBoost?.target === 'mental') {
             html += `
                 <select onchange="app.creationFlow.setOriginChoice('statBoost', this.value)">
-                    <option value="">选择增幅属性</option>
+                    <option value="">选择精神属性增幅</option>
+                    ${['intellect', 'awareness', 'willpower'].map(k => `<option value="${k}" ${char.originChoices.statBoost === k ? 'selected' : ''}>${ATTRIBUTE_NAMES[k]}</option>`).join('')}
+                </select>
+            `;
+        } else if (mech.statBoost?.target === 'any_one' || (mech.choice === 'power_or_boost' && char.originChoices.mutantChoice === 'boost')) {
+            html += `
+                <select onchange="app.creationFlow.setOriginChoice('statBoost', this.value)">
+                    <option value="">选择属性增幅</option>
                     ${getAttributeKeys().map(k => `<option value="${k}" ${char.originChoices.statBoost === k ? 'selected' : ''}>${ATTRIBUTE_NAMES[k]}</option>`).join('')}
                 </select>
             `;
+        } else if (mech.statBoost?.target === 'any_two') {
+            html += `
+                <div class="origin-config-group">
+                    <label>选择两项属性增幅</label>
+                    <div class="dual-select">
+                        <select onchange="app.creationFlow.setOriginChoice('statBoosts', [this.value, document.getElementById('second-stat-boost').value].filter(Boolean))">
+                            <option value="">第一项属性</option>
+                            ${getAttributeKeys().map(k => `<option value="${k}" ${char.originChoices.statBoosts?.[0] === k ? 'selected' : ''}>${ATTRIBUTE_NAMES[k]}</option>`).join('')}
+                        </select>
+                        <select id="second-stat-boost" onchange="app.creationFlow.setOriginChoice('statBoosts', [document.querySelector('.dual-select select:first-child').value, this.value].filter(Boolean))">
+                            <option value="">第二项属性</option>
+                            ${getAttributeKeys().map(k => `<option value="${k}" ${char.originChoices.statBoosts?.[1] === k ? 'selected' : ''}>${ATTRIBUTE_NAMES[k]}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            `;
         }
 
+        // 人造生命：获得维系生命能力
         if (mech.guaranteedPower === '维系生命') {
             html += `
                 <div class="origin-exchange-notice">
@@ -494,6 +660,7 @@ export class CreationFlow {
             `;
         }
 
+        // 受训：用能力交换额外专长
         if (mech.optionalExchange === 'power_for_specialties_plus_2') {
             html += `
                 <div class="origin-exchange-notice">
@@ -502,6 +669,7 @@ export class CreationFlow {
             `;
         }
 
+        // 天外来客：选择双起源
         if (mech.optionalExchange === 'double_roll_origins') {
             html += `
                 <div class="origin-exchange-notice">
