@@ -218,7 +218,10 @@ export class CreationFlow {
             case 4: // 专长
                 return char.specialties.length > 0;
             case 5: // 英雄信息
-                return char.name && char.qualities.some(q => q);
+                // 确保至少有3项特质且英雄名称不为空
+                const traits = char.qualities || [];
+                const filledTraits = traits.filter(t => t && t.trim()).length;
+                return char.name && filledTraits >= 3;
             default:
                 return true;
         }
@@ -229,6 +232,10 @@ export class CreationFlow {
     }
 
     renderIdentitySection(char) {
+        // 确保特质数组存在且至少有3项
+        if (!char.qualities) char.qualities = ['', '', ''];
+        while (char.qualities.length < 3) char.qualities.push('');
+        
         return `
             <div class="sheet-section section-identity">
                 <div class="step-num">STEP 1</div>
@@ -245,22 +252,29 @@ export class CreationFlow {
                                placeholder="输入英雄代号 (NAME)...">
                     </div>
                 </div>
-                <div class="qualities-grid">
-                    <div class="q-box">
-                        <label>身份 (IDENTITY)</label>
-                        <input type="text" value="${char.qualities[0] || ''}" 
-                               oninput="app.creationFlow.updateQuality(0, this.value)" placeholder="如：退役特工">
+                <div class="traits-section">
+                    <div class="traits-header">
+                        <h3>英雄特质 (TRAITS)</h3>
+                        <button class="btn btn-xs btn-primary" onclick="app.creationFlow.addTrait()">➕ 添加特质</button>
                     </div>
-                    <div class="q-box">
-                        <label>动机 (MOTIVATION)</label>
-                        <input type="text" value="${char.qualities[1] || ''}" 
-                               oninput="app.creationFlow.updateQuality(1, this.value)" placeholder="如：寻找真相">
+                    <div class="traits-inputs">
+                        ${char.qualities.map((trait, index) => `
+                            <div class="trait-input-group">
+                                <input type="text" value="${trait || ''}" 
+                                       oninput="app.creationFlow.updateTrait(${index}, this.value)" 
+                                       placeholder="输入特质 ${index + 1}...">
+                                ${index >= 3 ? `<button class="btn-icon-del" onclick="app.creationFlow.removeTrait(${index})")">✕</button>` : ''}
+                            </div>
+                        `).join('')}
                     </div>
-                    <div class="q-box">
-                        <label>羁绊 (BOND)</label>
-                        <input type="text" value="${char.qualities[2] || ''}" 
-                               oninput="app.creationFlow.updateQuality(2, this.value)" placeholder="如：唯一的伙伴">
-                    </div>
+                </div>
+                <div class="traits-cards">
+                    ${char.qualities.filter(t => t).map((trait, index) => `
+                        <div class="trait-card">
+                            <span class="trait-text">${trait}</span>
+                            <button class="btn-icon-del" onclick="app.creationFlow.removeTrait(${index})")">✕</button>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         `;
@@ -509,11 +523,30 @@ export class CreationFlow {
         }
     }
 
-    updateQuality(index, val) {
+    updateTrait(index, val) {
+        if (!this.characterGenerator.character.qualities) {
+            this.characterGenerator.character.qualities = ['', '', ''];
+        }
         this.characterGenerator.character.qualities[index] = val;
         // 检查英雄信息步骤是否完成
         if (this.currentStep === 5) {
             this.completedSteps[4] = this.isStepCompleted();
+        }
+        this.renderFullSheet();
+    }
+
+    addTrait() {
+        if (!this.characterGenerator.character.qualities) {
+            this.characterGenerator.character.qualities = ['', '', ''];
+        }
+        this.characterGenerator.character.qualities.push('');
+        this.renderFullSheet();
+    }
+
+    removeTrait(index) {
+        if (this.characterGenerator.character.qualities && this.characterGenerator.character.qualities.length > 3) {
+            this.characterGenerator.character.qualities.splice(index, 1);
+            this.renderFullSheet();
         }
     }
 

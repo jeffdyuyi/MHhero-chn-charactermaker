@@ -70,11 +70,17 @@ export function calculateDerivedStats(character) {
     const stamina = (character.attributes?.strength || 1) + (character.attributes?.willpower || 1);
 
     // 基础决意: 6 - 有效能力数量 (最低为1)
-    // 根据规则，“能力提升”不计入决意等级判定
+    // 根据规则，"能力提升"不计入决意等级判定
     const effectivePowers = (character.powers || []).filter(p => p.name !== '能力提升');
-    let resolve = Math.max(1, 6 - effectivePowers.length);
+    
+    // 统计等级大于6的属性数量（视为特殊能力）
+    const highLevelAttributes = Object.values(character.attributes || {}).filter(level => level > 6).length;
+    
+    // 计算总消耗：特殊能力数量 + 高等级属性数量
+    const totalCost = effectivePowers.length + highLevelAttributes;
+    let resolve = Math.max(1, 6 - totalCost);
 
-    // 检查是否有“概率控制”能力
+    // 检查是否有"概率控制"能力
     const probControl = character.powers?.find(p => p.name === '概率控制');
     if (probControl) {
         resolve += probControl.level;
