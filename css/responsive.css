@@ -44,11 +44,34 @@
     .attributes-grid {
         grid-template-columns: 1fr;
     }
+
+    .controls-overlay {
+        flex-direction: column;
+        gap: 8px;
+        position: relative;
+        top: 0;
+    }
+
+    .action-btns {
+        margin-left: 0 !important;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
 }
 
 @media (max-width: 480px) {
     .sheet-container {
         box-shadow: 6px 6px 0px var(--black);
+        border-width: 2px;
     }
 
     .header-content {
@@ -57,6 +80,68 @@
 
     .stat-bubble .value {
         font-size: var(--font-size-xl);
+    }
+
+    .main-nav {
+        gap: 5px;
+    }
+
+    .nav-btn {
+        padding: 8px;
+    }
+
+    .nav-icon {
+        font-size: 16px;
+    }
+
+    .sheet-section {
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    h4 {
+        font-size: 1.1rem;
+    }
+
+    p {
+        font-size: 14px;
+    }
+
+    input, select, textarea {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .saved-characters-list {
+        grid-template-columns: 1fr;
+    }
+
+    .help-content {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* 移动端触摸优化 */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    input, select, textarea {
+        touch-action: manipulation;
     }
 }
 
