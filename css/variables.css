@@ -57,14 +57,30 @@
     --bg-header: #ffffff;
     --bg-footer: #ffffff;
 
-    /* --- 英雄渐变（废弃，改为深色） --- */
-    --hero-gradient: #000000;
+    /* --- 英雄渐变 --- */
+    --hero-gradient: var(--bg-page);
 
     /* --- 边框 --- */
-    --border-color: var(--color-border-dark);
-    --border-dark: var(--color-border-light);
-    --border-radius: 6px;     /* 适中圆角 */
+    --border-color: var(--comic-border-color);
+    --border-dark: var(--comic-border-color);
+    --border-radius: 6px;
     --border-radius-lg: 12px;
+
+    /* --- 语义化叠加与悬浮色（切换主题只需改这里）--- */
+    --color-overlay-dark: rgba(0, 0, 0, 0.5);   /* 模态背景遮罩 */
+    --color-hover-bg: rgba(0, 0, 0, 0.04);       /* 按钮/Logo 悬浮背景 */
+    --color-hover-border: rgba(0, 0, 0, 0.2);    /* 悬浮时的边框色 */
+    --color-feature-bg: rgba(0, 0, 0, 0.04);     /* feature 标签背景 */
+    --color-feature-border: rgba(0, 0, 0, 0.15); /* feature 标签边框 */
+    --color-subtle-bg: rgba(0, 0, 0, 0.06);      /* 极淡的内部区块背景 */
+
+    /* --- 危险色 --- */
+    --color-danger: #c0392b;
+    --color-danger-bg: rgba(192, 57, 43, 0.08);
+
+    /* --- 滚动条颜色 --- */
+    --scrollbar-thumb: var(--comic-border-color);
+    --scrollbar-track: var(--bg-secondary);
 
     /* --- 间距（基于 8px） --- */
     --spacing-xs: 4px;

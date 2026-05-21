@@ -13,16 +13,15 @@
 /* --- 工具栏 --- */
 .controls-overlay {
     position: sticky;
-    top: 68px;  /* header 高度 */
+    top: 68px;
     z-index: 90;
     display: flex;
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing);
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: var(--pure-white);
     padding: 10px 14px;
     border: var(--comic-border-width) solid var(--comic-border-color);
+    box-shadow: var(--comic-shadow);
     border-radius: var(--border-radius-lg);
 }
 
@@ -70,19 +69,19 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.4);
+    background: var(--color-overlay-dark);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
 }
 
 .lock-message {
     background: var(--pure-white);
-    border: 2px solid var(--black);
-    box-shadow: 4px 4px 0px rgba(0,0,0,1);
+    border: var(--comic-border-width) solid var(--comic-border-color);
+    box-shadow: var(--comic-shadow);
     padding: 12px 24px;
     border-radius: var(--border-radius);
     font-weight: var(--fw-bold);
-    color: var(--black);
+    color: var(--charcoal-ink);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -336,11 +335,11 @@
 }
 
 .section-combat .panel-header {
-    border-bottom-color: rgba(255, 255, 255, 0.15);
+    border-bottom-color: var(--color-hover-border);
 }
 
 .section-combat .panel-header h3 {
-    color: var(--tw-80);
+    color: var(--text-secondary);
 }
 
 .combat-grid {
@@ -365,32 +364,32 @@
     font-weight: var(--fw-semibold);
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: var(--tw-80);
+    color: var(--text-muted);
 }
 
 .c-stat .val.large {
     font-size: 44px;
     font-weight: var(--fw-emphasis);
-    color: var(--tw-95);
+    color: var(--charcoal-ink);
     line-height: var(--line-height-display);
     letter-spacing: -1px;
 }
 
 .combat-points-box {
     text-align: right;
-    border-left: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 1px solid var(--color-hover-border);
     padding-left: 24px;
 }
 
 .point-val {
     font-size: 24px;
     font-weight: var(--fw-emphasis);
-    color: var(--tw-95);
+    color: var(--charcoal-ink);
 }
 
 .point-val.negative {
-    background: rgba(203, 183, 251, 0.2);
-    color: var(--lavender-glow);
+    background: var(--color-subtle-bg);
+    color: var(--charcoal-ink);
     padding: 2px 10px;
     border-radius: var(--border-radius);
 }
@@ -497,8 +496,8 @@
 }
 
 .btn-add-tag:hover {
-    border-color: var(--amethyst-link);
-    background: rgba(113, 76, 182, 0.05);
+    border-color: var(--charcoal-ink);
+    background: var(--color-hover-bg);
 }
 
 /* 能力控制 */
@@ -510,8 +509,8 @@
 
 .p-level {
     font-weight: var(--fw-semibold);
-    background: var(--lavender-glow);
-    color: var(--charcoal-ink);
+    background: var(--charcoal-ink);
+    color: var(--pure-white);
     padding: 2px 8px;
     font-size: 12px;
     border-radius: var(--border-radius);

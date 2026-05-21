@@ -4,15 +4,14 @@
 
 /* --- 应用头部 --- */
 .app-header {
-    background: rgba(27, 25, 56, 0.97);
-    color: var(--pure-white);
+    background: var(--pure-white);
+    color: var(--charcoal-ink);
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: none;
+    border-bottom: var(--comic-border-width) solid var(--comic-border-color);
     padding: 0;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 2px 0 var(--comic-border-color);
 }
 
 .header-content {
@@ -38,8 +37,8 @@
 }
 
 .logo:hover {
-    border-color: var(--tw-20);
-    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--color-hover-border);
+    background: var(--color-hover-bg);
 }
 
 .logo-icon {
@@ -49,7 +48,7 @@
 .logo h1 {
     font-size: var(--font-size-md);
     font-weight: var(--fw-semibold);
-    color: var(--tw-95);
+    color: var(--charcoal-ink);
     letter-spacing: -0.3px;
     line-height: 1;
 }
@@ -57,7 +56,7 @@
 .logo .subtitle {
     font-size: var(--font-size-xs);
     font-weight: var(--fw-body);
-    color: var(--tw-80);
+    color: var(--text-muted);
     display: block;
     line-height: 1;
     margin-top: 2px;
@@ -74,7 +73,7 @@
     align-items: center;
     gap: var(--spacing-xs);
     padding: 7px 16px;
-    color: var(--tw-80);
+    color: var(--text-secondary);
     border: 1px solid transparent;
     font-weight: var(--fw-body);
     font-size: var(--font-size-sm);
@@ -84,9 +83,9 @@
 }
 
 .nav-btn:hover {
-    color: var(--tw-95);
-    background: rgba(255, 255, 255, 0.07);
-    border-color: var(--tw-20);
+    color: var(--charcoal-ink);
+    background: var(--color-hover-bg);
+    border-color: var(--comic-border-color);
     transform: none;
     box-shadow: var(--comic-shadow);
 }
@@ -151,7 +150,7 @@
 .hero-title {
     font-size: var(--font-size-huge);
     font-weight: var(--fw-emphasis);
-    color: var(--tw-95);
+    color: var(--charcoal-ink);
     margin-bottom: var(--spacing-sm);
     letter-spacing: -1.32px;
     line-height: var(--line-height-display);
@@ -160,7 +159,7 @@
 
 .hero-subtitle {
     font-size: var(--font-size-xl);
-    color: var(--tw-80);
+    color: var(--text-secondary);
     margin-bottom: var(--spacing-xl);
     font-weight: var(--fw-body);
     line-height: 1.25;
@@ -175,10 +174,10 @@
 
 .feature {
     padding: 6px 16px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid var(--tw-20);
+    background: var(--color-feature-bg);
+    border: 1px solid var(--color-feature-border);
     border-radius: var(--border-radius);
-    color: var(--tw-95);
+    color: var(--charcoal-ink);
     font-size: var(--font-size-sm);
     font-weight: var(--fw-body);
     text-transform: none;

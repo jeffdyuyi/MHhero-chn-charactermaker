@@ -61,8 +61,8 @@
 }
 
 .btn-danger:hover:not(:disabled) {
-    border-color: #c0392b;
-    color: #c0392b;
+    border-color: var(--color-danger);
+    color: var(--color-danger);
     opacity: 1;
 }
 
@@ -143,7 +143,7 @@
 }
 
 .btn-hero-ghost:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--color-hover-bg);
     opacity: 1;
 }
 
@@ -300,7 +300,7 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(27, 25, 56, 0.5);
+    background: var(--color-overlay-dark);
     backdrop-filter: blur(4px);
     z-index: var(--z-index-modal);
     align-items: center;
@@ -499,8 +499,7 @@
    加载状态
    ============================================================ */
 .loading-overlay {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(4px);
+    background: var(--pure-white);
     color: var(--charcoal-ink);
 }
 
@@ -611,8 +610,8 @@
 }
 
 .origin-step-hint {
-    background: rgba(203, 183, 251, 0.15);
-    border: 1px solid var(--lavender-glow);
+    background: var(--color-hover-bg);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     padding: 8px 12px;
     margin-bottom: 12px;
     border-radius: var(--border-radius);
@@ -990,8 +989,8 @@
 }
 
 .btn-icon-del:hover {
-    color: #c0392b;
-    background: rgba(192, 57, 43, 0.08);
+    color: var(--color-danger);
+    background: var(--color-danger-bg);
     transform: none;
     box-shadow: var(--comic-shadow);
 }
