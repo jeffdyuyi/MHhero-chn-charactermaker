@@ -1,59 +1,72 @@
 :root {
     /* ====================================================
-       Superhuman Design System Tokens
-       Reference: superhuman/DESIGN.md
+       Supabase Dark x Comic Design System Tokens
     ==================================================== */
 
-    /* --- 核心色板 --- */
-    --mysteria-purple: #1b1938;        /* Hero 渐变背景 */
-    --lavender-glow: #cbb7fb;          /* 主要强调色（唯一的高饱和度色） */
-    --charcoal-ink: #292827;           /* 亮面上的主要文字/标题 */
-    --amethyst-link: #714cb6;          /* 链接文字色 */
-    --pure-white: #ffffff;             /* 页面主体背景 */
-    --warm-cream: #e9e5dd;             /* 按钮背景（温暖奶油） */
-    --parchment-border: #dcd7d3;       /* 卡片/分割线边框 */
+    /* --- Supabase Brand --- */
+    --color-green: #3ecf8e;
+    --color-green-link: #00c573;
+    --color-green-border: rgba(62, 207, 142, 0.3);
+
+    /* --- Neutral Scale (Supabase) --- */
+    --color-near-black: #0f0f0f;
+    --color-dark: #171717;
+    --color-dark-border: #242424;
+    --color-border-dark: #2e2e2e;
+    --color-mid-border: #363636;
+    --color-border-light: #393939;
+    --color-charcoal: #434343;
+    --color-dark-gray: #4d4d4d;
+    --color-mid-gray: #898989;
+    --color-light-gray: #b4b4b4;
+    --color-near-white: #efefef;
+    --color-off-white: #fafafa;
+
+    /* --- 核心色板映射 --- */
+    --mysteria-purple: #171717;        /* 去除紫色渐变，统一黑底 */
+    --lavender-glow: var(--color-green);  /* 将紫色强调色换为绿色 */
+    --charcoal-ink: var(--color-off-white); /* 原黑墨水变为白字 */
+    --amethyst-link: var(--color-green-link); /* 链接色 */
+    --pure-white: #121212;             /* 深色模式极黑 */
+    --warm-cream: var(--color-dark-border); /* 按钮默认底色 */
+    --parchment-border: var(--color-border-dark); /* 边框 */
 
     /* --- 透明叠加 --- */
-    --tw-95: rgba(255, 255, 255, 0.95);  /* 深色背景上的主文字 */
-    --tw-80: rgba(255, 255, 255, 0.80);  /* 深色背景上的次要文字 */
-    --tw-20: rgba(255, 255, 255, 0.20);  /* Hero 区域的幽灵边框 */
+    --tw-95: rgba(250, 250, 250, 0.95);
+    --tw-80: rgba(250, 250, 250, 0.80);
+    --tw-20: rgba(250, 250, 250, 0.20);
 
-    /* --- 语义化别名（保持向后兼容） --- */
-    --white: var(--pure-white);
-    --black: var(--charcoal-ink);
-    --primary-color: var(--charcoal-ink);
-    --accent-color: var(--lavender-glow);
-    --secondary-color: var(--amethyst-link);
+    /* --- 语义化别名 --- */
+    --white: var(--color-near-black);
+    --black: var(--color-off-white);
+    --primary-color: var(--color-off-white);
+    --accent-color: var(--color-green);
+    --secondary-color: var(--color-mid-gray);
 
     /* --- 文本颜色 --- */
-    --text-primary: var(--charcoal-ink);
-    --text-secondary: rgba(41, 40, 39, 0.65);
-    --text-muted: rgba(41, 40, 39, 0.45);
-    --text-on-dark: var(--tw-95);
+    --text-primary: var(--color-off-white);
+    --text-secondary: var(--color-light-gray);
+    --text-muted: var(--color-mid-gray);
+    --text-on-dark: var(--color-off-white);
 
     /* --- 背景颜色 --- */
-    --bg-body: var(--pure-white);
-    --bg-card: var(--pure-white);
-    --bg-secondary: #f7f5f2;
-    --bg-header: rgba(27, 25, 56, 0.96);
-    --bg-footer: var(--pure-white);
+    --bg-page: #171717;
+    --bg-body: var(--bg-page);
+    --bg-card: #1c1c1c;
+    --bg-secondary: #242424;
+    --bg-header: rgba(23, 23, 23, 0.92);
+    --bg-footer: #121212;
 
-    /* --- 英雄渐变 --- */
-    --hero-gradient: linear-gradient(
-        175deg,
-        var(--mysteria-purple) 0%,
-        #2a1f5e 45%,
-        #4a2d7a 72%,
-        var(--lavender-glow) 100%
-    );
+    /* --- 英雄渐变（废弃，改为深色） --- */
+    --hero-gradient: var(--bg-page);
 
     /* --- 边框 --- */
-    --border-color: var(--parchment-border);
-    --border-dark: var(--charcoal-ink);
-    --border-radius: 8px;     /* 小元素：按钮、输入框 */
-    --border-radius-lg: 16px; /* 大元素：卡片、容器 */
+    --border-color: var(--color-border-dark);
+    --border-dark: var(--color-border-light);
+    --border-radius: 6px;     /* 适中圆角 */
+    --border-radius-lg: 12px;
 
-    /* --- 间距（基准 8px） --- */
+    /* --- 间距（基于 8px） --- */
     --spacing-xs: 4px;
     --spacing-sm: 8px;
     --spacing: 16px;
@@ -63,8 +76,10 @@
     --spacing-xxl: 80px;
 
     /* --- 字体 --- */
-    --font-family: system-ui, -apple-system, "Segoe UI", Roboto, Oxygen,
-        Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    --font-primary: system-ui, -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-mono: 'Source Code Pro', 'Office Code Pro', Menlo, monospace;
+    --font-family: var(--font-primary);
+    
     --font-size-xs: 12px;
     --font-size-sm: 14px;
     --font-size-md: 16px;
@@ -73,35 +88,34 @@
     --font-size-xxl: 28px;
     --font-size-huge: 48px;
 
-    /* Superhuman 非标准字重轴 */
-    --fw-body: 460;
-    --fw-emphasis: 540;
+    /* 字重 */
+    --fw-body: 400;
+    --fw-emphasis: 500;
     --fw-semibold: 600;
     --fw-bold: 700;
 
-    /* 向后兼容 */
     --font-weight-normal: var(--fw-body);
     --font-weight-medium: var(--fw-emphasis);
     --font-weight-semibold: var(--fw-semibold);
     --font-weight-bold: var(--fw-bold);
 
     /* --- 行高 --- */
-    --line-height-display: 0.96;   /* 大标题：极度压缩 */
-    --line-height-normal: 1.50;    /* 正文：宽松 */
-    --line-height-relaxed: 1.70;
+    --line-height-display: 1.00;
+    --line-height-normal: 1.50;
+    --line-height-relaxed: 1.75;
 
-    /* --- 阴影（极度克制） --- */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.10);
+    /* --- 阴影（深色模式克制） --- */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.6);
 
-    /* 向后兼容（漫画阴影别名已废弃，改用柔和版） */
-    --comic-shadow: var(--shadow-md);
-    --comic-shadow-sm: var(--shadow-sm);
-    --comic-shadow-hover: var(--shadow-lg);
-    --comic-border-width: 1px;
-    --comic-border-color: var(--parchment-border);
-    --box-shadow: var(--shadow-sm);
+    /* 漫画感恢复（深色背景下的荧光或硬边阴影） */
+    --comic-shadow: 4px 4px 0px rgba(62, 207, 142, 0.4);
+    --comic-shadow-sm: 2px 2px 0px rgba(62, 207, 142, 0.6);
+    --comic-shadow-hover: 6px 6px 0px rgba(62, 207, 142, 0.8);
+    --comic-border-width: 2px;
+    --comic-border-color: var(--color-green-border);
+    --box-shadow: var(--comic-shadow);
 
     /* --- 过渡 --- */
     --transition-fast: 0.15s ease;

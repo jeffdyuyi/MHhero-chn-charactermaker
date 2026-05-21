@@ -22,7 +22,7 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 10px 14px;
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     border-radius: var(--border-radius-lg);
 }
 
@@ -32,9 +32,9 @@
     flex-direction: column;
     gap: 0;
     background: var(--pure-white);
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--comic-shadow-hover);
     position: relative;
     max-width: 840px;
     margin: 0 auto;
@@ -46,7 +46,7 @@
 /* --- 角色卡各区块 --- */
 .sheet-section {
     padding: var(--spacing-md) var(--spacing-lg);
-    border-bottom: 1px solid var(--parchment-border);
+    border-bottom: var(--comic-border-width) solid var(--comic-border-color);
     position: relative;
 }
 
@@ -82,7 +82,7 @@
     align-items: center;
     margin-bottom: var(--spacing);
     padding-bottom: var(--spacing-sm);
-    border-bottom: 1px solid var(--parchment-border);
+    border-bottom: var(--comic-border-width) solid var(--comic-border-color);
 }
 
 .panel-header h3 {
@@ -104,7 +104,7 @@
     font-size: 28px;
     font-weight: var(--fw-emphasis);
     border: none;
-    border-bottom: 1px solid var(--parchment-border);
+    border-bottom: var(--comic-border-width) solid var(--comic-border-color);
     padding: 8px 0 12px;
     margin-bottom: var(--spacing);
     background: transparent;
@@ -118,7 +118,7 @@
 .identity-header input:focus {
     border-bottom-color: var(--charcoal-ink);
     outline: none;
-    box-shadow: none;
+    box-shadow: var(--comic-shadow);
     transform: none;
 }
 
@@ -140,7 +140,7 @@
 
 .q-box input {
     width: 100%;
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     padding: 8px 10px;
     font-size: var(--font-size-sm);
     border-radius: var(--border-radius);
@@ -151,7 +151,7 @@
    ============================================================ */
 .origin-display {
     background: var(--bg-secondary);
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     padding: var(--spacing);
     border-radius: var(--border-radius);
 }
@@ -185,7 +185,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 14px;
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     background: var(--pure-white);
     border-radius: var(--border-radius);
     transition: border-color var(--transition-fast);
@@ -226,7 +226,7 @@
 }
 
 .power-panel-card {
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     padding: var(--spacing);
     background: var(--pure-white);
     border-radius: var(--border-radius-lg);
@@ -235,7 +235,7 @@
 
 .power-panel-card:hover {
     border-color: var(--charcoal-ink);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--comic-shadow-hover);
 }
 
 .card-top {
@@ -275,7 +275,7 @@
 }
 
 .spec-tag-card {
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     padding: 5px 12px;
     background: var(--pure-white);
     display: flex;
@@ -376,7 +376,7 @@
 .bio-container textarea {
     width: 100%;
     min-height: 120px;
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     padding: var(--spacing);
     font-size: var(--font-size-sm);
     line-height: var(--line-height-normal);
@@ -407,7 +407,7 @@
 .btn-step {
     width: 24px;
     height: 24px;
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     background: var(--pure-white);
     font-size: 14px;
     font-weight: var(--fw-semibold);
@@ -431,7 +431,7 @@
 .tag {
     font-size: 11px;
     padding: 3px 8px;
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     font-weight: var(--fw-semibold);
     border-radius: var(--border-radius);
     color: var(--charcoal-ink);

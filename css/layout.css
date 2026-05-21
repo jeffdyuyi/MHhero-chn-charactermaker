@@ -16,7 +16,7 @@
 }
 
 .header-content {
-    max-width: 1200px;
+    max-width: 1440px;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
     display: flex;
@@ -88,7 +88,7 @@
     background: rgba(255, 255, 255, 0.07);
     border-color: var(--tw-20);
     transform: none;
-    box-shadow: none;
+    box-shadow: var(--comic-shadow);
 }
 
 .nav-btn.active {
@@ -115,7 +115,7 @@
     padding: var(--spacing-md);
     font-size: var(--font-size-sm);
     font-weight: var(--fw-body);
-    border-top: 1px solid var(--parchment-border);
+    border-top: var(--comic-border-width) solid var(--comic-border-color);
 }
 
 /* --- Hero 区域 --- */
@@ -128,7 +128,7 @@
     text-align: center;
     position: relative;
     overflow: hidden;
-    box-shadow: none;
+    box-shadow: var(--comic-shadow);
 }
 
 /* 渐变淡出过渡 */
@@ -194,16 +194,16 @@
 
 .mode-card {
     background: var(--pure-white);
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     border-radius: var(--border-radius-lg);
     display: flex;
     flex-direction: column;
     transition: box-shadow var(--transition-normal), transform var(--transition-normal);
-    box-shadow: none;
+    box-shadow: var(--comic-shadow);
 }
 
 .mode-card:hover {
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--comic-shadow-hover);
     transform: translateY(-3px);
 }
 
@@ -215,7 +215,7 @@
     align-items: center;
     gap: var(--spacing);
     border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-    border-bottom: 1px solid var(--parchment-border);
+    border-bottom: var(--comic-border-width) solid var(--comic-border-color);
 }
 
 .mode-header h3 {
@@ -227,7 +227,7 @@
 
 .mode-tag {
     padding: 2px 8px;
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     font-size: var(--font-size-xs);
     font-weight: var(--fw-semibold);
     border-radius: var(--border-radius);
@@ -242,7 +242,7 @@
 
 .mode-features li {
     padding: 7px 0;
-    border-bottom: 1px solid var(--parchment-border);
+    border-bottom: var(--comic-border-width) solid var(--comic-border-color);
     font-weight: var(--fw-body);
     font-size: var(--font-size-sm);
     color: var(--text-secondary);
@@ -258,14 +258,14 @@
 .mode-footer {
     padding: var(--spacing) var(--spacing-md);
     background: var(--bg-secondary);
-    border-top: 1px solid var(--parchment-border);
+    border-top: var(--comic-border-width) solid var(--comic-border-color);
     border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
 }
 
 /* --- 快速操作 --- */
 .quick-actions {
     background: var(--pure-white);
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     padding: var(--spacing-md);
     border-radius: var(--border-radius-lg);
 }
@@ -281,7 +281,7 @@
 
 .action-card {
     padding: var(--spacing);
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     background: var(--pure-white);
     border-radius: var(--border-radius);
     cursor: pointer;
@@ -314,24 +314,24 @@
 
 .step-content {
     background: var(--pure-white);
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     padding: var(--spacing-xl);
     border-radius: var(--border-radius-lg);
     min-height: 500px;
-    box-shadow: none;
+    box-shadow: var(--comic-shadow);
 }
 
 .creation-footer {
     margin-top: var(--spacing);
     padding: var(--spacing);
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     background: var(--pure-white);
     border-radius: var(--border-radius-lg);
 }
 
 /* --- 帮助页面 --- */
 .help-section {
-    border: 1px solid var(--parchment-border);
+    border: var(--comic-border-width) solid var(--comic-border-color);
     padding: var(--spacing-xl);
     background: var(--pure-white);
     border-radius: var(--border-radius-lg);
@@ -346,7 +346,7 @@
     font-weight: var(--fw-emphasis);
     font-size: var(--font-size-lg);
     letter-spacing: -0.3px;
-    border-bottom: 1px solid var(--parchment-border);
+    border-bottom: var(--comic-border-width) solid var(--comic-border-color);
     padding-bottom: var(--spacing-sm);
 }
 
@@ -375,7 +375,7 @@
     align-items: center;
     margin-bottom: var(--spacing);
     padding-bottom: var(--spacing-sm);
-    border-bottom: 1px solid var(--parchment-border);
+    border-bottom: var(--comic-border-width) solid var(--comic-border-color);
 }
 
 .section-header h2 {
