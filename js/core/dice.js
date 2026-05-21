@@ -8,7 +8,11 @@
  * @returns {number} 1-6的随机数
  */
 export function rollD6() {
-    return Math.floor(Math.random() * 6) + 1;
+    // 使用 Web Crypto API 实现真随机
+    const array = new Uint32Array(1);
+    window.crypto.getRandomValues(array);
+    const trueRandom = array[0] / (0xffffffff + 1);
+    return Math.floor(trueRandom * 6) + 1;
 }
 
 /**

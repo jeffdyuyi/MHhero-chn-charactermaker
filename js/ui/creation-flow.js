@@ -88,33 +88,68 @@ export class CreationFlow {
 
         if (editingId) {
             const char = this.app.getCharacterById(editingId);
-            if (char) this.characterGenerator.character = JSON.parse(JSON.stringify(char));
+            if (char) {
+                this.characterGenerator.character = JSON.parse(JSON.stringify(char));
+                this.heroType = char.heroType || 'destined_hero';
+                this.renderFullSheet();
+            }
         } else {
-            // 只生成基础结构，不生成具体内容
-            this.characterGenerator.character = {
-                name: '',
-                description: '',
-                qualities: ['', '', ''],
-                origin: null,
-                attributes: {
-                    brawn: 0,
-                    coordination: 0,
-                    strength: 0,
-                    intellect: 0,
-                    awareness: 0,
-                    willpower: 0
-                },
-                powers: [],
-                specialties: [],
-                equipment: [],
-                stamina: 0,
-                resolve: 0,
-                originChoices: {},
-                mode: 'random',
-                id: Date.now(),
-                createdAt: new Date().toISOString()
-            };
+            // 打开模式选择弹窗
+            openModal({
+                title: '选择英雄命运',
+                content: `
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <p style="margin-bottom: 15px; color: var(--text-secondary);">决定你的英雄诞生方式：</p>
+                        
+                        <div class="hero-type-card" style="border: var(--comic-border-width) solid var(--charcoal-ink); padding: 15px; margin-bottom: 15px; border-radius: var(--border-radius); text-align: left; cursor: pointer; transition: background 0.2s;" onclick="app.creationFlow.confirmHeroType('true_hero')">
+                            <h4 style="margin: 0 0 5px 0; color: var(--charcoal-ink);">真实英雄 (硬核模式)</h4>
+                            <p style="margin: 0; font-size: 12px; color: var(--text-muted);">
+                                只能随机投掷1次，接受命运的安排。特点是很有可能随机出并不理想的角色。这是成为真实英雄必须承担的风险。
+                            </p>
+                        </div>
+                        
+                        <div class="hero-type-card" style="border: var(--comic-border-width) solid var(--charcoal-ink); padding: 15px; border-radius: var(--border-radius); text-align: left; cursor: pointer; transition: background 0.2s;" onclick="app.creationFlow.confirmHeroType('destined_hero')">
+                            <h4 style="margin: 0 0 5px 0; color: var(--charcoal-ink);">天命英雄 (普通模式)</h4>
+                            <p style="margin: 0; font-size: 12px; color: var(--text-muted);">
+                                在主持人允许的情况下，你可以拥有多次重掷机会，直到打造出心仪的英雄。
+                            </p>
+                        </div>
+                    </div>
+                `,
+                footer: `<button class="btn btn-outline" onclick="closeModal(); app.showListView()">取消</button>`
+            });
         }
+    }
+
+    confirmHeroType(type) {
+        this.heroType = type;
+        closeModal();
+        
+        // 生成基础结构
+        this.characterGenerator.character = {
+            name: '',
+            description: '',
+            qualities: ['', '', ''],
+            origin: null,
+            attributes: {
+                brawn: 0,
+                coordination: 0,
+                strength: 0,
+                intellect: 0,
+                awareness: 0,
+                willpower: 0
+            },
+            powers: [],
+            specialties: [],
+            equipment: [],
+            stamina: 0,
+            resolve: 0,
+            originChoices: {},
+            mode: 'random',
+            heroType: type, // 记录类型
+            id: Date.now(),
+            createdAt: new Date().toISOString()
+        };
 
         this.renderFullSheet();
     }
@@ -286,7 +321,7 @@ export class CreationFlow {
                 <div class="step-num">STEP 1</div>
                 <div class="panel-header">
                     <h3>能力起源 (ORIGIN)</h3>
-                    <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollOrigin()">🎲 随机生成</button>
+                    ${!(this.heroType === 'true_hero' && char.origin) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollOrigin()">🎲 随机生成</button>` : ''}
                 </div>
                 <div class="origin-display">
                     <div class="origin-type-card">
@@ -360,7 +395,7 @@ export class CreationFlow {
                         <h3 style="margin: 0;">关键属性 (ATTRIBUTES)</h3>
                         ${this._pendingBoostTokens > 0 ? `<span class="badge" style="background: var(--lavender-glow); color: white;">拥有 ${this._pendingBoostTokens} 个 +2 升级点数</span>` : ''}
                     </div>
-                    <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机生成</button>
+                    ${!(this.heroType === 'true_hero' && Object.values(char.attributes).some(v => v > 0)) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机生成</button>` : ''}
                 </div>
                 ${originAttributeHint}
                 <div class="attributes-stack">
@@ -425,7 +460,7 @@ export class CreationFlow {
                         ${this._pendingBoostTokens > 0 ? `<span class="badge" style="background: var(--lavender-glow); color: white;">拥有 ${this._pendingBoostTokens} 个 +2 升级点数</span>` : ''}
                     </div>
                     <div class="p-actions">
-                        <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机生成</button>
+                        ${!(this.heroType === 'true_hero' && char.powers.length > 0) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机生成</button>` : ''}
                         <button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddPowerModal()">➕ 手动添加</button>
                     </div>
                 </div>
@@ -449,7 +484,7 @@ export class CreationFlow {
                 <div class="panel-header">
                     <h3>生活专长 (SPECIALTIES)</h3>
                     <div class="s-actions">
-                        <button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollSpecialties()">🎲 随机生成</button>
+                        ${!(this.heroType === 'true_hero' && char.specialties.length > 0) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollSpecialties()">🎲 随机生成</button>` : ''}
                         <button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddSpecialtyModal()">➕ 手动添加</button>
                     </div>
                 </div>
