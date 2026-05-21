@@ -1,22 +1,30 @@
-/* 响应式布局 - 一页式角色卡适配 */
+/* ============================================================
+   响应式布局 - Superhuman 断点适配
+   ============================================================ */
 
+/* --- 平板 / 中宽屏 --- */
 @media (max-width: 900px) {
     .one-page-app {
-        padding: 10px;
+        padding: var(--spacing-sm);
     }
 
     .sheet-container {
-        padding: 15px;
+        border-radius: var(--border-radius);
+    }
+
+    .section-title {
+        font-size: 36px;
     }
 }
 
+/* --- 手机横屏 / 平板竖屏 --- */
 @media (max-width: 768px) {
     .logo-icon {
-        font-size: 24px;
+        font-size: 20px;
     }
 
     .logo h1 {
-        font-size: 1.2rem;
+        font-size: var(--font-size-md);
     }
 
     .logo .subtitle {
@@ -27,29 +35,21 @@
         display: none;
     }
 
-    .qualities-inputs {
+    .qualities-grid {
         grid-template-columns: 1fr;
-        gap: 8px;
+        gap: var(--spacing-sm);
     }
 
-    .stats-row {
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .stat-bubble {
-        flex: 1 1 40%;
-    }
-
-    .attributes-grid {
+    .attributes-stack {
         grid-template-columns: 1fr;
     }
 
     .controls-overlay {
         flex-direction: column;
-        gap: 8px;
+        gap: var(--spacing-sm);
         position: relative;
         top: 0;
+        border-radius: var(--border-radius);
     }
 
     .action-btns {
@@ -58,65 +58,87 @@
     }
 
     .btn {
-        padding: 8px 12px;
-        font-size: 14px;
+        padding: 8px 14px;
+        font-size: var(--font-size-sm);
     }
 
     .btn-sm {
         padding: 6px 10px;
-        font-size: 12px;
+        font-size: var(--font-size-xs);
+    }
+
+    .mode-selection {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+        font-size: 36px;
+        letter-spacing: -0.8px;
+    }
+
+    .hero-subtitle {
+        font-size: var(--font-size-md);
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .header-actions {
+        width: 100%;
+        flex-wrap: wrap;
     }
 }
 
+/* --- 手机竖屏 --- */
 @media (max-width: 480px) {
-    .sheet-container {
-        box-shadow: 6px 6px 0px var(--black);
-        border-width: 2px;
+    .sheet-section {
+        padding: var(--spacing) var(--spacing);
     }
 
     .header-content {
-        padding: 10px;
+        padding: 0 var(--spacing);
     }
 
-    .stat-bubble .value {
-        font-size: var(--font-size-xl);
+    .main-content {
+        padding: var(--spacing);
     }
 
     .main-nav {
-        gap: 5px;
+        gap: 4px;
     }
 
     .nav-btn {
-        padding: 8px;
+        padding: 7px 10px;
     }
 
     .nav-icon {
         font-size: 16px;
     }
 
-    .sheet-section {
-        margin-bottom: 20px;
-    }
-
     h2 {
-        font-size: 1.4rem;
+        font-size: var(--font-size-xl);
     }
 
     h3 {
-        font-size: 1.2rem;
+        font-size: var(--font-size-lg);
     }
 
     h4 {
-        font-size: 1.1rem;
+        font-size: var(--font-size-md);
     }
 
     p {
-        font-size: 14px;
+        font-size: var(--font-size-sm);
     }
 
-    input, select, textarea {
-        font-size: 14px;
-        padding: 8px;
+    input,
+    select,
+    textarea {
+        font-size: var(--font-size-sm);
+        padding: 8px 10px;
     }
 
     .saved-characters-list {
@@ -126,9 +148,21 @@
     .help-content {
         grid-template-columns: 1fr !important;
     }
+
+    .combat-main-box {
+        gap: 20px;
+    }
+
+    .c-stat .val.large {
+        font-size: 36px;
+    }
+
+    .mod-modal-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* 移动端触摸优化 */
+/* --- 触摸屏优化 --- */
 @media (hover: none) and (pointer: coarse) {
     .btn {
         touch-action: manipulation;
@@ -140,12 +174,15 @@
         -webkit-tap-highlight-color: transparent;
     }
 
-    input, select, textarea {
+    input,
+    select,
+    textarea {
         touch-action: manipulation;
+        font-size: 16px; /* 防止 iOS 自动缩放 */
     }
 }
 
-/* 强制单色主题一致性 */
+/* --- 深色模式（遵从系统设置，保持浅色主体） --- */
 @media (prefers-color-scheme: dark) {
     body {
         background: var(--bg-body) !important;
@@ -153,6 +190,6 @@
     }
 
     #app {
-        background: var(--white);
+        background: var(--pure-white);
     }
 }

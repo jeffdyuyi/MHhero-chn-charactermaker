@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="漫画英雄TRPG车卡器 - 一页式竖版角色卡生成系统">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#1b1938">
     <title>漫画英雄 TRPG 车卡器</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
@@ -16,56 +16,6 @@
     <link rel="stylesheet" href="css/views.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/animations.css">
-    <style>
-        /* 一页式专用布局补丁 */
-        .one-page-app {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .sheet-container {
-            background: var(--white);
-            border: 4px solid var(--black);
-            box-shadow: 12px 12px 0px var(--black);
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            background-image: var(--halftone-bg);
-            background-size: var(--halftone-size) var(--halftone-size);
-        }
-
-        .sheet-container::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: var(--halftone-dot);
-            background-size: 20px 20px;
-            opacity: 0.15;
-            pointer-events: none;
-        }
-
-        .sheet-section {
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .controls-overlay {
-            position: sticky;
-            top: 20px;
-            z-index: 100;
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border: 2px solid var(--black);
-        }
-    </style>
 </head>
 
 <body>
@@ -95,7 +45,7 @@
                 <div class="controls-overlay">
                     <div class="action-btns" style="margin-left: auto; display: flex; gap: 8px;">
                         <button class="btn btn-sm btn-info" onclick="app.creationFlow.exportAsImage()">🖼️ 导出图片</button>
-                        <button class="btn btn-sm btn-success" onclick="app.creationFlow.saveCurrentCharacter()">💾
+                        <button class="btn btn-sm btn-primary" onclick="app.creationFlow.saveCurrentCharacter()">💾
                             保存英雄</button>
                     </div>
                 </div>
@@ -123,9 +73,8 @@
 
                 <div class="filter-bar" style="margin-bottom: 20px; display: flex; gap: 10px;">
                     <input type="text" id="search-characters" placeholder="搜索英雄..."
-                        style="flex: 1; padding: 8px; border: 2px solid var(--black);">
-                    <select id="sort-characters"
-                        style="padding: 8px; border: 2px solid var(--black); font-weight: 900;">
+                        style="flex: 1;">
+                    <select id="sort-characters" style="flex: 0 0 130px;">
                         <option value="newest">最近创建</option>
                         <option value="name">名称排序</option>
                     </select>
@@ -138,11 +87,11 @@
         </main>
 
         <footer class="app-footer">
-            <p>漫画英雄 TRPG 车卡器 | 一页式极简版 | 制作者：不咕鸟</p>
+            <p>漫画英雄 TRPG 车卡器 · 一页式极简版 · 制作者：不咕鸟</p>
         </footer>
     </div>
 
-    <!-- 模态框 & Toast 同前 -->
+    <!-- 模态框 & Toast -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">

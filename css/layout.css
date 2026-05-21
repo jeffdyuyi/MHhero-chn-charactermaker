@@ -1,12 +1,18 @@
-/* 应用头部 - 纯黑白漫画风格 */
+/* ============================================================
+   布局 - Superhuman 精致设计风格
+   ============================================================ */
+
+/* --- 应用头部 --- */
 .app-header {
-    background: var(--white);
-    color: var(--black);
+    background: rgba(27, 25, 56, 0.97);
+    color: var(--pure-white);
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: var(--comic-border-width) solid var(--black);
-    padding: var(--spacing-sm) 0;
+    border-bottom: none;
+    padding: 0;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
 .header-content {
@@ -19,17 +25,21 @@
     height: 60px;
 }
 
+/* --- Logo --- */
 .logo {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    padding: 4px 12px;
-    border: var(--comic-border-width) solid transparent;
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .logo:hover {
-    border-color: var(--black);
-    background: var(--gray-100);
+    border-color: var(--tw-20);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .logo-icon {
@@ -37,49 +47,58 @@
 }
 
 .logo h1 {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    letter-spacing: -1px;
+    font-size: var(--font-size-md);
+    font-weight: var(--fw-semibold);
+    color: var(--tw-95);
+    letter-spacing: -0.3px;
+    line-height: 1;
 }
 
 .logo .subtitle {
     font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--fw-body);
+    color: var(--tw-80);
     display: block;
     line-height: 1;
+    margin-top: 2px;
 }
 
-/* 主导航 - 标签式 */
+/* --- 主导航 --- */
 .main-nav {
     display: flex;
-    gap: var(--spacing-sm);
+    gap: var(--spacing-xs);
 }
 
 .nav-btn {
     display: flex;
     align-items: center;
     gap: var(--spacing-xs);
-    padding: 6px 16px;
-    color: var(--black);
-    border: var(--comic-border-width) solid var(--black);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    background: var(--white);
+    padding: 7px 16px;
+    color: var(--tw-80);
+    border: 1px solid transparent;
+    font-weight: var(--fw-body);
+    font-size: var(--font-size-sm);
+    background: transparent;
+    border-radius: var(--border-radius);
+    transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .nav-btn:hover {
-    background: var(--gray-100);
-    transform: translate(-2px, -2px);
-    box-shadow: var(--comic-shadow-sm);
+    color: var(--tw-95);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: var(--tw-20);
+    transform: none;
+    box-shadow: none;
 }
 
 .nav-btn.active {
-    background: var(--black);
-    color: var(--white);
+    background: var(--warm-cream);
+    color: var(--charcoal-ink);
+    border-color: transparent;
+    font-weight: var(--fw-semibold);
 }
 
-/* 主内容区 */
+/* --- 主内容区 --- */
 .main-content {
     flex: 1;
     max-width: 1200px;
@@ -88,223 +107,281 @@
     padding: var(--spacing-lg);
 }
 
-/* 页脚 */
+/* --- 页脚 --- */
 .app-footer {
-    background: var(--white);
-    color: var(--black);
+    background: var(--pure-white);
+    color: var(--text-muted);
     text-align: center;
     padding: var(--spacing-md);
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    border-top: var(--comic-border-width) solid var(--black);
+    font-weight: var(--fw-body);
+    border-top: 1px solid var(--parchment-border);
 }
 
-/* 首页布局 - 复古漫画格 */
+/* --- Hero 区域 --- */
 .hero-section {
-    background: var(--white);
-    border: var(--comic-border-width) solid var(--black);
-    padding: var(--spacing-xl);
+    background: var(--hero-gradient);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl) var(--spacing-xl) 80px;
     margin-bottom: var(--spacing-xl);
     text-align: center;
     position: relative;
-    box-shadow: var(--comic-shadow);
+    overflow: hidden;
+    box-shadow: none;
 }
 
-/* 装饰性漫画圆点背景 */
-.hero-section::before {
+/* 渐变淡出过渡 */
+.hero-section::after {
     content: '';
     position: absolute;
-    top: 10px;
-    left: 10px;
-    right: -10px;
-    bottom: -10px;
-    border: var(--comic-border-width) solid var(--black);
-    z-index: -1;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--bg-body));
+    pointer-events: none;
+}
+
+/* 去除旧的 offset 装饰边框 */
+.hero-section::before {
+    display: none;
 }
 
 .hero-title {
     font-size: var(--font-size-huge);
-    font-weight: var(--font-weight-bold);
-    color: var(--black);
+    font-weight: var(--fw-emphasis);
+    color: var(--tw-95);
     margin-bottom: var(--spacing-sm);
-    text-transform: uppercase;
-    letter-spacing: -2px;
+    letter-spacing: -1.32px;
+    line-height: var(--line-height-display);
+    text-transform: none;
 }
 
 .hero-subtitle {
-    font-size: var(--font-size-lg);
-    color: var(--text-secondary);
+    font-size: var(--font-size-xl);
+    color: var(--tw-80);
     margin-bottom: var(--spacing-xl);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--fw-body);
+    line-height: 1.25;
 }
 
 .hero-features {
     display: flex;
     justify-content: center;
-    gap: var(--spacing-md);
+    gap: var(--spacing);
     flex-wrap: wrap;
 }
 
 .feature {
-    padding: var(--spacing-sm) var(--spacing-md);
-    background: var(--white);
-    border: var(--comic-border-width) solid var(--black);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
+    padding: 6px 16px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid var(--tw-20);
+    border-radius: var(--border-radius);
+    color: var(--tw-95);
+    font-size: var(--font-size-sm);
+    font-weight: var(--fw-body);
+    text-transform: none;
 }
 
-/* 模式选择 - 漫画分格效果 */
+/* --- 模式选择 --- */
 .mode-selection {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: var(--spacing-xl);
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--spacing-md);
     margin-bottom: var(--spacing-xl);
 }
 
 .mode-card {
-    background: var(--white);
-    border: var(--comic-border-width) solid var(--black);
-    box-shadow: var(--comic-shadow);
+    background: var(--pure-white);
+    border: 1px solid var(--parchment-border);
+    border-radius: var(--border-radius-lg);
     display: flex;
     flex-direction: column;
+    transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+    box-shadow: none;
 }
 
 .mode-card:hover {
-    transform: translate(-4px, -4px);
-    box-shadow: var(--comic-shadow-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
 }
 
 .mode-header {
-    padding: var(--spacing-md);
-    background: var(--black);
-    color: var(--white);
+    padding: var(--spacing) var(--spacing-md);
+    background: var(--bg-secondary);
+    color: var(--charcoal-ink);
     display: flex;
     align-items: center;
     gap: var(--spacing);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    border-bottom: 1px solid var(--parchment-border);
 }
 
 .mode-header h3 {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
+    font-size: var(--font-size-md);
+    font-weight: var(--fw-emphasis);
+    text-transform: none;
+    letter-spacing: -0.2px;
 }
 
 .mode-tag {
     padding: 2px 8px;
-    border: 2px solid var(--white);
+    border: 1px solid var(--parchment-border);
     font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--fw-semibold);
+    border-radius: var(--border-radius);
+    background: var(--warm-cream);
+    color: var(--charcoal-ink);
 }
 
 .mode-body {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     flex: 1;
 }
 
 .mode-features li {
-    padding: 8px 0;
-    border-bottom: 1px dashed var(--gray-400);
-    font-weight: var(--font-weight-medium);
+    padding: 7px 0;
+    border-bottom: 1px solid var(--parchment-border);
+    font-weight: var(--fw-body);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
 }
 
 .mode-features li::before {
-    content: '▶';
+    content: '→';
     margin-right: 8px;
-    font-size: 10px;
+    font-size: 11px;
+    color: var(--amethyst-link);
 }
 
 .mode-footer {
-    padding: var(--spacing-lg);
-    background: var(--gray-100);
-    border-top: var(--comic-border-width) solid var(--black);
+    padding: var(--spacing) var(--spacing-md);
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--parchment-border);
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
 }
 
-/* 快速操作 */
+/* --- 快速操作 --- */
 .quick-actions {
-    background: var(--white);
-    border: var(--comic-border-width) solid var(--black);
-    padding: var(--spacing-lg);
-    box-shadow: var(--comic-shadow-sm);
+    background: var(--pure-white);
+    border: 1px solid var(--parchment-border);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-lg);
 }
 
 .quick-actions h3 {
     font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-lg);
-    text-transform: uppercase;
-    text-decoration: underline;
-    text-underline-offset: 4px;
+    font-weight: var(--fw-emphasis);
+    margin-bottom: var(--spacing);
+    text-transform: none;
+    text-decoration: none;
+    letter-spacing: -0.3px;
 }
 
 .action-card {
-    padding: var(--spacing-lg);
-    border: var(--comic-border-width) solid var(--black);
-    background: var(--white);
+    padding: var(--spacing);
+    border: 1px solid var(--parchment-border);
+    background: var(--pure-white);
+    border-radius: var(--border-radius);
     cursor: pointer;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .action-card:hover {
-    background: var(--black);
-    color: var(--white);
+    background: var(--bg-secondary);
+    border-color: var(--charcoal-ink);
+    color: var(--charcoal-ink);
 }
 
-/* 创建页面 */
+/* --- 创建页面 --- */
 .creation-header {
-    background: var(--black);
-    color: var(--white);
-    padding: var(--spacing-md) var(--spacing-lg);
-    border: var(--comic-border-width) solid var(--black);
-    margin-bottom: var(--spacing-lg);
+    background: var(--mysteria-purple);
+    color: var(--pure-white);
+    padding: var(--spacing) var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--spacing);
 }
 
 .creation-header h2 {
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
+    font-weight: var(--fw-emphasis);
+    text-transform: none;
+    letter-spacing: -0.5px;
+    font-size: var(--font-size-xl);
+    color: var(--tw-95);
 }
 
 .step-content {
-    background: var(--white);
-    border: var(--comic-border-width) solid var(--black);
+    background: var(--pure-white);
+    border: 1px solid var(--parchment-border);
     padding: var(--spacing-xl);
-    box-shadow: var(--comic-shadow);
+    border-radius: var(--border-radius-lg);
     min-height: 500px;
+    box-shadow: none;
 }
 
 .creation-footer {
-    margin-top: var(--spacing-lg);
-    padding: var(--spacing-lg);
-    border: var(--comic-border-width) solid var(--black);
-    background: var(--white);
+    margin-top: var(--spacing);
+    padding: var(--spacing);
+    border: 1px solid var(--parchment-border);
+    background: var(--pure-white);
+    border-radius: var(--border-radius-lg);
 }
 
-/* 帮助页面 */
+/* --- 帮助页面 --- */
 .help-section {
-    border: var(--comic-border-width) solid var(--black);
+    border: 1px solid var(--parchment-border);
     padding: var(--spacing-xl);
-    background: var(--white);
-    box-shadow: var(--comic-shadow-sm);
+    background: var(--pure-white);
+    border-radius: var(--border-radius-lg);
 }
 
 .help-section h3 {
-    background: var(--black);
-    color: var(--white);
-    padding: 8px 16px;
-    margin-bottom: var(--spacing-lg);
-    display: inline-block;
-    text-transform: uppercase;
+    background: transparent;
+    color: var(--charcoal-ink);
+    padding: 0;
+    margin-bottom: var(--spacing);
+    display: block;
+    font-weight: var(--fw-emphasis);
+    font-size: var(--font-size-lg);
+    letter-spacing: -0.3px;
+    border-bottom: 1px solid var(--parchment-border);
+    padding-bottom: var(--spacing-sm);
 }
 
-/* 通用列表展示 */
+/* --- 通用列表展示 --- */
 .grid-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
 }
 
-/* 空状态 */
+/* --- 空状态 --- */
 .empty-state {
     grid-column: 1 / -1;
     padding: 60px 20px;
     text-align: center;
-    border: 3px dashed var(--gray-400);
+    border: 1px dashed var(--parchment-border);
+    border-radius: var(--border-radius-lg);
+    color: var(--text-muted);
+    font-weight: var(--fw-body);
+}
+
+/* 章节头部 */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--parchment-border);
+}
+
+.section-header h2 {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--fw-emphasis);
+    letter-spacing: -0.63px;
+    line-height: var(--line-height-display);
+    color: var(--charcoal-ink);
 }

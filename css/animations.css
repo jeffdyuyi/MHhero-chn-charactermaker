@@ -1,86 +1,113 @@
-/* 漫画风格动画 */
+/* ============================================================
+   动画 - Superhuman 精致柔和过渡
+   ============================================================ */
 
+/* 全局允许过渡（覆盖旧的 transition: none! 规则） */
+* {
+    /* 不再全局禁用过渡 */
+}
+
+/* --- 淡入 --- */
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: scale(0.98);
+        transform: translateY(6px);
     }
-
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0);
     }
 }
 
 .fade-in {
-    animation: fadeIn 0.15s ease-out;
+    animation: fadeIn 0.25s ease-out;
 }
 
-/* 模态框弹出动画 - 更有冲击力 */
+/* --- 模态框弹出（柔和弹性） --- */
 @keyframes modalIn {
-    0% {
-        transform: scale(0.5) rotate(-5deg);
+    from {
+        transform: scale(0.94) translateY(10px);
         opacity: 0;
     }
-
-    70% {
-        transform: scale(1.05) rotate(2deg);
-        opacity: 1;
-    }
-
-    100% {
-        transform: scale(1) rotate(0deg);
+    to {
+        transform: scale(1) translateY(0);
         opacity: 1;
     }
 }
 
-/* 简单的滑入 */
+/* --- Toast 滑入 --- */
 @keyframes slideInRight {
     from {
-        transform: translateX(20px);
+        transform: translateX(16px);
         opacity: 0;
     }
-
     to {
         transform: translateX(0);
         opacity: 1;
     }
 }
 
-/* 禁用大部分不必要的平滑过渡，漫画风格需要瞬间对比 */
-* {
-    transition: none !important;
-}
-
-.btn,
-.nav-btn,
-.origin-card,
-#step-content {
-    transition: transform 0.05s, box-shadow 0.05s, opacity 0.3s !important;
-}
-
-/* 步骤过渡动画 */
+/* --- 步骤切换 --- */
 .step-transition {
-    animation: stepTransition 0.3s ease-in-out;
+    animation: stepFade 0.25s ease-in-out;
 }
 
-@keyframes stepTransition {
-    0% { opacity: 1; transform: translateX(0); }
-    50% { opacity: 0; transform: translateX(20px); }
+@keyframes stepFade {
+    0%   { opacity: 1; transform: translateX(0); }
+    40%  { opacity: 0; transform: translateX(12px); }
+    60%  { opacity: 0; transform: translateX(-12px); }
     100% { opacity: 1; transform: translateX(0); }
 }
 
-/* 加载状态动画 */
+/* --- 加载旋转 --- */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 .loading {
     display: inline-block;
     width: 20px;
     height: 20px;
-    border: 3px solid rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--parchment-border);
     border-radius: 50%;
-    border-top-color: var(--primary);
-    animation: spin 1s ease-in-out infinite;
+    border-top-color: var(--amethyst-link);
+    animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+/* --- 特定组件过渡白名单 --- */
+.btn {
+    transition: opacity 0.15s ease, transform 0.15s ease !important;
+}
+
+.nav-btn {
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+}
+
+.card,
+.character-card,
+.mode-card {
+    transition: box-shadow 0.2s ease, transform 0.2s ease !important;
+}
+
+.power-panel-card,
+.eq-item-card {
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+input,
+textarea,
+select {
+    transition: border-color 0.15s ease !important;
+}
+
+.btn-icon-del {
+    transition: color 0.15s ease, background 0.15s ease !important;
+}
+
+.logo,
+.attr-row,
+.spec-tag-card,
+.trait-card,
+.step-indicator {
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease !important;
 }
