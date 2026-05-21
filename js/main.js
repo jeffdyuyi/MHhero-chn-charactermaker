@@ -95,7 +95,7 @@ class ComicHeroApp {
                     <div style="font-size: 48px; margin-bottom: 15px;">🦸‍♂️</div>
                     <h3 style="margin-bottom: 15px; text-transform: uppercase; font-weight: 900;">漫画英雄 TRPG 车卡器</h3>
                     
-                    <div style="text-align: left; background: var(--gray-100); padding: 15px; border: var(--comic-border-width) solid var(--black); margin-bottom: 15px; box-shadow: var(--comic-shadow-sm);">
+                    <div style="text-align: left; background: var(--bg-secondary); padding: 15px; border: 1px solid var(--parchment-border); border-radius: var(--border-radius); margin-bottom: 15px;">
                         <p style="margin-bottom: 8px;"><strong>制作者：</strong> 不咕鸟（哈基米德）</p>
                         <p style="margin-bottom: 8px;"><strong>AI辅助：</strong> Antigravity Gemini</p>
                         <p style="margin-bottom: 8px;"><strong>约团地址：</strong> <a href="https://nogubird.top/schedule" target="_blank">nogubird.top/schedule</a></p>

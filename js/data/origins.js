@@ -8,7 +8,7 @@ export const ORIGINS = [
         id: 'trained',
         name: '受训',
         rollRange: [2, 3, 4],
-        description: '英雄是技艺娴熟的个体，拥有的“能力”实际上都来自精湛的训练或专门的设备。额外获得两项专长，同时可以选择一项特殊能力作为交换，另外获得两项专长。',
+        description: '英雄是技艺娴熟的个体,拥有的“能力”实际上都来自精湛的训练或专门的设备(请参阅特殊能力章节的装置部分)。额外获得两项专长,同时可以选择一项特殊能力作为交换,另外获得两项专长。',
         mechanics: {
             bonusSpecialties: 2,
             optionalExchange: 'power_for_specialties_plus_2'
@@ -18,7 +18,7 @@ export const ORIGINS = [
         id: 'altered',
         name: '改造',
         rollRange: [5, 6],
-        description: '英雄原本是正常人类，经由某些外部手段（通常是事故或试验）成为超人。选择一项能力（属性或特殊能力）增加2个等级，最高不超过10级。',
+        description: '英雄原本是正常人类,经由某些外部手段(通常是事故或试验)成为超人。选择一项能力(属性或特殊能力)增加2个等级,最高不超过10级。',
         mechanics: {
             statBoost: { target: 'any_one', value: 2 }
         }
@@ -27,7 +27,7 @@ export const ORIGINS = [
         id: 'mutant',
         name: '天赋异禀',
         rollRange: [7],
-        description: '英雄与生俱来（或命中注定）拥有超越常人的特殊能力。额外选择一项——与生俱来，而非依靠装置的——特殊能力，或者选择一项能力增加2个等级，最高不超过10级。',
+        description: '英雄与生俱来(或命中注定)拥有超越常人的特殊能力。额外选择一项--与生俱来,而非依靠装置的--特殊能力,或者选择一项能力增加2个等级,最高不超过10级。',
         mechanics: {
             choice: 'power_or_boost',
             bonusPower: 1,
@@ -39,7 +39,7 @@ export const ORIGINS = [
         id: 'gimmick',
         name: '花招诡计',
         rollRange: [8, 9],
-        description: '角色的特殊能力完全依靠某种装置。选择一项精神属性增加2个等级，最高不超过10级。',
+        description: '角色的特殊能力完全依靠某种装置(请参阅特殊能力章节的装置部分)。选择一项精神属性增加2个等级,最高不超过10级。',
         mechanics: {
             deviceLimit: true,
             statBoost: { target: 'mental', value: 2 }
@@ -49,7 +49,7 @@ export const ORIGINS = [
         id: 'artificial',
         name: '人造生命',
         rollRange: [10],
-        description: '角色是机器人或其他类型的构装体（如魔像）。角色增加2个力量等级，除了掷骰获得的特殊能力，还会额外获得维系生命能力，正常掷骰决定维系生命的等级，或者舍弃一项掷骰获得特殊能力，将维系生命升至10级。',
+        description: '角色是机器人或其他类型的构装体(如魔像)。角色增加2个力量等级,除了掷骰获得的特殊能力,还会额外获得维系生命能力,正常掷骰决定维系生命的能力等级,或者舍弃一项掷骰获得的特殊能力,将维系生命升至10级。',
         mechanics: {
             statBoost: { target: 'strength', value: 2 },
             guaranteedPower: '维系生命',
@@ -60,7 +60,7 @@ export const ORIGINS = [
         id: 'alien',
         name: '天外来客',
         rollRange: [11, 12],
-        description: '角色是外星人、元素精灵、天使、魔鬼乃至神祇。选择两项能力（属性或特殊能力）增加2个等级，或者根据起源列表进行两次掷骰（去掉重复和11-12的结果）。',
+        description: '角色是外星人、元素精灵、天使、魔鬼乃至神祇——来自另外一个世界或位面的生物。选择两项能力(属性或特殊能力)增加2个等级,或者根据起源列表进行两次掷骰,去掉重复的结果和11-12的结果,同时享有这两项起源的能力效果此时应该使用掷骰起源的调整值,而非天外来客的调整值。',
         mechanics: {
             statBoost: { target: 'any_two', value: 2 },
             optionalExchange: 'double_roll_origins'
