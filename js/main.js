@@ -13,7 +13,6 @@ import {
 import { APP_CONFIG, POINT_BUY_CONFIG } from './data/index.js';
 import { ViewManager } from './ui/view-manager.js';
 import { CreationFlow } from './ui/creation-flow.js';
-import { GuidedCreationFlow } from './ui/guided-creation-flow.js';
 import { SavedCharactersView } from './ui/saved-characters.js';
 import { openModal, closeModal, showCharacterDetail } from './ui/modal.js';
 import { getEquipmentById, getAllEquipment } from './data/equipment.js';
@@ -30,7 +29,6 @@ class ComicHeroApp {
         // 初始化各个模块
         this.viewManager = new ViewManager(this);
         this.creationFlow = new CreationFlow(this);
-        this.guidedCreationFlow = new GuidedCreationFlow(this);
         this.savedCharactersView = new SavedCharactersView(this);
 
         this.init();

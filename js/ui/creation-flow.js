@@ -29,6 +29,15 @@ const ATTRIBUTE_NAMES = {
     willpower: '意志'
 };
 
+/** 轻量级防抖工具（仅用于文字输入类操作） */
+function debounce(fn, wait = 250) {
+    let t;
+    return function (...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+    };
+}
+
 export class CreationFlow {
     constructor(app) {
         this.app = app;
@@ -39,6 +48,9 @@ export class CreationFlow {
         this.currentStep = 1; // 当前步骤
         this.totalSteps = 4; // 总步骤数
         this.completedSteps = [false, false, false, false]; // 记录各步骤是否完成
+
+        // 文字输入防抖：250ms 内连续输入不重建卡片
+        this._debouncedRender = debounce(() => this.renderFullSheet(), 250);
 
         this.init();
     }
@@ -122,6 +134,11 @@ export class CreationFlow {
             const filledTraits = traits.filter(t => t && t.trim()).length;
             this.completedSteps[3] = char.name && char.name.trim() !== '' && filledTraits >= 3;
 
+            // 编辑模式：角色数据已完整，直接解锁全部区块
+            if (this.editingCharacterId) {
+                this.completedSteps = [true, true, true, true];
+            }
+
             // 一次性顺序渲染所有区块，根据前置是否完成来施加锁定遮罩
             let html = '';
             
@@ -194,6 +211,12 @@ export class CreationFlow {
         if (!char.qualities) char.qualities = ['', '', ''];
         while (char.qualities.length < 3) char.qualities.push('');
         
+        const placeholders = [
+            "你是谁？（例：身份、头衔、绰号，如“意念大师”）",
+            "什么驱使着你？/什么带来麻烦？（例：动机或弱点）",
+            "你做些什么？/与众不同之处？（例：作风或特点）"
+        ];
+        
         return `
             <div class="sheet-section section-identity">
                 <div class="step-num">STEP 4</div>
@@ -207,32 +230,28 @@ export class CreationFlow {
                     <div class="identity-header">
                         <input type="text" id="sheet-name" value="${char.name || ''}" 
                                oninput="app.creationFlow.updateBasicInfo('name', this.value)" 
-                               placeholder="输入英雄代号 (NAME)...">
+                               placeholder="输入英雄代号 (NAME)..." style="font-size: 1.5rem; font-weight: bold; width: 100%;">
                     </div>
                 </div>
-                <div class="traits-section">
+                <div class="traits-section" style="margin-top: 20px;">
                     <div class="traits-header">
-                        <h3>英雄特质 (TRAITS)</h3>
-                        <button class="btn btn-xs btn-primary" onclick="app.creationFlow.addTrait()">➕ 添加特质</button>
+                        <h3 style="margin: 0 0 4px 0;">英雄特质 (QUALITIES)</h3>
+                        <p class="group-hint" style="margin: 0 0 12px 0; font-size: 12px; color: var(--text-muted);">
+                            选择三项特质，游戏里启用特质可以获得优势或制造麻烦（获得决意点数）。
+                        </p>
                     </div>
-                    <div class="traits-inputs">
+                    <div class="traits-inputs" style="display: flex; flex-direction: column; gap: 8px;">
                         ${char.qualities.map((trait, index) => `
-                            <div class="trait-input-group">
+                            <div class="trait-input-group" style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-weight: bold; color: var(--text-muted); min-width: 20px;">#${index + 1}</span>
                                 <input type="text" value="${trait || ''}" 
                                        oninput="app.creationFlow.updateTrait(${index}, this.value)" 
-                                       placeholder="输入特质 ${index + 1}...">
-                                ${index >= 3 ? `<button class="btn-icon-del" onclick="app.creationFlow.removeTrait(${index})")">✕</button>` : ''}
+                                       placeholder="${placeholders[index] || '输入特质...'}"
+                                       style="flex: 1; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+                                ${index >= 3 ? `<button class="btn-icon-del" onclick="app.creationFlow.removeTrait(${index})">✕</button>` : ''}
                             </div>
                         `).join('')}
                     </div>
-                </div>
-                <div class="traits-cards">
-                    ${char.qualities.filter(t => t).map((trait, index) => `
-                        <div class="trait-card">
-                            <span class="trait-text">${trait}</span>
-                            <button class="btn-icon-del" onclick="app.creationFlow.removeTrait(${index})")">✕</button>
-                        </div>
-                    `).join('')}
                 </div>
             </div>
         `;
@@ -332,8 +351,7 @@ export class CreationFlow {
     }
 
     renderAttributesSection(char) {
-        // 生成起源属性增益提示
-        const originAttributeHint = this.renderOriginAttributeHint(char);
+        const originAttributeHint = this.renderOriginStepHint(char, 'attributes');
         
         return `
             <div class="sheet-section section-attributes" style="border-top: none;">
@@ -352,42 +370,50 @@ export class CreationFlow {
         `;
     }
     
-    renderOriginAttributeHint(char) {
+    /**
+     * 通用起源增益提示渲染
+     * @param {Object} char - 角色对象
+     * @param {'attributes'|'powers'|'specialties'} section - 所属区块
+     */
+    renderOriginStepHint(char, section) {
         if (!char.origin || !char.origin.mechanics) return '';
-        
         const mech = char.origin.mechanics;
-        if (!mech.statBoost) return '';
-        
-        let hint = '';
-        switch (mech.statBoost.target) {
-            case 'strength':
-                hint = '起源增益：力量 +2 级';
+        const hints = [];
+
+        switch (section) {
+            case 'attributes':
+                if (mech.statBoost) {
+                    const targets = {
+                        strength: '力量',
+                        mental: '一项精神属性',
+                        any_one: '一项能力',
+                        any_two: '两项能力'
+                    };
+                    const target = targets[mech.statBoost.target] || mech.statBoost.target;
+                    hints.push(`起源增益：${target} +${mech.statBoost.value} 级`);
+                }
                 break;
-            case 'mental':
-                hint = '起源增益：选择一项精神属性 +2 级';
+            case 'powers':
+                if (mech.bonusPower) hints.push('起源增益：额外获得1项特殊能力');
+                if (mech.guaranteedPower) hints.push(`起源增益：获得「${mech.guaranteedPower}」能力`);
+                if (mech.deviceLimit) hints.push('起源限制：所有能力带上"装置"限制');
                 break;
-            case 'any_one':
-                hint = '起源增益：选择一项能力 +2 级';
-                break;
-            case 'any_two':
-                hint = '起源增益：选择两项能力 +2 级';
+            case 'specialties':
+                if (mech.bonusSpecialties) hints.push(`起源增益：额外获得 ${mech.bonusSpecialties} 项专长`);
                 break;
         }
-        
-        if (hint) {
-            return `
-                <div class="origin-step-hint">
-                    <span class="hint-icon">💡</span>
-                    <span class="hint-text">${hint}</span>
-                </div>
-            `;
-        }
-        return '';
+
+        if (hints.length === 0) return '';
+        return `
+            <div class="origin-step-hint">
+                <span class="hint-icon">💡</span>
+                <span class="hint-text">${hints.join(' | ')}</span>
+            </div>
+        `;
     }
 
     renderPowersSection(char) {
-        // 生成起源能力增益提示
-        const originPowerHint = this.renderOriginPowerHint(char);
+        const originPowerHint = this.renderOriginStepHint(char, 'powers');
         const originActionBar = this.renderOriginActionBar(char);
         
         return `
@@ -412,36 +438,10 @@ export class CreationFlow {
         `;
     }
     
-    renderOriginPowerHint(char) {
-        if (!char.origin || !char.origin.mechanics) return '';
-        
-        const mech = char.origin.mechanics;
-        const hints = [];
-        
-        if (mech.bonusPower) {
-            hints.push('起源增益：额外获得1项特殊能力');
-        }
-        if (mech.guaranteedPower) {
-            hints.push(`起源增益：获得「${mech.guaranteedPower}」能力`);
-        }
-        if (mech.deviceLimit) {
-            hints.push('起源限制：所有能力带上"装置"限制');
-        }
-        
-        if (hints.length > 0) {
-            return `
-                <div class="origin-step-hint">
-                    <span class="hint-icon">💡</span>
-                    <span class="hint-text">${hints.join(' | ')}</span>
-                </div>
-            `;
-        }
-        return '';
-    }
+
 
     renderSpecialtiesSection(char) {
-        // 生成起源专长增益提示
-        const originSpecialtyHint = this.renderOriginSpecialtyHint(char);
+        const originSpecialtyHint = this.renderOriginStepHint(char, 'specialties');
         
         return `
             <div class="sheet-section section-specialties">
@@ -461,27 +461,20 @@ export class CreationFlow {
         `;
     }
     
-    renderOriginSpecialtyHint(char) {
-        if (!char.origin || !char.origin.mechanics) return '';
-        
-        const mech = char.origin.mechanics;
-        if (!mech.bonusSpecialties) return '';
-        
-        return `
-            <div class="origin-step-hint">
-                <span class="hint-icon">💡</span>
-                <span class="hint-text">起源增益：额外获得 ${mech.bonusSpecialties} 项专长</span>
-            </div>
-        `;
-    }
+
 
     renderBioSection(char) {
         return `
             <div class="sheet-section section-bio">
+                 <div class="step-num">STEP 5</div>
                  <div class="bio-container">
-                    <label>英雄档案说明 (BIOGRAPHY)</label>
+                    <label style="display: block; font-weight: bold; margin-bottom: 8px;">英雄档案说明 (BIOGRAPHY & LORE)</label>
+                    <p class="group-hint" style="margin-bottom: 12px; font-size: 12px; color: var(--text-muted);">
+                        这位英雄是如何获得能力的？他的背景设定之中有哪些元素可以为现在的行动提供动机或是带来挑战？你的英雄看起来如何？
+                    </p>
                     <textarea oninput="app.creationFlow.updateBasicInfo('description', this.value)" 
-                              placeholder="在正义被召唤时，这里将记述你的故事...">${char.description || ''}</textarea>
+                              style="width: 100%; min-height: 120px; resize: vertical; padding: 10px; border-radius: 4px; border: 1px solid var(--border-color); font-family: inherit;"
+                              placeholder="设定他的外貌、着装、体形、发色发型、言行习惯和其他明显的身体特征... 或讲述他的起源故事...">${char.description || ''}</textarea>
                  </div>
             </div>
         `;
@@ -663,7 +656,8 @@ export class CreationFlow {
     // 更新信息
     updateBasicInfo(key, val) {
         this.characterGenerator.character[key] = val;
-        this.renderFullSheet();
+        // 文字输入用防抖渲染，避免每个按键都重建卡片
+        this._debouncedRender();
     }
 
     updateTrait(index, val) {
@@ -671,7 +665,8 @@ export class CreationFlow {
             this.characterGenerator.character.qualities = ['', '', ''];
         }
         this.characterGenerator.character.qualities[index] = val;
-        this.renderFullSheet();
+        // 文字输入用防抖渲染
+        this._debouncedRender();
     }
 
     addTrait() {
@@ -895,12 +890,17 @@ export class CreationFlow {
     }
 
     handleMutantChoice(val) {
+        const oldChoice = this.characterGenerator.character.originChoices.mutantChoice;
         this.characterGenerator.setOriginChoice('mutantChoice', val);
         if (val === 'boost') {
             this._pendingBoostTokens = 1;
         } else {
             this._pendingBoostTokens = 0;
-            if (this.creationMode === 'random') {
+            // 天赋异禀额外随机操作：在现有能力基础上追加1项，而不是全部重置
+            if (oldChoice !== 'power' && this.characterGenerator.character.powers.length > 0) {
+                this.characterGenerator.addRandomPower();
+                showSuccess('已额外抽取1项特殊能力！');
+            } else if (this.creationMode === 'random' && this.characterGenerator.character.powers.length === 0) {
                 this.characterGenerator.generatePowers();
             }
         }

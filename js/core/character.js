@@ -31,8 +31,8 @@ import {
 } from '../data/powers.js';
 
 import {
-    getSpecialtyCountByRoll,
     createSpecialty,
+    getSpecialtyByD66,
     SPECIALTIES
 } from '../data/specialties.js';
 
@@ -399,8 +399,8 @@ export class CharacterGenerator {
             this.character.specialties = [];
         }
 
-        const roll = roll2d6();
-        let count = (extraCount === 0) ? getSpecialtyCountByRoll(roll) : extraCount;
+        // 专长数量 = 6 - 特殊能力的数量 (除非是额外获取，如受训起源的加分)
+        let count = (extraCount === 0) ? Math.max(0, 6 - this.character.powers.length) : extraCount;
 
         // 起源额外专长 (仅在非额外生成时计算)
         if (extraCount === 0 && this.character.origin?.mechanics.bonusSpecialties) {
@@ -408,7 +408,8 @@ export class CharacterGenerator {
         }
 
         for (let i = 0; i < count; i++) {
-            const randomSpecialty = SPECIALTIES[Math.floor(Math.random() * SPECIALTIES.length)];
+            const d66 = rollD66();
+            const randomSpecialty = getSpecialtyByD66(d66) || SPECIALTIES[0];
             const specialty = createSpecialty(randomSpecialty.id, 1);
             this.character.specialties.push(specialty);
         }
