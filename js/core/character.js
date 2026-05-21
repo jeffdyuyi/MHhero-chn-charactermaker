@@ -266,10 +266,18 @@ export class CharacterGenerator {
         }
 
         // 应用装置限制
+        const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
         if (this.character.origin?.mechanics.deviceLimit) {
-            const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
             this.character.powers.forEach(power => {
                 if (!power.flaws.some(f => f.id === 'device')) {
+                    power.flaws.push(deviceFlaw);
+                }
+            });
+        } else if (this.mode === 'random') {
+            this.character.powers.forEach(power => {
+                // 如果采用随机投掷法,进行一次2d6掷骰,结果为4点以下(包括4点)则该项特殊能力需要装置作为支持
+                const roll = roll2d6();
+                if (roll <= 4 && !power.flaws.some(f => f.id === 'device')) {
                     power.flaws.push(deviceFlaw);
                 }
             });
@@ -326,6 +334,12 @@ export class CharacterGenerator {
         const level = getAttributeLevel(levelRoll);
 
         const power = createPower(category.id, powerData.name, level);
+        
+        if (this.character.origin?.mechanics.deviceLimit) {
+            const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
+            power.flaws.push(deviceFlaw);
+        }
+        
         this.character.powers.push(power);
     }
 
@@ -337,6 +351,12 @@ export class CharacterGenerator {
      */
     addPower(categoryId, powerName, level = 1) {
         const power = createPower(categoryId, powerName, level);
+        
+        if (this.character.origin?.mechanics.deviceLimit) {
+            const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
+            power.flaws.push(deviceFlaw);
+        }
+        
         this.character.powers.push(power);
         this.updateDerivedStats();
     }

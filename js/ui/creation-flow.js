@@ -503,6 +503,15 @@ export class CreationFlow {
                                     ${item.handling ? `<span class="eq-stat">OP ${item.handling}</span>` : ''}
                                     ${item.armor ? `<span class="eq-stat">ARMOR ${item.armor}</span>` : ''}
                                 </div>
+                                ${item.customFeatures && item.customFeatures.length > 0 ? `
+                                    <div class="eq-features-list" style="margin-top: 8px; border-top: 1px dashed var(--comic-border-color); padding-top: 8px;">
+                                        ${item.customFeatures.map(f => `
+                                            <div style="margin-bottom: 4px; font-size: 12px; line-height: 1.4;">
+                                                <strong>${f.name ? f.name + ': ' : ''}</strong><span style="color: var(--text-secondary);">${f.desc || ''}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
                             </div>
                             <div class="eq-controls">
                                 <button class="btn-icon-del" onclick="app.creationFlow.openEditEquipmentModal('${item.instanceId}')">✎</button>
@@ -971,38 +980,63 @@ export class CreationFlow {
         const item = char.equipment.find(e => e.instanceId === instanceId);
         if (!item) return;
 
+        // 初始化 customFeatures 数组
+        const features = item.customFeatures || [];
+        
+        let featuresHtml = features.map((f, i) => `
+            <div class="eq-feature-row" style="display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start;">
+                <input type="text" class="eq-feature-name full-width" placeholder="条目名称 (如: 特效)" value="${f.name || ''}" style="flex: 1;">
+                <textarea class="eq-feature-desc full-width" placeholder="描述效果..." style="flex: 2; height: 36px; resize: vertical;">${f.desc || ''}</textarea>
+                <button class="btn-icon-del" onclick="this.parentElement.remove()" style="margin-top: 4px;">✕</button>
+            </div>
+        `).join('');
+
         openModal({
             title: '自定义装备信息',
             content: `
-                <div class="edit-eq-modal">
+                <div class="edit-eq-modal" style="max-height: 60vh; overflow-y: auto; padding-right: 10px;">
                     <div class="form-group">
                         <label>装备名称</label>
                         <input type="text" id="edit-eq-name" value="${item.name}" class="full-width">
                     </div>
                     <div class="form-group">
-                        <label>描述与备注</label>
-                        <textarea id="edit-eq-desc" class="full-width" style="height: 80px;">${item.description || ''}</textarea>
+                        <label>核心描述与备注</label>
+                        <textarea id="edit-eq-desc" class="full-width" style="height: 60px; resize: vertical;">${item.description || ''}</textarea>
                     </div>
-                    <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div class="form-group">
-                            <label>等级 (Level)</label>
-                            <input type="number" id="edit-eq-level" value="${item.level || 0}" class="full-width">
+                    
+                    <div class="form-group" style="margin-top: 16px; border-top: 1px dashed var(--comic-border-color); padding-top: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <label style="margin: 0;">分栏式条目 (特效/能力/规则)</label>
+                            <button class="btn btn-xs btn-outline" onclick="app.creationFlow.addEqFeatureRow()">➕ 添加条目</button>
                         </div>
-                        <div class="form-group">
-                            <label>速度 (Speed)</label>
-                            <input type="number" id="edit-eq-speed" value="${item.speed || 0}" class="full-width">
+                        <div id="eq-features-container">
+                            ${featuresHtml}
                         </div>
-                        <div class="form-group">
-                            <label>构造 (Body)</label>
-                            <input type="number" id="edit-eq-body" value="${item.body || 0}" class="full-width">
-                        </div>
-                        <div class="form-group">
-                            <label>操控 (Handling)</label>
-                            <input type="number" id="edit-eq-handling" value="${item.handling || 0}" class="full-width">
-                        </div>
-                        <div class="form-group">
-                            <label>护甲 (Armor)</label>
-                            <input type="number" id="edit-eq-armor" value="${item.armor || 0}" class="full-width">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 16px; border-top: 1px dashed var(--comic-border-color); padding-top: 16px;">
+                        <label>基础数值调整 (可选)</label>
+                        <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
+                            <div class="form-group">
+                                <label>等级 (Level)</label>
+                                <input type="number" id="edit-eq-level" value="${item.level || 0}" class="full-width">
+                            </div>
+                            <div class="form-group">
+                                <label>速度 (Speed)</label>
+                                <input type="number" id="edit-eq-speed" value="${item.speed || 0}" class="full-width">
+                            </div>
+                            <div class="form-group">
+                                <label>构造 (Body)</label>
+                                <input type="number" id="edit-eq-body" value="${item.body || 0}" class="full-width">
+                            </div>
+                            <div class="form-group">
+                                <label>操控 (Handling)</label>
+                                <input type="number" id="edit-eq-handling" value="${item.handling || 0}" class="full-width">
+                            </div>
+                            <div class="form-group">
+                                <label>护甲 (Armor)</label>
+                                <input type="number" id="edit-eq-armor" value="${item.armor || 0}" class="full-width">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1011,10 +1045,35 @@ export class CreationFlow {
         });
     }
 
+    addEqFeatureRow() {
+        const container = document.getElementById('eq-features-container');
+        if (!container) return;
+        const row = document.createElement('div');
+        row.className = 'eq-feature-row';
+        row.style.cssText = 'display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start;';
+        row.innerHTML = `
+            <input type="text" class="eq-feature-name full-width" placeholder="条目名称 (如: 特效)" style="flex: 1;">
+            <textarea class="eq-feature-desc full-width" placeholder="描述效果..." style="flex: 2; height: 36px; resize: vertical;"></textarea>
+            <button class="btn-icon-del" onclick="this.parentElement.remove()" style="margin-top: 4px;">✕</button>
+        `;
+        container.appendChild(row);
+    }
+
     confirmEditEquipment(instanceId) {
+        const features = [];
+        const rows = document.querySelectorAll('.eq-feature-row');
+        rows.forEach(row => {
+            const name = row.querySelector('.eq-feature-name').value.trim();
+            const desc = row.querySelector('.eq-feature-desc').value.trim();
+            if (name || desc) {
+                features.push({ name, desc });
+            }
+        });
+
         const newData = {
             name: document.getElementById('edit-eq-name').value,
             description: document.getElementById('edit-eq-desc').value,
+            customFeatures: features,
             level: parseInt(document.getElementById('edit-eq-level').value) || 0,
             speed: parseInt(document.getElementById('edit-eq-speed').value) || 0,
             body: parseInt(document.getElementById('edit-eq-body').value) || 0,

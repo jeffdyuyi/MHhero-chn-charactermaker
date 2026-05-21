@@ -11,7 +11,8 @@ export const ORIGINS = [
         description: '英雄是技艺娴熟的个体,拥有的“能力”实际上都来自精湛的训练或专门的设备(请参阅特殊能力章节的装置部分)。额外获得两项专长,同时可以选择一项特殊能力作为交换,另外获得两项专长。',
         mechanics: {
             bonusSpecialties: 2,
-            optionalExchange: 'power_for_specialties_plus_2'
+            optionalExchange: 'power_for_specialties_plus_2',
+            deviceLimit: true
         }
     },
     {
