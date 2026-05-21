@@ -16,9 +16,9 @@
 }
 
 .header-content {
-    max-width: 1440px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--spacing-xl);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -101,10 +101,10 @@
 /* --- 主内容区 --- */
 .main-content {
     flex: 1;
-    max-width: 1200px;
+    max-width: 100%;
     width: 100%;
     margin: 0 auto;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xl);
 }
 
 /* --- 页脚 --- */
