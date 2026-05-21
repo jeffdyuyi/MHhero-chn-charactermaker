@@ -182,8 +182,8 @@
 
 .attr-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
     padding: 10px 14px;
     border: var(--comic-border-width) solid var(--comic-border-color);
     background: var(--pure-white);
@@ -276,15 +276,16 @@
 
 .spec-tag-card {
     border: var(--comic-border-width) solid var(--comic-border-color);
-    padding: 5px 12px;
+    padding: var(--spacing-sm) var(--spacing-md);
     background: var(--pure-white);
     display: flex;
-    align-items: center;
-    gap: 8px;
+    flex-direction: column;
+    align-items: stretch;
     font-weight: var(--fw-body);
     font-size: var(--font-size-sm);
     border-radius: var(--border-radius);
     transition: border-color var(--transition-fast);
+    width: 100%;
 }
 
 .spec-tag-card:hover {

@@ -11,8 +11,8 @@ import {
 } from '../data/powers.js';
 
 import { formatOriginMechanics, ORIGINS } from '../data/origins.js';
-import { getSpecialtiesList } from '../data/specialties.js';
-import { getAttributeKeys } from '../data/attributes.js';
+import { getSpecialtiesList, SPECIALTIES } from '../data/specialties.js';
+import { getAttributeKeys, ATTRIBUTES } from '../data/attributes.js';
 import { POINT_BUY_CONFIG } from '../data/index.js';
 import { CharacterGenerator } from '../core/character.js';
 import { showSuccess, showError, showInfo } from './toast.js';
@@ -561,12 +561,16 @@ export class CreationFlow {
 
     renderAttributeItem(key, val) {
         const isClickable = this._pendingBoostTokens > 0;
+        const desc = ATTRIBUTES[key]?.description || '';
         return `
             <div class="attr-row" ${isClickable ? `onclick="app.creationFlow.handleAttributeClick('${key}')" style="cursor:pointer; border-color: var(--lavender-glow);"` : ''}>
-                <span class="attr-name">${ATTRIBUTE_NAMES[key]}</span>
-                <div class="attr-value-box">
-                    <span class="val">${val}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="attr-name">${ATTRIBUTE_NAMES[key]}</span>
+                    <div class="attr-value-box">
+                        <span class="val">${val}</span>
+                    </div>
                 </div>
+                ${desc ? `<div class="item-desc">${desc}</div>` : ''}
                 ${isClickable ? '<div style="font-size: 10px; color: var(--lavender-glow); text-align: center; margin-top: 4px;">点击升级 +2</div>' : ''}
             </div>
         `;
@@ -576,7 +580,7 @@ export class CreationFlow {
         const desc = getPowerDescription(power.name) || '暂无详细说明';
         const isClickable = this._pendingBoostTokens > 0;
         return `
-            <div class="power-panel-card" title="${desc.replace(/"/g, '&quot;')}" ${isClickable ? `onclick="app.creationFlow.handlePowerClick(${index})" style="cursor:pointer; border-color: var(--lavender-glow);"` : ''}>
+            <div class="power-panel-card" ${isClickable ? `onclick="app.creationFlow.handlePowerClick(${index})" style="cursor:pointer; border-color: var(--lavender-glow);"` : ''}>
                 <div class="card-top">
                     <span class="p-name" onclick="event.stopPropagation(); app.showPowerDetail('${power.name}')">${power.name}</span>
                     <span class="p-cat">(${power.category})</span>
@@ -586,6 +590,7 @@ export class CreationFlow {
                         <button class="btn-icon-del" onclick="event.stopPropagation(); app.creationFlow.removePower(${index})">✕</button>
                     </div>
                 </div>
+                <div class="item-desc" style="margin-top: 6px;">${desc}</div>
                 <div class="p-mods">
                     <div class="mod-list">
                         ${power.extras.map(e => `<span class="tag extra" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'extra', '${e.id}')">${e.name}</span>`).join('')}
@@ -599,11 +604,18 @@ export class CreationFlow {
 
     renderSpecialtyItem(specialty, index) {
         const levels = { 1: '基础', 2: '专家', 3: '大师' };
+        const specData = SPECIALTIES.find(s => s.name === specialty.name || s.id === specialty.id);
+        const desc = specData ? specData.description : '暂无详细说明';
         return `
             <div class="spec-tag-card">
-                <span class="s-name">${specialty.name}</span>
-                <span class="s-level">${levels[specialty.level]}</span>
-                <button class="btn-icon-del" onclick="app.creationFlow.removeSpecialty(${index})">✕</button>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span class="s-name">${specialty.name}</span>
+                        <span class="s-level" style="margin-left: 8px;">${levels[specialty.level]}</span>
+                    </div>
+                    <button class="btn-icon-del" onclick="app.creationFlow.removeSpecialty(${index})">✕</button>
+                </div>
+                <div class="item-desc" style="margin-top: 6px;">${desc}</div>
             </div>
         `;
     }
@@ -723,6 +735,7 @@ export class CreationFlow {
     // 重新掷骰
     rerollOrigin() {
         this.characterGenerator.generateOrigin();
+        this.characterGenerator.updateDerivedStats();
         this.renderFullSheet();
         if (this.isStepCompleted()) {
             this.completedSteps[0] = true;
@@ -731,6 +744,7 @@ export class CreationFlow {
 
     rerollAttributes() {
         this.characterGenerator.generateAttributes();
+        this.characterGenerator.updateDerivedStats();
         this.renderFullSheet();
         if (this.isStepCompleted()) {
             this.completedSteps[0] = true;
@@ -739,6 +753,7 @@ export class CreationFlow {
 
     rerollPowers() {
         this.characterGenerator.generatePowers();
+        this.characterGenerator.updateDerivedStats();
         this.renderFullSheet();
         // 标记能力步骤为已完成
         this.completedSteps[1] = true;
@@ -746,6 +761,7 @@ export class CreationFlow {
 
     rerollSpecialties() {
         this.characterGenerator.generateSpecialties();
+        this.characterGenerator.updateDerivedStats();
         this.renderFullSheet();
         // 标记专长步骤为已完成
         this.completedSteps[2] = true;
@@ -814,6 +830,7 @@ export class CreationFlow {
         }
         this.characterGenerator.character.stackedOrigins = origins;
         this.characterGenerator.character.originChoices.alienChoice = 'double';
+        this.characterGenerator.updateDerivedStats();
         this.renderFullSheet();
     }
 
