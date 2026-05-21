@@ -92,21 +92,20 @@
     background: var(--bg-secondary);
 }
 
-/* 步骤编号 */
 .step-num {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    padding: 2px 8px;
     background: var(--pure-white);
     color: var(--charcoal-ink);
     border: var(--comic-border-width) solid var(--charcoal-ink);
     font-size: 10px;
     font-weight: var(--fw-bold);
-    border-radius: 50%;
+    border-radius: 12px;
     margin-right: 8px;
     flex-shrink: 0;
+    white-space: nowrap;
 }
 
 /* --- 模块标题 --- */

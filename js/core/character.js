@@ -27,7 +27,8 @@ import {
     getPowerCategoryByRoll,
     getPowerByD66,
     getPowerCountByRoll,
-    createPower
+    createPower,
+    POWERS
 } from '../data/powers.js';
 
 import {
@@ -73,6 +74,7 @@ export class CharacterGenerator {
         getAttributeKeys().forEach(key => {
             this.character.attributes[key] = pointsPerAttr;
         });
+        this.character.baseAttributes = { ...this.character.attributes };
         this.updateDerivedStats();
         return this.character;
     }
@@ -182,11 +184,20 @@ export class CharacterGenerator {
      */
     addPowerDirectly(powerName) {
         if (!this.character.powers.some(p => p.name === powerName)) {
-            const power = createPower(powerName);
+            let targetCategory = 'alteration'; // fallback
+            for (const [catId, catData] of Object.entries(POWERS)) {
+                if (catData.powers && catData.powers.some(p => p.name === powerName)) {
+                    targetCategory = catId;
+                    break;
+                }
+            }
+            
+            const power = createPower(targetCategory, powerName);
             if (power) {
                 // 如果随机模式，随机决定等级
                 if (this.mode === 'random') {
-                    power.level = roll2d6();
+                    const levelRoll = roll2d6();
+                    power.level = getAttributeLevel(levelRoll);
                 }
                 this.character.powers.push(power);
             }
@@ -242,45 +253,27 @@ export class CharacterGenerator {
     generatePowers() {
         this.character.powers = [];
 
+        // 1. 根据特殊能力数量列表进行掷骰
         const roll = roll2d6();
         let count = getPowerCountByRoll(roll);
         const mech = this.character.origin?.mechanics;
 
         if (mech) {
             if (mech.bonusPower && !mech.choice) {
-                // 普通加成
                 count++;
             } else if (mech.choice === 'power_or_boost' && this.character.originChoices.mutantChoice === 'power') {
-                // 天赋异禀选择能力
                 count++;
             }
         }
 
+        // 2 & 3 & 4. 获取类型 -> 类别下的能力 -> 能力等级 -> 应用起源修正 (都在 addRandomPower 中完成)
         for (let i = 0; i < count; i++) {
             this.addRandomPower();
         }
 
-        // 处理由于起源获得固定能力（如维系生命），不占用掷骰次数
+        // 额外起源特性：如维系生命，作为固定能力获得
         if (mech?.guaranteedPower) {
             this.addPowerDirectly(mech.guaranteedPower);
-        }
-
-        // 应用装置限制
-        const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
-        if (this.character.origin?.mechanics.deviceLimit) {
-            this.character.powers.forEach(power => {
-                if (!power.flaws.some(f => f.id === 'device')) {
-                    power.flaws.push(deviceFlaw);
-                }
-            });
-        } else if (this.mode === 'random') {
-            this.character.powers.forEach(power => {
-                // 如果采用随机投掷法,进行一次2d6掷骰,结果为4点以下(包括4点)则该项特殊能力需要装置作为支持
-                const roll = roll2d6();
-                if (roll <= 4 && !power.flaws.some(f => f.id === 'device')) {
-                    power.flaws.push(deviceFlaw);
-                }
-            });
         }
     }
 
@@ -335,9 +328,15 @@ export class CharacterGenerator {
 
         const power = createPower(category.id, powerData.name, level);
         
+        const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
         if (this.character.origin?.mechanics.deviceLimit) {
-            const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
             power.flaws.push(deviceFlaw);
+        } else if (this.mode === 'random') {
+            // 如果采用随机掷骰法,进行一次2d6掷骰,结果为4点以下(包括4点)则该项特殊能力需要装置作为支持
+            const deviceRoll = roll2d6();
+            if (deviceRoll <= 4) {
+                power.flaws.push(deviceFlaw);
+            }
         }
         
         this.character.powers.push(power);
@@ -352,10 +351,11 @@ export class CharacterGenerator {
     addPower(categoryId, powerName, level = 1) {
         const power = createPower(categoryId, powerName, level);
         
+        const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
         if (this.character.origin?.mechanics.deviceLimit) {
-            const deviceFlaw = { id: 'device', name: '装置', description: '该能力依赖于外部装置' };
             power.flaws.push(deviceFlaw);
         }
+        // 手动添加的能力不触发2d6装置判定
         
         this.character.powers.push(power);
         this.updateDerivedStats();

@@ -399,7 +399,7 @@ export class CreationFlow {
                 </div>
                 ${originAttributeHint}
                 <div class="attributes-stack">
-                    ${getAttributeKeys().map(key => this.renderAttributeItem(key, char.attributes[key])).join('')}
+                    ${getAttributeKeys().map(key => this.renderAttributeItem(key, char.attributes[key], char.baseAttributes ? char.baseAttributes[key] : char.attributes[key])).join('')}
                 </div>
             </div>
         `;
@@ -559,15 +559,18 @@ export class CreationFlow {
         `;
     }
 
-    renderAttributeItem(key, val) {
+    renderAttributeItem(key, val, baseVal = val) {
         const isClickable = this._pendingBoostTokens > 0;
         const desc = ATTRIBUTES[key]?.description || '';
+        const isBoosted = val > baseVal;
+        
         return `
             <div class="attr-row" ${isClickable ? `onclick="app.creationFlow.handleAttributeClick('${key}')" style="cursor:pointer; border-color: var(--lavender-glow);"` : ''}>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span class="attr-name">${ATTRIBUTE_NAMES[key]}</span>
-                    <div class="attr-value-box">
+                    <div class="attr-value-box" style="${isBoosted ? 'background: var(--charcoal-ink); color: var(--pure-white); border-color: var(--charcoal-ink);' : ''}">
                         <span class="val">${val}</span>
+                        ${isBoosted ? `<span style="font-size: 10px; margin-left: 4px; font-weight: normal;">▲起源增益</span>` : ''}
                     </div>
                 </div>
                 ${desc ? `<div class="item-desc">${desc}</div>` : ''}
@@ -772,6 +775,20 @@ export class CreationFlow {
                 this.characterGenerator.generateSpecialties(2); // 额外加2项
                 this.characterGenerator.character.originChoices.sacrificedForSpecialties = true;
                 showSuccess('已舍弃能力，获得2项额外专长名额（请在专长页面查看）！');
+            } else if (this._pendingExchange === 'extra') {
+                if (index === this._pendingExtraConfig.pIndex) {
+                    showError('你不能献祭需要添加附带效果的能力本身！请选择另一项能力。');
+                    return;
+                }
+                
+                // 确定目标能力在献祭后的新索引
+                let targetIndex = this._pendingExtraConfig.pIndex;
+                if (index < targetIndex) targetIndex--;
+                
+                this.characterGenerator.removePower(index);
+                this.characterGenerator.addPowerModifier(targetIndex, 'extra', this._pendingExtraConfig.mod);
+                showSuccess('已成功献祭一项能力并获得附带效果！');
+                this._pendingExtraConfig = null;
             }
             this._pendingExchange = null;
         } else {
@@ -918,6 +935,22 @@ export class CreationFlow {
     applyMod(pIndex, type, modId) {
         try {
             const mod = (type === 'extra' ? POWER_EXTRAS : POWER_FLAWS).find(m => m.id === modId);
+            
+            // 附带效果必须以一换一（牺牲另一项特殊能力）
+            if (type === 'extra') {
+                const powers = this.characterGenerator.character.powers;
+                if (powers.length <= 1) {
+                    showError('你的特殊能力不足，无法献祭以换取附带效果！');
+                    return;
+                }
+                
+                this._pendingExtraConfig = { pIndex, mod };
+                this._pendingExchange = 'extra';
+                closeModal();
+                showInfo('附带效果替换：请点击你要献祭（舍弃）的另一项特殊能力上的 ✕ 按钮！');
+                return;
+            }
+            
             this.characterGenerator.addPowerModifier(pIndex, type, mod);
             this.renderFullSheet();
         } catch (error) {
