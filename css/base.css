@@ -18,7 +18,7 @@ body {
     font-weight: var(--fw-body);
     line-height: var(--line-height-normal);
     color: var(--text-primary);
-    background: var(--bg-body);
+    background: var(--bg-body) var(--halftone-bg);
     min-height: 100vh;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;

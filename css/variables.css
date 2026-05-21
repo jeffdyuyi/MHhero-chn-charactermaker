@@ -23,42 +23,42 @@
     --color-off-white: #fafafa;
 
     /* --- 核心色板映射 --- */
-    --mysteria-purple: #171717;        /* 去除紫色渐变，统一黑底 */
-    --lavender-glow: var(--color-green);  /* 将紫色强调色换为绿色 */
-    --charcoal-ink: var(--color-off-white); /* 原黑墨水变为白字 */
-    --amethyst-link: var(--color-green-link); /* 链接色 */
-    --pure-white: #121212;             /* 深色模式极黑 */
-    --warm-cream: var(--color-dark-border); /* 按钮默认底色 */
-    --parchment-border: var(--color-border-dark); /* 边框 */
+    --mysteria-purple: #000000;        /* 全局黑 */
+    --lavender-glow: #000000;          /* 交互黑 */
+    --charcoal-ink: #000000;           /* 深色文字 */
+    --amethyst-link: #000000;          /* 链接色 */
+    --pure-white: #ffffff;             /* 纯白 */
+    --warm-cream: #ffffff;             /* 按钮默认底色 */
+    --parchment-border: #000000;       /* 边框 */
 
     /* --- 透明叠加 --- */
-    --tw-95: rgba(250, 250, 250, 0.95);
-    --tw-80: rgba(250, 250, 250, 0.80);
-    --tw-20: rgba(250, 250, 250, 0.20);
+    --tw-95: rgba(0, 0, 0, 0.95);
+    --tw-80: rgba(0, 0, 0, 0.80);
+    --tw-20: rgba(0, 0, 0, 0.20);
 
     /* --- 语义化别名 --- */
-    --white: var(--color-near-black);
-    --black: var(--color-off-white);
-    --primary-color: var(--color-off-white);
-    --accent-color: var(--color-green);
-    --secondary-color: var(--color-mid-gray);
+    --white: #ffffff;
+    --black: #000000;
+    --primary-color: #000000;
+    --accent-color: #000000;
+    --secondary-color: #666666;
 
     /* --- 文本颜色 --- */
-    --text-primary: var(--color-off-white);
-    --text-secondary: var(--color-light-gray);
-    --text-muted: var(--color-mid-gray);
-    --text-on-dark: var(--color-off-white);
+    --text-primary: #000000;
+    --text-secondary: #444444;
+    --text-muted: #666666;
+    --text-on-dark: #ffffff;
 
     /* --- 背景颜色 --- */
-    --bg-page: #171717;
+    --bg-page: #ffffff;
     --bg-body: var(--bg-page);
-    --bg-card: #1c1c1c;
-    --bg-secondary: #242424;
-    --bg-header: rgba(23, 23, 23, 0.92);
-    --bg-footer: #121212;
+    --bg-card: #ffffff;
+    --bg-secondary: #f4f4f4;
+    --bg-header: #ffffff;
+    --bg-footer: #ffffff;
 
     /* --- 英雄渐变（废弃，改为深色） --- */
-    --hero-gradient: var(--bg-page);
+    --hero-gradient: #000000;
 
     /* --- 边框 --- */
     --border-color: var(--color-border-dark);
@@ -109,12 +109,12 @@
     --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
     --shadow-lg: 0 12px 32px rgba(0,0,0,0.6);
 
-    /* 漫画感恢复（深色背景下的荧光或硬边阴影） */
-    --comic-shadow: 4px 4px 0px rgba(62, 207, 142, 0.4);
-    --comic-shadow-sm: 2px 2px 0px rgba(62, 207, 142, 0.6);
-    --comic-shadow-hover: 6px 6px 0px rgba(62, 207, 142, 0.8);
+    /* 黑白漫画硬边阴影 */
+    --comic-shadow: 4px 4px 0px rgba(0, 0, 0, 1);
+    --comic-shadow-sm: 2px 2px 0px rgba(0, 0, 0, 1);
+    --comic-shadow-hover: 6px 6px 0px rgba(0, 0, 0, 1);
     --comic-border-width: 2px;
-    --comic-border-color: var(--color-green-border);
+    --comic-border-color: #000000;
     --box-shadow: var(--comic-shadow);
 
     /* --- 过渡 --- */
@@ -126,8 +126,8 @@
     --z-index-modal: 2000;
     --z-index-toast: 3000;
 
-    /* --- 去除旧漫画网点纹理 --- */
-    --halftone-size: 0px;
-    --halftone-dot: none;
-    --halftone-bg: none;
+    /* --- 还原漫画网点纹理 --- */
+    --halftone-size: 4px;
+    --halftone-dot: radial-gradient(circle, #cccccc 1px, transparent 1.5px);
+    --halftone-bg: var(--halftone-dot) 0 0 / var(--halftone-size) var(--halftone-size);
 }

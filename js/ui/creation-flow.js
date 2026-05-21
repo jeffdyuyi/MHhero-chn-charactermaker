@@ -114,30 +114,66 @@ export class CreationFlow {
         try {
             const char = this.characterGenerator.getCharacter();
 
-            // 清空并渲染当前步骤的内容
-            container.innerHTML = '';
+            // 自动判断区块完成情况，直接更新 completedSteps
+            this.completedSteps[0] = char.origin !== null && Object.values(char.attributes).some(val => val > 0);
+            this.completedSteps[1] = char.powers.length > 0;
+            this.completedSteps[2] = char.specialties.length > 0;
+            const traits = char.qualities || [];
+            const filledTraits = traits.filter(t => t && t.trim()).length;
+            this.completedSteps[3] = char.name && char.name.trim() !== '' && filledTraits >= 3;
 
-            // 渲染步骤导航
-            container.innerHTML += this.renderStepNavigation();
+            // 一次性顺序渲染所有区块，根据前置是否完成来施加锁定遮罩
+            let html = '';
+            
+            // 区块 1: 起源与属性（始终解锁）
+            html += this.renderOriginSection(char) + this.renderAttributesSection(char) + this.renderCombatSection(char);
 
-            // 根据当前步骤渲染对应内容
-            let sectionContent = '';
-            switch (this.currentStep) {
-                case 1:
-                    sectionContent = this.renderOriginSection(char) + this.renderAttributesSection(char) + this.renderCombatSection(char);
-                    break;
-                case 2:
-                    sectionContent = this.renderPowersSection(char);
-                    break;
-                case 3:
-                    sectionContent = this.renderSpecialtiesSection(char) + this.renderEquipmentSection(char);
-                    break;
-                case 4:
-                    sectionContent = this.renderIdentitySection(char) + this.renderCombatSection(char) + this.renderBioSection(char);
-                    break;
+            // 区块 2: 能力（如果第一步属性掷骰未完成则锁定）
+            let isPowersUnlocked = this.completedSteps[0];
+            if (!isPowersUnlocked) {
+                html += `
+                    <div class="locked-section">
+                        <div class="lock-overlay">
+                            <div class="lock-message">🔒 请先生成您的起源与属性</div>
+                        </div>
+                        ${this.renderPowersSection(char)}
+                    </div>
+                `;
+            } else {
+                html += this.renderPowersSection(char);
             }
 
-            container.innerHTML += sectionContent;
+            // 区块 3: 专长与装备（如果第二步未完成则锁定）
+            let isSpecsUnlocked = this.completedSteps[1];
+            if (!isSpecsUnlocked) {
+                html += `
+                    <div class="locked-section">
+                        <div class="lock-overlay">
+                            <div class="lock-message">🔒 请先生成您的超凡能力</div>
+                        </div>
+                        ${this.renderSpecialtiesSection(char) + this.renderEquipmentSection(char)}
+                    </div>
+                `;
+            } else {
+                html += this.renderSpecialtiesSection(char) + this.renderEquipmentSection(char);
+            }
+
+            // 区块 4: 英雄身份（如果第三步未完成则锁定）
+            let isIdentityUnlocked = this.completedSteps[2];
+            if (!isIdentityUnlocked) {
+                html += `
+                    <div class="locked-section">
+                        <div class="lock-overlay">
+                            <div class="lock-message">🔒 请先生成您的背景专长</div>
+                        </div>
+                        ${this.renderIdentitySection(char) + this.renderBioSection(char)}
+                    </div>
+                `;
+            } else {
+                html += this.renderIdentitySection(char) + this.renderBioSection(char);
+            }
+
+            container.innerHTML = html;
 
             // 重新绑定可能的动态事件或初始化提示
             this.initPowerTooltips();
@@ -147,80 +183,7 @@ export class CreationFlow {
         }
     }
 
-    renderStepNavigation() {
-        return `
-            <div class="step-navigation">
-                <div class="step-indicators">
-                    ${Array.from({ length: this.totalSteps }, (_, i) => {
-                        const step = i + 1;
-                        const isClickable = step === this.currentStep || this.completedSteps[step - 1];
-                        return `
-                            <div class="step-indicator ${step === this.currentStep ? 'active' : step < this.currentStep ? 'completed' : ''} ${!isClickable ? 'disabled' : ''}" ${isClickable ? `onclick="app.creationFlow.goToStep(${step})"` : ''}>
-                                ${step < this.currentStep ? '✓' : step}
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-                <div class="step-buttons">
-                    <button class="btn btn-secondary ${this.currentStep === 1 ? 'disabled' : ''}" onclick="app.creationFlow.prevStep()" ${this.currentStep === 1 ? 'disabled' : ''}>
-                        ← 上一步
-                    </button>
-                    <button class="btn btn-primary ${this.currentStep === this.totalSteps ? 'disabled' : ''}" onclick="app.creationFlow.nextStep()" ${this.currentStep === this.totalSteps ? 'disabled' : ''}>
-                        下一步 →
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-
-    goToStep(step) {
-        // 只允许访问当前步骤或已完成的步骤
-        if (step >= 1 && step <= this.totalSteps && (step === this.currentStep || this.completedSteps[step - 1])) {
-            this.currentStep = step;
-            this.renderFullSheet();
-        }
-    }
-
-    prevStep() {
-        if (this.currentStep > 1) {
-            this.currentStep--;
-            this.renderFullSheet();
-        }
-    }
-
-    nextStep() {
-        // 检查当前步骤是否完成
-        if (!this.isStepCompleted()) {
-            showInfo('请先完成当前步骤的内容');
-            return;
-        }
-        
-        if (this.currentStep < this.totalSteps) {
-            // 标记当前步骤为已完成
-            this.completedSteps[this.currentStep - 1] = true;
-            this.currentStep++;
-            this.renderFullSheet();
-        }
-    }
-
-    isStepCompleted() {
-        const char = this.characterGenerator.getCharacter();
-        switch (this.currentStep) {
-            case 1: // 起源 + 属性
-                return char.origin !== null && Object.values(char.attributes).every(val => val > 0);
-            case 2: // 能力
-                return char.powers.length > 0;
-            case 3: // 专长
-                return char.specialties.length > 0;
-            case 4: // 英雄信息
-                // 确保至少有3项特质且英雄名称不为空
-                const traits = char.qualities || [];
-                const filledTraits = traits.filter(t => t && t.trim()).length;
-                return char.name && filledTraits >= 3;
-            default:
-                return true;
-        }
-    }
+    // 旧的步骤导航与校验方法已被移除
 
     initPowerTooltips() {
         // 后续可以通过 Tippy.js 或自定义实现更酷的提示，目前使用原生 title 的增强版
@@ -700,10 +663,7 @@ export class CreationFlow {
     // 更新信息
     updateBasicInfo(key, val) {
         this.characterGenerator.character[key] = val;
-        // 检查英雄信息步骤是否完成
-        if (this.currentStep === 4) {
-            this.completedSteps[3] = this.isStepCompleted();
-        }
+        this.renderFullSheet();
     }
 
     updateTrait(index, val) {
@@ -711,10 +671,7 @@ export class CreationFlow {
             this.characterGenerator.character.qualities = ['', '', ''];
         }
         this.characterGenerator.character.qualities[index] = val;
-        // 检查英雄信息步骤是否完成
-        if (this.currentStep === 4) {
-            this.completedSteps[3] = this.isStepCompleted();
-        }
+        this.renderFullSheet();
     }
 
     addTrait() {
@@ -737,18 +694,12 @@ export class CreationFlow {
         this.characterGenerator.generateOrigin();
         this.characterGenerator.updateDerivedStats();
         this.renderFullSheet();
-        if (this.isStepCompleted()) {
-            this.completedSteps[0] = true;
-        }
     }
 
     rerollAttributes() {
         this.characterGenerator.generateAttributes();
         this.characterGenerator.updateDerivedStats();
         this.renderFullSheet();
-        if (this.isStepCompleted()) {
-            this.completedSteps[0] = true;
-        }
     }
 
     rerollPowers() {

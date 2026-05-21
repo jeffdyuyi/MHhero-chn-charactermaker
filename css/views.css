@@ -54,6 +54,40 @@
     border-bottom: none;
 }
 
+/* --- 锁定区块遮罩 --- */
+.locked-section {
+    position: relative;
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.lock-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.lock-message {
+    background: var(--pure-white);
+    border: 2px solid var(--black);
+    box-shadow: 4px 4px 0px rgba(0,0,0,1);
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    font-weight: var(--fw-bold);
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 /* 奇数区块轻微背景区分 */
 .sheet-section:nth-child(even) {
     background: var(--bg-secondary);
