@@ -49,8 +49,8 @@ class ComicHeroApp {
             }
         };
 
-        // 默认开启创建流程
-        this.creationFlow.start();
+        // 默认进入名录视图
+        this.viewManager.switchView('saved');
     }
 
     bindGlobalEvents() {

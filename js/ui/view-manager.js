@@ -6,7 +6,7 @@
 export class ViewManager {
     constructor(app) {
         this.app = app;
-        this.currentView = 'editor';
+        this.currentView = 'saved';
         this.init();
     }
 

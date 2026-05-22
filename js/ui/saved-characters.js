@@ -87,7 +87,7 @@ export class SavedCharactersView {
             container.innerHTML = `
                 <div class="empty-state">
                     <p>${this.searchQuery ? '没有找到符合条件的角色' : '名录空空如也'}</p>
-                    <button class="btn btn-primary" onclick="app.viewManager.switchView('editor')">前往锻造新英雄</button>
+                    <button class="btn btn-primary" onclick="app.viewManager.switchView('editor')">前往创建新英雄</button>
                 </div>
             `;
             return;
@@ -104,10 +104,13 @@ export class SavedCharactersView {
                         ${character.avatar ? `<img src="${character.avatar}" alt="Avatar">` : '🦸'}
                     </div>
                     <div class="char-title-group">
-                        <h4>${character.name || '未命名英雄'}</h4>
-                        <div class="char-subtitle">
+                        <h4 style="margin: 0; font-size: 1.1em;">${character.name || '未命名英雄'}</h4>
+                        <div class="char-subtitle" style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; align-items: center;">
                            <span class="char-origin badge-xs">${character.origin?.name || '未知起源'}</span>
                            <span class="char-mode-badge ${character.mode}">${character.mode === 'random' ? '🎲' : '🎯'}</span>
+                           <span class="char-timestamp" style="font-size: 0.8em; color: var(--text-muted);">
+                               🕒 ${new Date(character.createdAt || Date.now()).toLocaleDateString()}
+                           </span>
                         </div>
                     </div>
                 </div>

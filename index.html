@@ -23,15 +23,14 @@
         <header class="app-header">
             <div class="header-content">
                 <div class="logo" id="logo" title="点击查看作者信息" style="cursor: pointer;">
-                    <span class="logo-icon">🦸</span>
-                    <h1>漫画英雄 <span class="subtitle">卡片锻造炉</span></h1>
+                    <h1>漫画英雄：<span class="subtitle">英雄快速登场工具</span></h1>
                 </div>
                 <nav class="main-nav">
-                    <button class="nav-btn active" data-view="editor" aria-label="角色编辑">
+                    <button class="nav-btn" data-view="editor" aria-label="角色编辑">
                         <span class="nav-icon">✍️</span>
                         <span class="nav-text">编辑角色</span>
                     </button>
-                    <button class="nav-btn" data-view="saved" aria-label="已存角色">
+                    <button class="nav-btn active" data-view="saved" aria-label="已存角色">
                         <span class="nav-icon">📋</span>
                         <span class="nav-text">英雄名录</span>
                     </button>
@@ -41,7 +40,7 @@
 
         <main class="main-content one-page-app">
             <!-- 一页式角色卡编辑器 -->
-            <section id="editor-view" class="view active">
+            <section id="editor-view" class="view">
                 <div class="controls-overlay">
                     <div class="action-btns" style="margin-left: auto; display: flex; gap: 8px;">
                         <button class="btn btn-sm btn-info" onclick="app.creationFlow.exportAsImage()">🖼️ 导出图片</button>
@@ -59,7 +58,7 @@
             </section>
 
             <!-- 已存角色名录 -->
-            <section id="saved-view" class="view">
+            <section id="saved-view" class="view active">
                 <div class="section-header">
                     <h2>英雄名录</h2>
                     <div class="header-actions" style="display: flex; gap: 8px;">

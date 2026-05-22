@@ -141,9 +141,7 @@
         padding: 8px 10px;
     }
 
-    .saved-characters-list {
-        grid-template-columns: 1fr;
-    }
+
 
     .help-content {
         grid-template-columns: 1fr !important;
