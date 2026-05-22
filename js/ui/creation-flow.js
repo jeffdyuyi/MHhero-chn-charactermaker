@@ -684,10 +684,10 @@ export class CreationFlow {
         // Attributes
         if (targetFilter !== 'powers_only') {
             html += `<optgroup label="属性 (Attributes)">`;
-            const attrKeys = targetFilter === 'mental' ? ['intellect', 'awareness', 'willpower'] : ['strength', 'agility', 'dexterity', 'stamina', 'intellect', 'awareness', 'willpower', 'resolve'];
+            const attrKeys = targetFilter === 'mental' ? ['intellect', 'awareness', 'willpower'] : ['brawn', 'coordination', 'strength', 'intellect', 'awareness', 'willpower'];
             const attrNames = {
-                strength: '力量', agility: '敏捷', dexterity: '灵巧', stamina: '耐力',
-                intellect: '智力', awareness: '感知', willpower: '意志', resolve: '决意'
+                brawn: '勇猛', coordination: '协调', strength: '力量',
+                intellect: '智力', awareness: '感知', willpower: '意志'
             };
             
             attrKeys.forEach(k => {
