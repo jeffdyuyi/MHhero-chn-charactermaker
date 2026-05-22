@@ -143,33 +143,8 @@ export class CharacterGenerator {
             return;
         }
 
-        // 应用固定属性加成
-        if (boost) {
-            switch (boost.target) {
-                case 'strength':
-                    this.character.attributes.strength = Math.min(10, this.character.attributes.strength + boost.value);
-                    break;
-                case 'mental':
-                    if (!choices.statBoost) {
-                        const mentalKeys = ['intellect', 'awareness', 'willpower'];
-                        const targetKey = mentalKeys[Math.floor(Math.random() * mentalKeys.length)];
-                        choices.statBoost = targetKey;
-                    }
-                    break;
-                case 'any_one':
-                    if (!choices.statBoost) {
-                        const randomKey = keys[Math.floor(Math.random() * keys.length)];
-                        choices.statBoost = randomKey;
-                    }
-                    break;
-                case 'any_two':
-                    if (!choices.statBoosts) {
-                        const shuffled = [...keys].sort(() => 0.5 - Math.random());
-                        choices.statBoosts = shuffled.slice(0, 2);
-                    }
-                    break;
-            }
-        }
+        // 不再自动随机分配起源的属性和能力提升选择（如 any_one, any_two, mental 等），
+        // 而是将这些选择权交给 UI 层，让玩家在前端自行选择并更新 originChoices。
 
         // 处理固定获得的超凡能力
         if (mech.guaranteedPower) {
@@ -227,22 +202,18 @@ export class CharacterGenerator {
         }
 
         // 应用选择属性
-        const choices = this.character.originChoices;
-        if (choices.statBoost && this.character.attributes[choices.statBoost] !== undefined) {
-            this.character.attributes[choices.statBoost] = Math.min(10, this.character.attributes[choices.statBoost] + 2);
-        }
-        if (choices.statBoosts && Array.isArray(choices.statBoosts)) {
-            choices.statBoosts.forEach(key => {
-                if (this.character.attributes[key] !== undefined) {
-                    this.character.attributes[key] = Math.min(10, this.character.attributes[key] + 2);
+        const choices = this.character.originChoices || {};
+        
+        // 动态应用所有手动选择的增益项（由 UI 层注入的以 _stat 或 _power 结尾的配置）
+        for (const [key, val] of Object.entries(choices)) {
+            if (key.endsWith('_stat') && val && this.character.attributes[val] !== undefined) {
+                this.character.attributes[val] = Math.min(10, this.character.attributes[val] + 2);
+            }
+            if (key.endsWith('_power') && val !== null && val !== undefined) {
+                const power = this.character.powers[val];
+                if (power) {
+                    power.level = Math.min(10, power.level + 2);
                 }
-            });
-        }
-        if (choices.powerBoost && choices.powerBoostIndex !== undefined) {
-            const power = this.character.powers[choices.powerBoostIndex];
-            if (power) {
-                // 注意：这里需要考虑是否超过10级
-                power.level = Math.min(10, power.level + 2);
             }
         }
     }

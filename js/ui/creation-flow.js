@@ -203,7 +203,7 @@ export class CreationFlow {
             let html = '';
             
             // 区块 1: 起源与属性（始终解锁）
-            html += this.renderOriginSection(char) + this.renderAttributesSection(char) + this.renderCombatSection(char);
+            html += this.renderOriginSection(char) + this.renderAttributesSection(char);
 
             // 区块 2: 能力（如果第一步属性掷骰未完成则锁定）
             let isPowersUnlocked = this.completedSteps[0];
@@ -281,16 +281,33 @@ export class CreationFlow {
             <div class="sheet-section section-identity">
                 <div class="step-num">STEP 4</div>
                 <div class="identity-layout">
-                    <div class="avatar-upload-container">
-                        <div class="avatar-preview" id="avatar-preview-box" onclick="document.getElementById('avatar-input').click()">
-                            ${char.avatar ? `<img src="${char.avatar}" alt="Avatar">` : '<span class="avatar-placeholder">上传头像</span>'}
+                    <div class="avatar-upload-container" style="position: relative; overflow: hidden; border-radius: 8px;">
+                        <div class="avatar-preview" id="avatar-preview-box" onclick="document.getElementById('avatar-input').click()" style="cursor: pointer; position: relative; width: 100px; height: 100px; border: 2px dashed var(--border-color); display: flex; align-items: center; justify-content: center; background: var(--bg-secondary);">
+                            ${char.avatar ? `<img src="${char.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
+                            <div class="avatar-overlay" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: ${char.avatar ? 'rgba(0,0,0,0.5)' : 'transparent'}; color: ${char.avatar ? 'white' : 'var(--text-muted)'}; opacity: ${char.avatar ? '0' : '1'}; transition: opacity 0.2s;">
+                                <span style="font-size: 24px;">📸</span>
+                                <span style="font-size: 12px; margin-top: 4px; font-weight: bold;">点击上传头像</span>
+                            </div>
                         </div>
                         <input type="file" id="avatar-input" hidden accept="image/*" onchange="app.creationFlow.handleAvatarUpload(event)">
                     </div>
-                    <div class="identity-header">
+                    <div class="identity-header" style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
                         <input type="text" id="sheet-name" value="${char.name || ''}" 
                                oninput="app.creationFlow.updateBasicInfo('name', this.value)" 
-                               placeholder="输入英雄代号 (NAME)..." style="font-size: 1.5rem; font-weight: bold; width: 100%;">
+                               placeholder="英雄代号 (HERO CODE NAME)" style="font-size: 1.5rem; font-weight: bold; width: 100%; border: none; border-bottom: 2px solid var(--border-color); background: transparent; padding: 4px 8px;">
+                        <input type="text" id="sheet-realname" value="${char.realName || ''}" 
+                               oninput="app.creationFlow.updateBasicInfo('realName', this.value)" 
+                               placeholder="角色本名 (REAL NAME)" style="font-size: 1.1rem; width: 100%; border: none; border-bottom: 1px dashed var(--border-color); background: transparent; padding: 4px 8px; color: var(--text-secondary);">
+                        <div class="identity-stats" style="display: flex; gap: 15px; margin-top: 8px;">
+                            <div class="c-stat" style="display: flex; flex-direction: column; align-items: center; background: var(--bg-secondary); border: 2px solid var(--charcoal-ink); border-radius: 4px; padding: 4px 12px;">
+                                <span class="label" style="font-size: 10px; font-weight: bold;">耐力 (STAMINA)</span>
+                                <span class="val large" style="font-size: 1.5rem; font-weight: 900;">${char.stamina}</span>
+                            </div>
+                            <div class="c-stat" style="display: flex; flex-direction: column; align-items: center; background: var(--bg-secondary); border: 2px solid var(--charcoal-ink); border-radius: 4px; padding: 4px 12px;">
+                                <span class="label" style="font-size: 10px; font-weight: bold;">决意 (RESOLVE)</span>
+                                <span class="val large" style="font-size: 1.5rem; font-weight: 900;">${char.resolve}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="traits-section" style="margin-top: 20px;">
@@ -311,26 +328,6 @@ export class CreationFlow {
                                 ${index >= 3 ? `<button class="btn-icon-del" onclick="app.creationFlow.removeTrait(${index})">✕</button>` : ''}
                             </div>
                         `).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    renderCombatSection(char) {
-        return `
-            <div class="sheet-section section-combat">
-                <div class="step-num">CORE</div>
-                <div class="combat-grid">
-                    <div class="combat-main-box">
-                        <div class="c-stat">
-                            <span class="label">耐力 (STAMINA)</span>
-                            <span class="val large">${char.stamina}</span>
-                        </div>
-                        <div class="c-stat">
-                            <span class="label">决意 (RESOLVE)</span>
-                            <span class="val large">${char.resolve}</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -418,7 +415,6 @@ export class CreationFlow {
                 <div class="panel-header">
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <h3 style="margin: 0;">关键属性 (ATTRIBUTES)</h3>
-                        ${this._pendingBoostTokens > 0 ? `<span class="badge" style="background: var(--lavender-glow); color: white;">拥有 ${this._pendingBoostTokens} 个 +2 升级点数</span>` : ''}
                     </div>
                     ${!(this.heroType === 'true_hero' && Object.values(char.attributes).some(v => v > 0)) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机生成</button>` : ''}
                 </div>
@@ -482,7 +478,6 @@ export class CreationFlow {
                 <div class="panel-header">
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <h3 style="margin: 0;">超凡能力 (POWERS)</h3>
-                        ${this._pendingBoostTokens > 0 ? `<span class="badge" style="background: var(--lavender-glow); color: white;">拥有 ${this._pendingBoostTokens} 个 +2 升级点数</span>` : ''}
                     </div>
                     <div class="p-actions">
                         ${!(this.heroType === 'true_hero' && char.isPowersRolled) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机生成</button>` : ''}
@@ -606,7 +601,6 @@ export class CreationFlow {
 
     renderPowerItem(power, index, char) {
         const desc = getPowerDescription(power.name) || '暂无详细说明';
-        const isClickable = this._pendingBoostTokens > 0;
         
         // 检查是否为起源固定能力
         let isGuaranteed = false;
@@ -621,12 +615,11 @@ export class CreationFlow {
         }
 
         return `
-            <div class="power-panel-card" ${isClickable ? `onclick="app.creationFlow.handlePowerClick(${index})" style="cursor:pointer; border-color: var(--lavender-glow);"` : ''}>
+            <div class="power-panel-card">
                 <div class="card-top">
                     <span class="p-name" onclick="event.stopPropagation(); app.showPowerDetail('${power.name}')">${power.name}</span>
                     <span class="p-cat">(${power.category})</span>
                     <div class="p-controls">
-                        ${isClickable ? `<span style="font-size: 11px; color: var(--lavender-glow); margin-right: 10px;">点击升级 +2</span>` : ''}
                         <span class="p-level">Lvl ${power.level}</span>
                         ${!isGuaranteed ? `<button class="btn-icon-del" onclick="event.stopPropagation(); app.creationFlow.removePower(${index})">✕</button>` : `<span class="badge" style="margin-left: 8px; font-size: 10px;">固定</span>`}
                     </div>
@@ -661,10 +654,59 @@ export class CreationFlow {
         `;
     }
 
+    renderStatOrPowerSelect(char, choiceKey, targetFilter = 'any_one') {
+        const choices = char.originChoices || {};
+        let currentValue = '';
+        if (choices[`${choiceKey}_stat`]) currentValue = `attr_${choices[`${choiceKey}_stat`]}`;
+        else if (choices[`${choiceKey}_power`] !== undefined && choices[`${choiceKey}_power`] !== null) currentValue = `power_${choices[`${choiceKey}_power`]}`;
+
+        let html = `<select onchange="app.creationFlow.handleOriginBoostChange('${choiceKey}', this.value)" style="padding: 4px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-lighter); font-family: inherit; font-size: 12px; margin-top: 5px;">`;
+        html += `<option value="">-- 请选择要提升的能力 (+2级) --</option>`;
+        
+        // Attributes
+        html += `<optgroup label="属性 (Attributes)">`;
+        const attrKeys = targetFilter === 'mental' ? ['intellect', 'awareness', 'willpower'] : ['strength', 'agility', 'dexterity', 'stamina', 'intellect', 'awareness', 'willpower', 'resolve'];
+        const attrNames = {
+            strength: '力量', agility: '敏捷', dexterity: '灵巧', stamina: '耐力',
+            intellect: '智力', awareness: '感知', willpower: '意志', resolve: '决意'
+        };
+        
+        attrKeys.forEach(k => {
+            if (attrNames[k]) {
+                const selected = currentValue === `attr_${k}` ? 'selected' : '';
+                html += `<option value="attr_${k}" ${selected}>${attrNames[k]}</option>`;
+            }
+        });
+        html += `</optgroup>`;
+        
+        // Powers
+        if (targetFilter !== 'mental' && char.powers && char.powers.length > 0) {
+            html += `<optgroup label="特殊能力 (Powers)">`;
+            char.powers.forEach((p, idx) => {
+                const selected = currentValue === `power_${idx}` ? 'selected' : '';
+                html += `<option value="power_${idx}" ${selected}>${p.name}</option>`;
+            });
+            html += `</optgroup>`;
+        }
+        
+        html += `</select>`;
+        return html;
+    }
+
     renderOriginMechanicsConfig(char) {
         if (!char.origin || !char.origin.mechanics) return '';
         const mech = char.origin.mechanics;
         let html = '<div class="origin-config-row">';
+
+        // 改造 / 花招诡计：固定属性增幅
+        if (mech.statBoost && !mech.choice && mech.statBoost.target !== 'strength') {
+            html += `
+                <div class="origin-exchange-notice">
+                    <strong>起源增益配置：</strong>
+                    <div>${this.renderStatOrPowerSelect(char, 'autoBoost', mech.statBoost.target)}</div>
+                </div>
+            `;
+        }
 
         // 天赋异禀：选择额外能力或属性增幅
         if (mech.choice === 'power_or_boost') {
@@ -677,6 +719,11 @@ export class CreationFlow {
                         <button class="btn btn-xs ${char.originChoices.mutantChoice === 'boost' ? 'btn-primary' : 'btn-outline'}" 
                                 onclick="app.creationFlow.handleMutantChoice('boost')">获得1个 +2等级资源点</button>
                     </div>
+                    ${char.originChoices.mutantChoice === 'boost' ? `
+                        <div style="margin-top: 10px;">
+                            ${this.renderStatOrPowerSelect(char, 'mutantBoost', 'any_one')}
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -692,6 +739,12 @@ export class CreationFlow {
                         <button class="btn btn-xs ${char.originChoices.alienChoice === 'double' ? 'btn-primary' : 'btn-outline'}" 
                                 onclick="app.creationFlow.handleAlienChoice('double')">开启双重起源</button>
                     </div>
+                    ${char.originChoices.alienChoice === 'boosts' ? `
+                        <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 5px;">
+                            ${this.renderStatOrPowerSelect(char, 'alienBoost1', 'any_one')}
+                            ${this.renderStatOrPowerSelect(char, 'alienBoost2', 'any_one')}
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -1004,13 +1057,29 @@ export class CreationFlow {
         this.renderFullSheet();
     }
 
+    handleOriginBoostChange(choiceKey, val) {
+        const char = this.characterGenerator.character;
+        if (!char.originChoices) char.originChoices = {};
+        
+        // Reset old values
+        char.originChoices[`${choiceKey}_stat`] = null;
+        char.originChoices[`${choiceKey}_power`] = null;
+        
+        if (val.startsWith('attr_')) {
+            char.originChoices[`${choiceKey}_stat`] = val.replace('attr_', '');
+        } else if (val.startsWith('power_')) {
+            char.originChoices[`${choiceKey}_power`] = parseInt(val.replace('power_', ''), 10);
+        }
+        
+        this.characterGenerator.applyOriginChoices();
+        this.characterGenerator.updateDerivedStats();
+        this.renderFullSheet();
+    }
+
     handleMutantChoice(val) {
         const oldChoice = this.characterGenerator.character.originChoices.mutantChoice;
         this.characterGenerator.setOriginChoice('mutantChoice', val);
-        if (val === 'boost') {
-            this._pendingBoostTokens = 1;
-        } else {
-            this._pendingBoostTokens = 0;
+        if (val !== 'boost') {
             // 天赋异禀额外随机操作：在现有能力基础上追加1项，而不是全部重置
             if (oldChoice !== 'power' && this.characterGenerator.character.powers.length > 0) {
                 this.characterGenerator.addRandomPower();
@@ -1025,10 +1094,8 @@ export class CreationFlow {
     handleAlienChoice(val) {
         this.characterGenerator.setOriginChoice('alienChoice', val);
         if (val === 'boosts') {
-            this._pendingBoostTokens = 2;
             this.characterGenerator.character.stackedOrigins = null;
         } else if (val === 'double') {
-            this._pendingBoostTokens = 0;
             this.rerollAlienOrigins();
             return; // rerollAlienOrigins will render
         }
@@ -1036,26 +1103,11 @@ export class CreationFlow {
     }
 
     handleAttributeClick(key) {
-        if (this._pendingBoostTokens > 0) {
-            const char = this.characterGenerator.character;
-            char.attributes[key] = Math.min(10, (char.attributes[key] || 0) + 2);
-            this._pendingBoostTokens--;
-            this.characterGenerator.updateDerivedStats();
-            this.renderFullSheet();
-        }
+        // Obsolete, replaced by explicit dropdowns
     }
 
     handlePowerClick(index) {
-        if (this._pendingBoostTokens > 0) {
-            const char = this.characterGenerator.character;
-            const power = char.powers[index];
-            if (power) {
-                power.level = Math.min(10, power.level + 2);
-                this._pendingBoostTokens--;
-                this.characterGenerator.updateDerivedStats();
-                this.renderFullSheet();
-            }
-        }
+        // Obsolete, replaced by explicit dropdowns
     }
 
 
@@ -1068,13 +1120,45 @@ export class CreationFlow {
     openAddEquipmentModal() {
         const allEq = window.getAllEquipment();
         openModal({
-            title: '从资料库添加装备/载具',
+            title: '添加装备 / 装置',
             content: `
                 <div class="add-eq-modal">
-                    <p class="group-hint">选择预设模板，添加后可进行自定义修改</p>
-                    <select id="modal-eq-select" class="full-width">
-                        ${allEq.map(e => `<option value="${e.id}">${e.categoryName}: ${e.name}</option>`).join('')}
-                    </select>
+                    <p class="group-hint" style="margin-bottom: 12px; font-size: 12px; color: var(--text-muted);">
+                        您可以从预设库中选择，或创建完全自定义的装备条目。
+                    </p>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button class="btn btn-sm btn-outline active" id="tab-preset" onclick="document.getElementById('custom-eq-panel').style.display='none'; document.getElementById('preset-eq-panel').style.display='block'; this.classList.add('active'); document.getElementById('tab-custom').classList.remove('active');">从资料库选择</button>
+                        <button class="btn btn-sm btn-outline" id="tab-custom" onclick="document.getElementById('preset-eq-panel').style.display='none'; document.getElementById('custom-eq-panel').style.display='block'; this.classList.add('active'); document.getElementById('tab-preset').classList.remove('active');">完全自定义</button>
+                    </div>
+
+                    <div id="preset-eq-panel">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">预设模板：</label>
+                        <select id="modal-eq-select" class="full-width" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-lighter);">
+                            ${allEq.map(e => `<option value="${e.id}">${e.categoryName}: ${e.name}</option>`).join('')}
+                        </select>
+                    </div>
+
+                    <div id="custom-eq-panel" style="display: none;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">自定义名称：</label>
+                                <input type="text" id="custom-eq-name" class="full-width" placeholder="例如：多功能战术腰带" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-lighter);">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">类型：</label>
+                                <select id="custom-eq-type" class="full-width" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-lighter);">
+                                    <option value="equipment">常规装备</option>
+                                    <option value="weapon">武器</option>
+                                    <option value="armor">护甲</option>
+                                    <option value="vehicle">载具</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">描述/效果：</label>
+                                <textarea id="custom-eq-desc" class="full-width" placeholder="详细描述该装备的功能..." style="padding: 6px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-lighter); min-height: 60px; resize: vertical;"></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `,
             footer: `<button class="btn btn-primary" onclick="app.creationFlow.confirmAddEquipment()">确认添加</button>`
@@ -1193,6 +1277,44 @@ export class CreationFlow {
     }
 
     confirmAddEquipment() {
+        const customPanel = document.getElementById('custom-eq-panel');
+        if (customPanel && customPanel.style.display === 'block') {
+            // 自定义装备
+            const name = document.getElementById('custom-eq-name').value.trim();
+            const typeId = document.getElementById('custom-eq-type').value;
+            const desc = document.getElementById('custom-eq-desc').value.trim();
+            
+            if (!name) {
+                showError('请输入自定义装备名称');
+                return;
+            }
+
+            const typeNames = {
+                'equipment': '装备',
+                'weapon': '武器',
+                'armor': '护甲',
+                'vehicle': '载具'
+            };
+
+            const customItem = {
+                instanceId: 'eq_' + Date.now(),
+                baseId: 'custom_' + Date.now(),
+                name: name,
+                categoryName: typeNames[typeId] || '装备',
+                description: desc,
+                customFeatures: []
+            };
+
+            if (!this.characterGenerator.character.equipment) {
+                this.characterGenerator.character.equipment = [];
+            }
+            this.characterGenerator.character.equipment.push(customItem);
+            this.renderFullSheet();
+            closeModal();
+            return;
+        }
+
+        // 预设装备
         const id = document.getElementById('modal-eq-select').value;
         if (id) {
             this.characterGenerator.addEquipment(id);
