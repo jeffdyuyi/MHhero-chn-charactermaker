@@ -3,7 +3,7 @@
  * 提供离线缓存功能
  */
 
-const CACHE_NAME = 'comic-hero-v3';
+const CACHE_NAME = 'comic-hero-v5';
 const STATIC_ASSETS = [
     '/',
     '/index.html',

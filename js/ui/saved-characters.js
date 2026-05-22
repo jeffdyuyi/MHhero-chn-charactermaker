@@ -85,9 +85,10 @@ export class SavedCharactersView {
 
         if (characters.length === 0) {
             container.innerHTML = `
-                <div class="empty-state">
-                    <p>${this.searchQuery ? '没有找到符合条件的角色' : '名录空空如也'}</p>
-                    <button class="btn btn-primary" onclick="app.viewManager.switchView('editor')">前往创建新英雄</button>
+                <div class="character-card create-new-card" onclick="app.viewManager.switchView('editor')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 250px; cursor: pointer; text-align: center; border: 2px dashed var(--comic-border-color); background: transparent; transition: all 0.2s;">
+                    <div style="font-size: 48px; color: var(--text-muted); margin-bottom: 10px; opacity: 0.5;">🦸</div>
+                    <h3 style="color: var(--charcoal-ink); margin: 0; font-size: 1.2em;">创建新英雄</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">${this.searchQuery ? '换个关键词试试？' : '开始你的超级英雄之旅'}</p>
                 </div>
             `;
             return;
@@ -103,16 +104,16 @@ export class SavedCharactersView {
                     <div class="char-avatar-mini">
                         ${character.avatar ? `<img src="${character.avatar}" alt="Avatar">` : '🦸'}
                     </div>
-                    <div class="char-title-group">
+                    <div class="char-title-group" style="text-align: right;">
                         <h4 style="margin: 0; font-size: 1.1em;">${character.name || '未命名英雄'}</h4>
-                        <div class="char-subtitle" style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; align-items: center;">
+                        <div class="char-subtitle" style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; margin-top: 5px;">
                            <span class="char-origin badge-xs">${character.origin?.name || '未知起源'}</span>
                            <span class="char-mode-badge ${character.mode}">${character.mode === 'random' ? '🎲' : '🎯'}</span>
-                           <span class="char-timestamp" style="font-size: 0.8em; color: var(--text-muted);">
-                               🕒 ${new Date(character.createdAt || Date.now()).toLocaleDateString()}
-                           </span>
                         </div>
                     </div>
+                </div>
+                <div style="font-size: 0.8em; color: var(--text-muted); text-align: right; margin-top: -8px;">
+                    🕒 ${new Date(character.createdAt || Date.now()).toLocaleDateString()}
                 </div>
                 <div class="char-info-row">
                     <span class="stat-pill">耐力 ${character.stamina}</span>
