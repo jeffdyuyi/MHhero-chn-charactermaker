@@ -52,10 +52,6 @@ export class SavedCharactersView {
             });
         }
 
-        if (exportAllBtn) {
-            exportAllBtn.addEventListener('click', () => this.exportAll());
-        }
-
         if (importBtn && importFileInput) {
             importBtn.addEventListener('click', () => importFileInput.click());
             importFileInput.addEventListener('change', (e) => this.handleImport(e));
@@ -127,6 +123,7 @@ export class SavedCharactersView {
                     <button class="btn btn-xs btn-secondary" onclick="app.savedCharactersView.viewCharacter('${character.id}')">详情</button>
                     <button class="btn btn-xs btn-secondary" onclick="app.editCharacter('${character.id}')">编辑</button>
                     <button class="btn btn-xs btn-info" onclick="app.savedCharactersView.exportCharacterImage('${character.id}')">🖼️ 图片</button>
+                    <button class="btn btn-xs btn-outline" onclick="app.savedCharactersView.exportCharacterJson('${character.id}')">📥 JSON</button>
                     <button class="btn btn-xs btn-danger" onclick="app.savedCharactersView.confirmDelete('${character.id}')">删除</button>
                 </div>
             </div>
@@ -179,10 +176,14 @@ export class SavedCharactersView {
         });
     }
 
-    exportAll() {
-        const json = exportAllCharacters();
-        downloadFile(json, `comic-heroes-all-${new Date().toISOString().slice(0, 10)}.json`);
-        showSuccess('已导出所有角色数据');
+    exportCharacterJson(id) {
+        const character = this.app.getCharacterById(id);
+        if (character) {
+            const json = JSON.stringify(character, null, 2);
+            const filename = `hero-${character.name || 'unnamed'}-${new Date().getTime()}.json`;
+            downloadFile(json, filename, 'application/json');
+            showSuccess('角色数据已导出');
+        }
     }
 
     async handleImport(event) {

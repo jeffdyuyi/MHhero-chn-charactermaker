@@ -66,10 +66,34 @@ export class CreationFlow {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            const base64 = e.target.result;
-            this.characterGenerator.character.avatar = base64;
-            this.renderFullSheet();
-            showSuccess('头像已上传！');
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                const maxDim = 400; // Limit dimension to save space
+                
+                if (width > height && width > maxDim) {
+                    height = Math.round((height * maxDim) / width);
+                    width = maxDim;
+                } else if (height > maxDim) {
+                    width = Math.round((width * maxDim) / height);
+                    height = maxDim;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Compress to JPEG with 0.8 quality
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                
+                this.characterGenerator.character.avatar = compressedBase64;
+                this.renderFullSheet();
+                showSuccess('头像已上传！');
+            };
+            img.src = e.target.result;
         };
         reader.readAsDataURL(file);
     }
