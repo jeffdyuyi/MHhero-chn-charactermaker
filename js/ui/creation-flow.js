@@ -636,21 +636,21 @@ export class CreationFlow {
                 <div class="p-mods">
                     <div class="mod-list">
                         ${power.extras.map(e => `
-                            <div class="power-plugin plugin-extra" title="【附带效果】\n${e.description}\n\n(点击移除此插件)" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'extra', '${e.id}', '${e.name}')">
+                            <div class="power-plugin plugin-extra" title="【附带效果】\n${e.description}\n\n(点击重新配置修饰项)" onclick="event.stopPropagation(); app.creationFlow.openModifierModal(${index})">
                                 <div class="plugin-header">
                                     <span class="plugin-icon">↗️ 附带效果</span>
                                     <span class="plugin-name">${e.name}</span>
                                 </div>
-                                <div class="plugin-remove">✕</div>
+                                <div class="plugin-remove" title="删除插件" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'extra', '${e.id}', '${e.name}')">✕</div>
                             </div>
                         `).join('')}
                         ${power.flaws.map(f => `
-                            <div class="power-plugin plugin-flaw" title="【限制条件】\n${f.description}\n\n(点击移除此插件)" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'flaw', '${f.id}', '${f.name}')">
+                            <div class="power-plugin plugin-flaw" title="【限制条件】\n${f.description}\n\n(点击重新配置修饰项)" onclick="event.stopPropagation(); app.creationFlow.openModifierModal(${index})">
                                 <div class="plugin-header">
                                     <span class="plugin-icon">⛓️ 限制条件</span>
                                     <span class="plugin-name">${f.name}</span>
                                 </div>
-                                <div class="plugin-remove">✕</div>
+                                <div class="plugin-remove" title="删除插件" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'flaw', '${f.id}', '${f.name}')">✕</div>
                             </div>
                         `).join('')}
                         <button class="btn-add-tag" title="配置附带效果或限制条件" onclick="event.stopPropagation(); app.creationFlow.openModifierModal(${index})" style="width: 100%; margin-top: 4px; padding: 6px; border-style: dashed;">+ 插入能力插件 (配置修饰项)</button>

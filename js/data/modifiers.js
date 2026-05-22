@@ -37,7 +37,7 @@ export const POWER_FLAWS = [
     { id: 'others_only', name: '仅限他人', cost: '-1', description: '该项特殊能力只能对他人造成影响,无法作用于自身这会抵消影响他人的附带效果。' },
     { id: 'activation', name: '施放动作', cost: '-1', description: '使用者需要做出某些施放动作才能使用特殊能力,如几句歌曲、一小段舞蹈、神秘的手势或吟诵咒语,无法做出施放动作则不能使用能力。除非该项特殊能力需要预先准备(下文所述),否则将施放动作视为使用能力这个动作的一部分。' },
     { id: 'preparation', name: '预先准备', cost: '-1', description: '使用者需要至少进行一画页的准备才能触发特殊能力(参阅前文的预先准备)。' },
-    { id: 'source_limited', name: '限制来源', cost: '-1', description: '使用者无法生成特殊能力所需的能量或物质,必须依赖外部来源,游戏主持人可以将特殊能力的等级限制为可用来源的有效等级。' },
+    { id: 'source_limited', name: '限制来源 (装置)', cost: '-1', description: '角色的特殊能力完全依靠某种物理装置才能发挥作用，或必须依赖特定的外部能量来源。如果装置被夺走、损坏，或是可用来源耗尽，角色将无法使用该能力。' },
     { id: 'reduced_duration', name: '缩短时间', cost: '-1', description: '原本持续时间为延续或永久的特殊能力效果,现在只能持续与等级相同的画页数。' },
     { id: 'tiring', name: '耐力消耗', cost: '-1', description: '使用该项特殊能力会损耗2点耐力值。' },
     { id: 'uncontrolled', name: '不受控制', cost: '-1', description: '该项特殊能力的触发有时不遵循使用者的意愿,而是受到游戏主持人控制。与其他限制条件一样,这不能视为麻烦。' },
