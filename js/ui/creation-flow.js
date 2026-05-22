@@ -635,9 +635,9 @@ export class CreationFlow {
                 <div class="item-desc" style="margin-top: 6px;">${desc}</div>
                 <div class="p-mods">
                     <div class="mod-list">
-                        ${power.extras.map(e => `<span class="tag extra" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'extra', '${e.id}')">${e.name}</span>`).join('')}
-                        ${power.flaws.map(f => `<span class="tag flaw" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'flaw', '${f.id}')">${f.name}</span>`).join('')}
-                        <button class="btn-add-tag" onclick="event.stopPropagation(); app.creationFlow.openModifierModal(${index})">+</button>
+                        ${power.extras.map(e => `<span class="tag extra" title="点击移除该附带效果" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'extra', '${e.id}', '${e.name}')">${e.name} <span style="opacity:0.6;font-size:10px;margin-left:2px;">✕</span></span>`).join('')}
+                        ${power.flaws.map(f => `<span class="tag flaw" title="点击移除该限制条件" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'flaw', '${f.id}', '${f.name}')">${f.name} <span style="opacity:0.6;font-size:10px;margin-left:2px;">✕</span></span>`).join('')}
+                        <button class="btn-add-tag" title="添加附带效果/限制条件" onclick="event.stopPropagation(); app.creationFlow.openModifierModal(${index})">+</button>
                     </div>
                 </div>
             </div>
@@ -1031,7 +1031,7 @@ export class CreationFlow {
             content: `
                 <div class="mod-modal-grid">
                     <div class="mod-group">
-                        <h5>✅ 额外增益 (Extras)</h5>
+                        <h5>✅ 附带效果 (Extras)</h5>
                         <p class="group-hint">增强能力的效果，但会增加点数成本。</p>
                         <div class="mod-list">
                             ${POWER_EXTRAS.map(e => `
@@ -1044,7 +1044,7 @@ export class CreationFlow {
                         </div>
                     </div>
                     <div class="mod-group">
-                        <h5>⚠️ 能力限制 (Flaws)</h5>
+                        <h5>⚠️ 限制条件 (Limits)</h5>
                         <p class="group-hint">限制能力的发挥，可以返还点数用于其他方面。</p>
                         <div class="mod-list">
                             ${POWER_FLAWS.map(f => `
@@ -1090,8 +1090,9 @@ export class CreationFlow {
         }
     }
 
-    removeModifier(pIndex, type, modId) {
+    removeModifier(pIndex, type, modId, modName) {
         this.characterGenerator.removePowerModifier(pIndex, type, modId);
+        showSuccess(`已移除${type === 'extra' ? '附带效果' : '限制条件'}: ${modName}`);
         this.renderFullSheet();
     }
 
