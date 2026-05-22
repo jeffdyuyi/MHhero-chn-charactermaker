@@ -8,6 +8,8 @@ export * from './attributes.js';
 export * from './powers.js';
 export * from './specialties.js';
 
+
+
 /**
  * 购点配置
  */

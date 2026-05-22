@@ -79,18 +79,26 @@ export class SavedCharactersView {
         // 排序
         characters = sortCharacters(characters, this.sortBy);
 
+        const createCardHTML = `
+            <div class="character-card create-new-card" onclick="app.creationFlow.start(); app.viewManager.switchView('editor');" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 250px; cursor: pointer; text-align: center; border: 2px dashed var(--comic-border-color); background: transparent; transition: all 0.2s;">
+                <div style="font-size: 48px; color: var(--text-muted); margin-bottom: 10px; opacity: 0.5;">➕</div>
+                <h3 style="color: var(--charcoal-ink); margin: 0; font-size: 1.2em;">创建新英雄</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">开始你的超级英雄之旅</p>
+            </div>
+        `;
+
         if (characters.length === 0) {
-            container.innerHTML = `
-                <div class="character-card create-new-card" onclick="app.creationFlow.start(); app.viewManager.switchView('editor');" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 250px; cursor: pointer; text-align: center; border: 2px dashed var(--comic-border-color); background: transparent; transition: all 0.2s;">
-                    <div style="font-size: 48px; color: var(--text-muted); margin-bottom: 10px; opacity: 0.5;">➕</div>
-                    <h3 style="color: var(--charcoal-ink); margin: 0; font-size: 1.2em;">创建新英雄</h3>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">${this.searchQuery ? '换个关键词试试？' : '开始你的超级英雄之旅'}</p>
+            container.innerHTML = this.searchQuery ? `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                    <p style="font-size: 48px; margin-bottom: 10px; opacity: 0.3;">🔍</p>
+                    <p>没有找到匹配的英雄...</p>
                 </div>
-            `;
+            ` : createCardHTML;
             return;
         }
 
-        container.innerHTML = characters.map(char => this.createCharacterCard(char)).join('');
+        const cardsHTML = characters.map(char => this.createCharacterCard(char)).join('');
+        container.innerHTML = this.searchQuery ? cardsHTML : createCardHTML + cardsHTML;
     }
 
     createCharacterCard(character) {
