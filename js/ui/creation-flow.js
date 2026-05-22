@@ -12,7 +12,7 @@ import {
 
 import { formatOriginMechanics, ORIGINS } from '../data/origins.js';
 import { getSpecialtiesList, SPECIALTIES, SPECIALTY_CATEGORIES } from '../data/specialties.js';
-import { getAttributeKeys, ATTRIBUTES, ATTRIBUTE_NAMES } from '../data/attributes.js';
+import { getAttributeKeys, ATTRIBUTES } from '../data/attributes.js';
 import { POINT_BUY_CONFIG } from '../data/index.js';
 import { CharacterGenerator } from '../core/character.js';
 import { showSuccess, showError, showInfo } from './toast.js';

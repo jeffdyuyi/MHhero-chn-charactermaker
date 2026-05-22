@@ -3,8 +3,9 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-    // 解析请求路径
-    let filePath = '.' + req.url;
+    // 解析请求路径，去除查询参数
+    const pathname = req.url.split('?')[0];
+    let filePath = '.' + pathname;
     if (filePath === './') {
         filePath = './index.html';
     }

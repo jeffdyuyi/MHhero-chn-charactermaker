@@ -3,7 +3,7 @@
  * 提供离线缓存功能
  */
 
-const CACHE_NAME = 'comic-hero-v7';
+const CACHE_NAME = 'comic-hero-v8';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
@@ -70,7 +70,7 @@ self.addEventListener('fetch', (event) => {
     }
 
     event.respondWith(
-        caches.match(event.request)
+        caches.match(event.request, { ignoreSearch: true })
             .then((response) => {
                 // 缓存命中，返回缓存
                 if (response) {
