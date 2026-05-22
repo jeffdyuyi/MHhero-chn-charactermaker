@@ -403,3 +403,35 @@
     line-height: var(--line-height-display);
     color: var(--charcoal-ink);
 }
+
+/* --- 页脚详情说明 --- */
+.footer-details {
+    margin-bottom: var(--spacing-sm);
+}
+
+.footer-details summary {
+    cursor: pointer;
+    font-weight: var(--fw-semibold);
+    outline: none;
+    display: inline-block;
+    color: var(--charcoal-ink);
+    transition: color var(--transition-fast);
+}
+
+.footer-details summary:hover {
+    color: var(--text-secondary);
+}
+
+.footer-expanded-content {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    padding: 12px 16px;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    border: 1px dashed var(--comic-border-color);
+    display: inline-block;
+    text-align: center;
+    max-width: 600px;
+}
