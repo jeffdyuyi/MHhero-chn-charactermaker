@@ -274,15 +274,33 @@
 
 .power-panel-card {
     border: var(--comic-border-width) solid var(--comic-border-color);
-    padding: var(--spacing);
     background: var(--pure-white);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     border-radius: var(--border-radius-lg);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    overflow: hidden;
+    box-shadow: var(--comic-shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .power-panel-card:hover {
-    border-color: var(--charcoal-ink);
+    transform: translateY(-2px);
     box-shadow: var(--comic-shadow-hover);
+}
+
+.power-panel-card .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--charcoal-ink);
+    color: var(--pure-white);
+    border-bottom: var(--comic-border-width) solid var(--comic-border-color);
+}
+
+.power-panel-card .item-desc {
+    padding: 12px;
 }
 
 .card-top {
@@ -292,24 +310,58 @@
 }
 
 .p-name {
-    font-weight: var(--fw-emphasis);
+    font-weight: var(--fw-bold);
     font-size: var(--font-size-md);
-    text-decoration: none;
     cursor: pointer;
-    color: var(--charcoal-ink);
-    letter-spacing: -0.2px;
-    transition: color var(--transition-fast);
+    color: var(--pure-white);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .p-name:hover {
-    color: var(--amethyst-link);
+    opacity: 0.8;
+}
+
+.p-cat {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-left: 8px;
+    font-weight: normal;
+}
+
+.p-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.p-level {
+    font-size: 14px;
+    font-weight: 900;
+    background: var(--pure-white);
+    color: var(--charcoal-ink);
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--comic-border-color);
+}
+
+.p-controls .btn-icon-del {
+    color: var(--pure-white);
+    opacity: 0.7;
+}
+
+.p-controls .btn-icon-del:hover {
+    opacity: 1;
+    color: #ff4d4f;
 }
 
 .p-mods {
-    margin-top: 8px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px dashed var(--border-color);
+    padding: 12px;
+    background: var(--bg-secondary);
 }
 
 /* ============================================================
@@ -499,6 +551,62 @@
     background: var(--charcoal-ink);
     color: var(--pure-white);
     border-color: transparent;
+}
+
+/* 插件化修饰词 (Power Plugins) */
+.power-plugin {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    border: var(--comic-border-width) dashed var(--comic-border-color);
+    background: var(--bg-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    border-radius: 4px;
+}
+.power-plugin:hover {
+    border-style: solid;
+    background: var(--pure-white);
+    transform: translateX(2px);
+    box-shadow: 2px 2px 0px var(--charcoal-ink);
+}
+.power-plugin .plugin-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.power-plugin .plugin-icon {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 2px;
+}
+.power-plugin.plugin-extra .plugin-icon {
+    background: var(--charcoal-ink);
+    color: var(--pure-white);
+}
+.power-plugin.plugin-flaw .plugin-icon {
+    background: var(--pure-white);
+    color: var(--charcoal-ink);
+    border: 1px solid var(--charcoal-ink);
+}
+.power-plugin .plugin-name {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-color);
+}
+.power-plugin .plugin-remove {
+    font-size: 14px;
+    font-weight: bold;
+    opacity: 0.3;
+    transition: opacity 0.2s;
+}
+.power-plugin:hover .plugin-remove {
+    opacity: 1;
+    color: #d93025;
 }
 
 /* 添加标签按钮 */

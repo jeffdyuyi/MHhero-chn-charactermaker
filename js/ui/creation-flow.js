@@ -635,9 +635,25 @@ export class CreationFlow {
                 <div class="item-desc" style="margin-top: 6px;">${desc}</div>
                 <div class="p-mods">
                     <div class="mod-list">
-                        ${power.extras.map(e => `<span class="tag extra" title="点击移除该附带效果" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'extra', '${e.id}', '${e.name}')">${e.name} <span style="opacity:0.6;font-size:10px;margin-left:2px;">✕</span></span>`).join('')}
-                        ${power.flaws.map(f => `<span class="tag flaw" title="点击移除该限制条件" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'flaw', '${f.id}', '${f.name}')">${f.name} <span style="opacity:0.6;font-size:10px;margin-left:2px;">✕</span></span>`).join('')}
-                        <button class="btn-add-tag" title="添加附带效果/限制条件" onclick="event.stopPropagation(); app.creationFlow.openModifierModal(${index})">+</button>
+                        ${power.extras.map(e => `
+                            <div class="power-plugin plugin-extra" title="【附带效果】\n${e.description}\n\n(点击移除此插件)" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'extra', '${e.id}', '${e.name}')">
+                                <div class="plugin-header">
+                                    <span class="plugin-icon">↗️ 附带效果</span>
+                                    <span class="plugin-name">${e.name}</span>
+                                </div>
+                                <div class="plugin-remove">✕</div>
+                            </div>
+                        `).join('')}
+                        ${power.flaws.map(f => `
+                            <div class="power-plugin plugin-flaw" title="【限制条件】\n${f.description}\n\n(点击移除此插件)" onclick="event.stopPropagation(); app.creationFlow.removeModifier(${index}, 'flaw', '${f.id}', '${f.name}')">
+                                <div class="plugin-header">
+                                    <span class="plugin-icon">⛓️ 限制条件</span>
+                                    <span class="plugin-name">${f.name}</span>
+                                </div>
+                                <div class="plugin-remove">✕</div>
+                            </div>
+                        `).join('')}
+                        <button class="btn-add-tag" title="配置附带效果或限制条件" onclick="event.stopPropagation(); app.creationFlow.openModifierModal(${index})" style="width: 100%; margin-top: 4px; padding: 6px; border-style: dashed;">+ 插入能力插件 (配置修饰项)</button>
                     </div>
                 </div>
             </div>
