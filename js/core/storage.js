@@ -31,7 +31,7 @@ export function saveCharacter(character) {
         const characters = getSavedCharacters();
 
         // 检查是否已存在
-        const existingIndex = characters.findIndex(c => c.id === character.id);
+        const existingIndex = characters.findIndex(c => String(c.id) === String(character.id));
 
         character.updatedAt = new Date().toISOString();
 
@@ -62,7 +62,7 @@ export function saveCharacter(character) {
 export function deleteCharacter(id) {
     try {
         const characters = getSavedCharacters();
-        const filtered = characters.filter(c => c.id !== id);
+        const filtered = characters.filter(c => String(c.id) !== String(id));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
         return true;
     } catch (error) {
@@ -78,7 +78,7 @@ export function deleteCharacter(id) {
  */
 export function getCharacterById(id) {
     const characters = getSavedCharacters();
-    return characters.find(c => c.id === id) || null;
+    return characters.find(c => String(c.id) === String(id)) || null;
 }
 
 /**
