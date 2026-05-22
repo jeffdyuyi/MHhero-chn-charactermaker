@@ -49,6 +49,8 @@ export class ViewManager {
         } else if (viewName === 'editor') {
             if (this.app.creationFlow && this.app.creationFlow.characterGenerator) {
                 this.app.creationFlow.renderFullSheet();
+            } else if (this.app.creationFlow) {
+                this.app.creationFlow.start();
             }
         }
     }

@@ -62,6 +62,7 @@
                 <div class="section-header">
                     <h2>英雄名录</h2>
                     <div class="header-actions" style="display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-primary" onclick="app.viewManager.switchView('editor'); app.creationFlow.start();">➕ 创建英雄</button>
                         <button class="btn btn-sm btn-info" id="import-image-btn">🖼️ 图片导入</button>
                         <input type="file" id="import-image-file" hidden accept="image/png">
                         <button class="btn btn-sm btn-outline" id="import-characters-btn">📥 JSON导入</button>
@@ -114,7 +115,7 @@
     <div id="toast-container" class="toast-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script type="module" src="js/main.js?v=5"></script>
+    <script type="module" src="js/main.js?v=6"></script>
 </body>
 
 </html>
