@@ -33,7 +33,7 @@ export const ORIGINS = [
             choice: 'power_or_boost',
             bonusPower: 1,
             powerType: 'natural',
-            statBoost: { target: 'any_one', value: 2 }
+            statBoost: { target: 'powers_only', value: 2 }
         }
     },
     {
@@ -101,7 +101,8 @@ export function formatOriginMechanics(mechanics) {
     if (mechanics.statBoost) {
         const target = mechanics.statBoost.target === 'strength' ? '力量' :
             mechanics.statBoost.target === 'mental' ? '一项精神属性' :
-                mechanics.statBoost.target === 'any_two' ? '两项能力' : '一项能力';
+                mechanics.statBoost.target === 'powers_only' ? '一项特殊能力' :
+                    mechanics.statBoost.target === 'any_two' ? '两项能力' : '一项能力';
         parts.push(`${target} +${mechanics.statBoost.value} 级`);
     }
     if (mechanics.bonusPower) {

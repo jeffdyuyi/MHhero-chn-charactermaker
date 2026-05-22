@@ -11,8 +11,8 @@ import {
 } from '../data/powers.js';
 
 import { formatOriginMechanics, ORIGINS } from '../data/origins.js';
-import { getSpecialtiesList, SPECIALTIES } from '../data/specialties.js';
-import { getAttributeKeys, ATTRIBUTES } from '../data/attributes.js';
+import { getSpecialtiesList, SPECIALTIES, SPECIALTY_CATEGORIES } from '../data/specialties.js';
+import { getAttributeKeys, ATTRIBUTES, ATTRIBUTE_NAMES } from '../data/attributes.js';
 import { POINT_BUY_CONFIG } from '../data/index.js';
 import { CharacterGenerator } from '../core/character.js';
 import { showSuccess, showError, showInfo } from './toast.js';
@@ -187,7 +187,8 @@ export class CreationFlow {
             const char = this.characterGenerator.getCharacter();
 
             // 自动判断区块完成情况，直接更新 completedSteps
-            this.completedSteps[0] = char.origin !== null && Object.values(char.attributes).some(val => val > 0);
+            // 使用 char.baseAttributes 判断属性是否已被真正投掷过，避免起源加值导致提前锁定
+            this.completedSteps[0] = char.origin !== null && char.baseAttributes !== undefined;
             this.completedSteps[1] = char.isPowersRolled || char.powers.length > (char.origin?.mechanics?.guaranteedPower ? 1 : 0);
             this.completedSteps[2] = char.specialties.length > 0;
             const traits = char.qualities || [];
@@ -378,6 +379,9 @@ export class CreationFlow {
                 case 'any_one':
                     target = '一项能力';
                     break;
+                case 'powers_only':
+                    target = '一项特殊能力';
+                    break;
                 case 'any_two':
                     target = '两项能力';
                     break;
@@ -416,7 +420,7 @@ export class CreationFlow {
                     <div style="display: flex; align-items: center; gap: 1rem;">
                         <h3 style="margin: 0;">关键属性 (ATTRIBUTES)</h3>
                     </div>
-                    ${!(this.heroType === 'true_hero' && Object.values(char.attributes).some(v => v > 0)) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机生成</button>` : ''}
+                    ${!(this.heroType === 'true_hero' && char.baseAttributes !== undefined) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollAttributes()">🎲 随机生成</button>` : ''}
                 </div>
                 ${originAttributeHint}
                 <div class="attributes-stack">
@@ -443,6 +447,7 @@ export class CreationFlow {
                         strength: '力量',
                         mental: '一项精神属性',
                         any_one: '一项能力',
+                        powers_only: '一项特殊能力',
                         any_two: '两项能力'
                     };
                     const target = targets[mech.statBoost.target] || mech.statBoost.target;
@@ -502,7 +507,10 @@ export class CreationFlow {
             <div class="sheet-section section-specialties">
                 <div class="step-num">STEP 3</div>
                 <div class="panel-header">
-                    <h3>生活专长 (SPECIALTIES)</h3>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <h3 style="margin: 0;">生活专长 (SPECIALTIES)</h3>
+                        <button class="btn-icon" onclick="app.creationFlow.showSpecialtyRules()" title="专长规则说明" style="background: none; border: none; cursor: pointer; font-size: 16px;">📖</button>
+                    </div>
                     <div class="s-actions">
                         ${!(this.heroType === 'true_hero' && char.specialties.length > 0) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollSpecialties()">🎲 随机生成</button>` : ''}
                         <button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddSpecialtyModal()">➕ 手动添加</button>
@@ -637,15 +645,25 @@ export class CreationFlow {
     }
 
     renderSpecialtyItem(specialty, index) {
-        const levels = { 1: '基础', 2: '专家', 3: '大师' };
         const specData = SPECIALTIES.find(s => s.name === specialty.name || s.id === specialty.id);
         const desc = specData ? specData.description : '暂无详细说明';
+        
+        const suffix = specialty.level === 1 ? '' : specialty.level === 2 ? '专家' : '大师';
+        const displayName = `${specialty.name}${suffix}`;
+        
+        let catText = '';
+        if (specData && specData.category && SPECIALTY_CATEGORIES[specData.category]) {
+            const cat = SPECIALTY_CATEGORIES[specData.category];
+            catText = `<span class="badge" style="background: var(--bg-secondary); color: var(--text-muted); font-weight: normal; margin-left: 5px; padding: 2px 6px; font-size: 10px; border: 1px solid var(--border-color);">${cat.icon} ${cat.name}</span>`;
+        }
+
         return `
             <div class="spec-tag-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <span class="s-name">${specialty.name}</span>
-                        <span class="s-level" style="margin-left: 8px;">${levels[specialty.level]}</span>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px;">
+                        <span class="s-name" style="font-weight: bold; font-size: 14px;">${displayName}</span>
+                        <span class="s-bonus badge badge-primary" style="margin-left: 4px; padding: 2px 6px; font-size: 11px;">+${specialty.level}</span>
+                        ${catText}
                     </div>
                     <button class="btn-icon-del" onclick="app.creationFlow.removeSpecialty(${index})">✕</button>
                 </div>
@@ -664,20 +682,22 @@ export class CreationFlow {
         html += `<option value="">-- 请选择要提升的能力 (+2级) --</option>`;
         
         // Attributes
-        html += `<optgroup label="属性 (Attributes)">`;
-        const attrKeys = targetFilter === 'mental' ? ['intellect', 'awareness', 'willpower'] : ['strength', 'agility', 'dexterity', 'stamina', 'intellect', 'awareness', 'willpower', 'resolve'];
-        const attrNames = {
-            strength: '力量', agility: '敏捷', dexterity: '灵巧', stamina: '耐力',
-            intellect: '智力', awareness: '感知', willpower: '意志', resolve: '决意'
-        };
-        
-        attrKeys.forEach(k => {
-            if (attrNames[k]) {
-                const selected = currentValue === `attr_${k}` ? 'selected' : '';
-                html += `<option value="attr_${k}" ${selected}>${attrNames[k]}</option>`;
-            }
-        });
-        html += `</optgroup>`;
+        if (targetFilter !== 'powers_only') {
+            html += `<optgroup label="属性 (Attributes)">`;
+            const attrKeys = targetFilter === 'mental' ? ['intellect', 'awareness', 'willpower'] : ['strength', 'agility', 'dexterity', 'stamina', 'intellect', 'awareness', 'willpower', 'resolve'];
+            const attrNames = {
+                strength: '力量', agility: '敏捷', dexterity: '灵巧', stamina: '耐力',
+                intellect: '智力', awareness: '感知', willpower: '意志', resolve: '决意'
+            };
+            
+            attrKeys.forEach(k => {
+                if (attrNames[k]) {
+                    const selected = currentValue === `attr_${k}` ? 'selected' : '';
+                    html += `<option value="attr_${k}" ${selected}>${attrNames[k]}</option>`;
+                }
+            });
+            html += `</optgroup>`;
+        }
         
         // Powers
         if (targetFilter !== 'mental' && char.powers && char.powers.length > 0) {
@@ -696,14 +716,14 @@ export class CreationFlow {
     renderOriginMechanicsConfig(char) {
         if (!char.origin || !char.origin.mechanics) return '';
         const mech = char.origin.mechanics;
-        let html = '<div class="origin-config-row">';
+        let html = '';
 
         // 改造 / 花招诡计：固定属性增幅
         if (mech.statBoost && !mech.choice && mech.statBoost.target !== 'strength') {
             html += `
-                <div class="origin-exchange-notice">
-                    <strong>起源增益配置：</strong>
-                    <div>${this.renderStatOrPowerSelect(char, 'autoBoost', mech.statBoost.target)}</div>
+                <div class="origin-exchange-notice" style="margin-top: 15px; border-color: var(--charcoal-ink);">
+                    <strong style="color: var(--charcoal-ink);">⚙️ 起源增益配置：</strong>
+                    <div style="width: 100%; margin-top: 5px;">${this.renderStatOrPowerSelect(char, 'autoBoost', mech.statBoost.target)}</div>
                 </div>
             `;
         }
@@ -711,17 +731,17 @@ export class CreationFlow {
         // 天赋异禀：选择额外能力或属性增幅
         if (mech.choice === 'power_or_boost') {
             html += `
-                <div class="origin-exchange-notice">
-                    <strong>起源抉择：</strong>
-                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                <div class="origin-exchange-notice" style="margin-top: 15px; border-color: var(--charcoal-ink);">
+                    <strong style="color: var(--charcoal-ink);">⚙️ 起源抉择：</strong>
+                    <div style="display: flex; gap: 10px; margin-top: 8px; width: 100%;">
                         <button class="btn btn-xs ${char.originChoices.mutantChoice === 'power' ? 'btn-primary' : 'btn-outline'}" 
-                                onclick="app.creationFlow.handleMutantChoice('power')">额外获得1项能力</button>
+                                onclick="app.creationFlow.handleMutantChoice('power')" style="flex: 1;">额外获得1项能力</button>
                         <button class="btn btn-xs ${char.originChoices.mutantChoice === 'boost' ? 'btn-primary' : 'btn-outline'}" 
-                                onclick="app.creationFlow.handleMutantChoice('boost')">获得1个 +2等级资源点</button>
+                                onclick="app.creationFlow.handleMutantChoice('boost')" style="flex: 1;">获得1个 +2等级资源点</button>
                     </div>
                     ${char.originChoices.mutantChoice === 'boost' ? `
-                        <div style="margin-top: 10px;">
-                            ${this.renderStatOrPowerSelect(char, 'mutantBoost', 'any_one')}
+                        <div style="margin-top: 10px; width: 100%;">
+                            ${this.renderStatOrPowerSelect(char, 'mutantBoost', 'powers_only')}
                         </div>
                     ` : ''}
                 </div>
@@ -731,16 +751,16 @@ export class CreationFlow {
         // 天外来客：选择双重起源
         if (mech.optionalExchange === 'double_roll_origins') {
             html += `
-                <div class="origin-exchange-notice">
-                    <strong>起源抉择：</strong> 你可以选择获得两个 +2等级资源点，或进行双重起源融合。
-                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                <div class="origin-exchange-notice" style="margin-top: 15px; border-color: var(--charcoal-ink);">
+                    <strong style="color: var(--charcoal-ink);">⚙️ 起源抉择：</strong> <span style="font-size: 12px; margin-left: 5px;">选择获得两个 +2等级资源点，或进行双重起源融合。</span>
+                    <div style="display: flex; gap: 10px; margin-top: 8px; width: 100%;">
                         <button class="btn btn-xs ${char.originChoices.alienChoice === 'boosts' ? 'btn-primary' : 'btn-outline'}" 
-                                onclick="app.creationFlow.handleAlienChoice('boosts')">获得2个 +2等级资源点</button>
+                                onclick="app.creationFlow.handleAlienChoice('boosts')" style="flex: 1;">获得2个 +2资源点</button>
                         <button class="btn btn-xs ${char.originChoices.alienChoice === 'double' ? 'btn-primary' : 'btn-outline'}" 
-                                onclick="app.creationFlow.handleAlienChoice('double')">开启双重起源</button>
+                                onclick="app.creationFlow.handleAlienChoice('double')" style="flex: 1;">开启双重起源</button>
                     </div>
                     ${char.originChoices.alienChoice === 'boosts' ? `
-                        <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 5px;">
+                        <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 5px; width: 100%;">
                             ${this.renderStatOrPowerSelect(char, 'alienBoost1', 'any_one')}
                             ${this.renderStatOrPowerSelect(char, 'alienBoost2', 'any_one')}
                         </div>
@@ -749,7 +769,6 @@ export class CreationFlow {
             `;
         }
 
-        html += '</div>';
         return html;
     }
 
@@ -841,6 +860,25 @@ export class CreationFlow {
         this.renderFullSheet();
         // 标记能力步骤为已完成
         this.completedSteps[1] = true;
+    }
+
+    showSpecialtyRules() {
+        const html = `
+            <div style="font-size: 13px; line-height: 1.6; color: var(--text-color); max-height: 60vh; overflow-y: auto;">
+                <p>进行与该项专长相关的检定时,用也可以获得+1的特殊加值。例如,如果拥有空中驾驶专长,在进行空中驾驶相关的协调检定或飞行器械相关的智力检定时,角色可以获得+1加值。</p>
+                <p>玩家可以重复选择同一专长,获得额外的等级加值,如下所述:</p>
+                <ul style="padding-left: 20px; margin: 10px 0;">
+                    <li style="margin-bottom: 8px;"><strong>专家：</strong> 如果专长达到专家等级,进行与该项专长相关的检定时,角色可以获得+2加值。成为专家需要重复选择一次该项专长(总计两次)。</li>
+                    <li style="margin-bottom: 8px;"><strong>大师：</strong> 如果专长达到大师等级,进行与该项专长相关的检定时,角色可以获得+3加值。成为大师需要重复选择两次该项专长(总计三次),此时角色可以使用专长施展特技(请参阅基本概念章节的特技部分)。</li>
+                </ul>
+                <p>每项专长都需要分别标明等级和领域,比如角色拥有的专长可能包括刀剑、弓箭专家、调查专家、绘画大师和潜行大师等。</p>
+            </div>
+        `;
+        openModal({
+            title: '📖 专长等级说明',
+            content: html,
+            footer: '<button class="btn btn-primary" onclick="app.closeModal()">关闭</button>'
+        });
     }
 
     rerollSpecialties() {

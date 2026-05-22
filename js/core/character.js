@@ -402,8 +402,7 @@ export class CharacterGenerator {
         for (let i = 0; i < count; i++) {
             const d66 = rollD66();
             const randomSpecialty = getSpecialtyByD66(d66) || SPECIALTIES[0];
-            const specialty = createSpecialty(randomSpecialty.id, 1);
-            this.character.specialties.push(specialty);
+            this.addSpecialty(randomSpecialty.id, 1);
         }
     }
 
@@ -413,8 +412,13 @@ export class CharacterGenerator {
      * @param {number} level - 等级
      */
     addSpecialty(specialtyId, level = 1) {
-        const specialty = createSpecialty(specialtyId, level);
-        this.character.specialties.push(specialty);
+        const existing = this.character.specialties.find(s => s.id === specialtyId);
+        if (existing) {
+            existing.level = Math.min(3, existing.level + level);
+        } else {
+            const specialty = createSpecialty(specialtyId, level);
+            this.character.specialties.push(specialty);
+        }
     }
 
     /**
