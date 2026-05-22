@@ -47,12 +47,8 @@ export class ViewManager {
         if (viewName === 'saved') {
             this.app.savedCharactersView.loadCharacters();
         } else if (viewName === 'editor') {
-            if (this.app.creationFlow) {
-                if (!this.app.creationFlow.characterGenerator || !this.app.creationFlow.characterGenerator.character) {
-                    this.app.creationFlow.start();
-                } else {
-                    this.app.creationFlow.renderFullSheet();
-                }
+            if (this.app.creationFlow && this.app.creationFlow.characterGenerator) {
+                this.app.creationFlow.renderFullSheet();
             }
         }
     }

@@ -67,7 +67,7 @@ class ComicHeroApp {
     editCharacter(id) {
         const char = this.getCharacterById(id);
         if (char) {
-            this.creationFlow.start(char.mode, id);
+            this.creationFlow.start(id);
             // 填充数据
             this.creationFlow.characterGenerator.character = JSON.parse(JSON.stringify(char));
             this.creationFlow.renderFullSheet();
