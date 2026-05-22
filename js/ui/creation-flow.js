@@ -568,9 +568,9 @@ export class CreationFlow {
             <div class="attr-row" ${isClickable ? `onclick="app.creationFlow.handleAttributeClick('${key}')" style="cursor:pointer; border-color: var(--lavender-glow);"` : ''}>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span class="attr-name">${ATTRIBUTE_NAMES[key]}</span>
-                    <div class="attr-value-box" style="${isBoosted ? 'background: var(--charcoal-ink); color: var(--pure-white); border-color: var(--charcoal-ink);' : ''}">
+                    <div class="attr-value-box ${isBoosted ? 'boosted' : ''}">
                         <span class="val">${val}</span>
-                        ${isBoosted ? `<span style="font-size: 10px; margin-left: 4px; font-weight: normal;">▲起源增益</span>` : ''}
+                        ${isBoosted ? `<span class="boost-label" style="font-size: 10px; margin-left: 4px; font-weight: normal;">▲起源增益</span>` : ''}
                     </div>
                 </div>
                 ${desc ? `<div class="item-desc">${desc}</div>` : ''}

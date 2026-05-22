@@ -249,6 +249,20 @@
     line-height: 1;
 }
 
+.attr-value-box.boosted {
+    background: var(--charcoal-ink);
+    padding: 4px 8px;
+    border-radius: var(--border-radius);
+}
+
+.attr-value-box.boosted .val {
+    color: var(--pure-white);
+}
+
+.attr-value-box.boosted .boost-label {
+    color: var(--pure-white);
+}
+
 /* ============================================================
    04: 能力
    ============================================================ */
