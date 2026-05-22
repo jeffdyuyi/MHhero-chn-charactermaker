@@ -129,7 +129,7 @@ export class SavedCharactersView {
                 </div>
                 <div class="char-actions">
                     <button class="btn btn-xs btn-secondary" onclick="app.savedCharactersView.viewCharacter('${character.id}')">详情</button>
-                    <button class="btn btn-xs btn-secondary" onclick="app.editCharacter('${character.id}')">编辑</button>
+                    <button class="btn btn-xs btn-secondary" onclick="app.savedCharactersView.editCharacter('${character.id}')">编辑</button>
                     <button class="btn btn-xs btn-info" onclick="app.savedCharactersView.exportCharacterImage('${character.id}')">🖼️ 图片</button>
                     <button class="btn btn-xs btn-outline" onclick="app.savedCharactersView.exportCharacterJson('${character.id}')">📥 JSON</button>
                     <button class="btn btn-xs btn-danger" onclick="app.savedCharactersView.confirmDelete('${character.id}')">删除</button>
@@ -146,7 +146,7 @@ export class SavedCharactersView {
         showInfo('准备生成英雄卡图片...');
 
         // 切换到编辑器视图并加载该角色，然后截图
-        this.app.creationFlow.start(character.mode, id);
+        this.app.creationFlow.start(id);
         this.app.viewManager.switchView('editor');
 
         // 给一点点渲染时间
@@ -165,7 +165,7 @@ export class SavedCharactersView {
     editCharacter(id) {
         const character = this.app.getCharacterById(id);
         if (character) {
-            this.app.creationFlow.start(character.mode, id);
+            this.app.creationFlow.start(id);
             // 模式已经由 start 处理，数据也已导入
             this.app.viewManager.switchView('editor');
             this.app.creationFlow.renderFullSheet();

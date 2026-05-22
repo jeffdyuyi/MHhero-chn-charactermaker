@@ -163,8 +163,8 @@ export function showCharacterDetail(character) {
         size: 'large',
         footer: `
             <button class="btn btn-secondary" onclick="app.closeModal()">关闭</button>
-            <button class="btn btn-primary" onclick="app.editCharacter('${character.id}')">编辑</button>
-            <button class="btn btn-success" onclick="app.exportSingleCharacter('${character.id}')">导出</button>
+            <button class="btn btn-primary" onclick="app.savedCharactersView.editCharacter('${character.id}'); app.closeModal();">编辑</button>
+            <button class="btn btn-success" onclick="app.savedCharactersView.exportCharacterJson('${character.id}')">导出JSON</button>
         `
     });
 }
