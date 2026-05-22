@@ -86,7 +86,7 @@ export class SavedCharactersView {
         if (characters.length === 0) {
             container.innerHTML = `
                 <div class="character-card create-new-card" onclick="app.viewManager.switchView('editor')" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 250px; cursor: pointer; text-align: center; border: 2px dashed var(--comic-border-color); background: transparent; transition: all 0.2s;">
-                    <div style="font-size: 48px; color: var(--text-muted); margin-bottom: 10px; opacity: 0.5;">🦸</div>
+                    <div style="font-size: 48px; color: var(--text-muted); margin-bottom: 10px; opacity: 0.5;">➕</div>
                     <h3 style="color: var(--charcoal-ink); margin: 0; font-size: 1.2em;">创建新英雄</h3>
                     <p style="font-size: 12px; color: var(--text-muted); margin-top: 8px;">${this.searchQuery ? '换个关键词试试？' : '开始你的超级英雄之旅'}</p>
                 </div>
@@ -102,7 +102,7 @@ export class SavedCharactersView {
             <div class="character-card">
                 <div class="char-header">
                     <div class="char-avatar-mini">
-                        ${character.avatar ? `<img src="${character.avatar}" alt="Avatar">` : '🦸'}
+                        ${character.avatar ? `<img src="${character.avatar}" alt="Avatar">` : '👤'}
                     </div>
                     <div class="char-title-group" style="text-align: right;">
                         <h4 style="margin: 0; font-size: 1.1em;">${character.name || '未命名英雄'}</h4>

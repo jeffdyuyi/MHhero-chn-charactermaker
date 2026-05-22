@@ -90,7 +90,6 @@ class ComicHeroApp {
             title: '关于作者',
             content: `
                 <div class="author-info" style="text-align: center; padding: 10px;">
-                    <div style="font-size: 48px; margin-bottom: 15px;">🦸‍♂️</div>
                     <h3 style="margin-bottom: 15px; text-transform: uppercase; font-weight: 900;">漫画英雄 TRPG 车卡器</h3>
                     
                     <div style="text-align: left; background: var(--bg-secondary); padding: 15px; border: 1px solid var(--parchment-border); border-radius: var(--border-radius); margin-bottom: 15px;">
