@@ -148,7 +148,8 @@ export class CreationFlow {
             mode: 'random',
             heroType: type, // 记录类型
             id: Date.now(),
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            isPowersRolled: false
         };
 
         this.renderFullSheet();
@@ -163,7 +164,7 @@ export class CreationFlow {
 
             // 自动判断区块完成情况，直接更新 completedSteps
             this.completedSteps[0] = char.origin !== null && Object.values(char.attributes).some(val => val > 0);
-            this.completedSteps[1] = char.powers.length > 0;
+            this.completedSteps[1] = char.isPowersRolled || char.powers.length > (char.origin?.mechanics?.guaranteedPower ? 1 : 0);
             this.completedSteps[2] = char.specialties.length > 0;
             const traits = char.qualities || [];
             const filledTraits = traits.filter(t => t && t.trim()).length;
@@ -460,14 +461,14 @@ export class CreationFlow {
                         ${this._pendingBoostTokens > 0 ? `<span class="badge" style="background: var(--lavender-glow); color: white;">拥有 ${this._pendingBoostTokens} 个 +2 升级点数</span>` : ''}
                     </div>
                     <div class="p-actions">
-                        ${!(this.heroType === 'true_hero' && char.powers.length > 0) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机生成</button>` : ''}
+                        ${!(this.heroType === 'true_hero' && char.isPowersRolled) ? `<button class="btn btn-xs btn-outline" onclick="app.creationFlow.rerollPowers()">🎲 随机生成</button>` : ''}
                         <button class="btn btn-xs btn-outline" onclick="app.creationFlow.openAddPowerModal()">➕ 手动添加</button>
                     </div>
                 </div>
                 ${originPowerHint}
                 ${originActionBar}
                 <div class="powers-stack">
-                    ${char.powers.length > 0 ? char.powers.map((p, i) => this.renderPowerItem(p, i)).join('') : '<div class="empty-hint">暂未获得超常能力...</div>'}
+                    ${char.powers.length > 0 ? char.powers.map((p, i) => this.renderPowerItem(p, i, char)).join('') : '<div class="empty-hint">暂未获得超常能力...</div>'}
                 </div>
             </div>
         `;
@@ -579,9 +580,22 @@ export class CreationFlow {
         `;
     }
 
-    renderPowerItem(power, index) {
+    renderPowerItem(power, index, char) {
         const desc = getPowerDescription(power.name) || '暂无详细说明';
         const isClickable = this._pendingBoostTokens > 0;
+        
+        // 检查是否为起源固定能力
+        let isGuaranteed = false;
+        if (char && char.origin) {
+            const mechanicsList = [];
+            if (char.stackedOrigins) {
+                char.stackedOrigins.forEach(o => o.mechanics && mechanicsList.push(o.mechanics));
+            } else if (char.origin.mechanics) {
+                mechanicsList.push(char.origin.mechanics);
+            }
+            isGuaranteed = mechanicsList.some(mech => mech.guaranteedPower === power.name);
+        }
+
         return `
             <div class="power-panel-card" ${isClickable ? `onclick="app.creationFlow.handlePowerClick(${index})" style="cursor:pointer; border-color: var(--lavender-glow);"` : ''}>
                 <div class="card-top">
@@ -590,7 +604,7 @@ export class CreationFlow {
                     <div class="p-controls">
                         ${isClickable ? `<span style="font-size: 11px; color: var(--lavender-glow); margin-right: 10px;">点击升级 +2</span>` : ''}
                         <span class="p-level">Lvl ${power.level}</span>
-                        <button class="btn-icon-del" onclick="event.stopPropagation(); app.creationFlow.removePower(${index})">✕</button>
+                        ${!isGuaranteed ? `<button class="btn-icon-del" onclick="event.stopPropagation(); app.creationFlow.removePower(${index})">✕</button>` : `<span class="badge" style="margin-left: 8px; font-size: 10px;">固定</span>`}
                     </div>
                 </div>
                 <div class="item-desc" style="margin-top: 6px;">${desc}</div>

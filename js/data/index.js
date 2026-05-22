@@ -49,6 +49,7 @@ export function createEmptyCharacter() {
             willpower: 1
         },
         powers: [],
+        isPowersRolled: false,
         specialties: [],
         equipment: [], // 新增：装备资料库
         avatar: null, // 新增：英雄头像 (Base64)

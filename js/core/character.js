@@ -252,6 +252,7 @@ export class CharacterGenerator {
      */
     generatePowers() {
         this.character.powers = [];
+        this.character.isPowersRolled = true;
 
         // 1. 根据特殊能力数量列表进行掷骰
         const roll = roll2d6();
