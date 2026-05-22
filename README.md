@@ -5,14 +5,18 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-blue.svg)](https://web.dev/progressive-web-apps/)
 
-## 📢 版权声明
+## 📢 版权与免责声明
 
-本工具基于《ICONS》（中文名漫画英雄）TRPG规则设计，仅作为爱好者工具使用。
+本工具基于《ICONS》（中文译名：漫画英雄）TRPG规则设计，属于**非盈利性质的粉丝自制工具**。
 
-- **版权所有**：《ICONS Superpowered Roleplaying》规则由 Steve Kenson 设计，Green Ronin Publishing 出版
-- **使用目的**：本工具仅用于非商业目的的个人使用和爱好者交流
-- **免责声明**：本工具不代表《ICONS》官方产品，仅为粉丝自制工具
-- **官方信息**：更多关于《ICONS》的信息，请访问 [Green Ronin Publishing 官方网站](https://greenronin.com/)
+- **原作者 (Original Author)**：Steve Kenson
+  - 英文原版官方网站：[ICONS Superpowered Roleplaying](https://stevekenson.com/icons/)
+- **中文代理 (Chinese Localizer)**：乐博睿
+  - 中文代理官方网站：[乐博睿 - 独立佳作](https://labyrinth-rpg.com/%E7%8B%AC%E7%AB%8B%E4%BD%B3%E4%BD%9C)
+- **免责声明**：
+  - 本工具仅作为方便玩家跑团的辅助工具，涉及的**所有游戏规则、专有名词、机制设定**的著作权均归原作者及中文代理方所有。
+  - 本工具**严格禁止用于任何形式的商业用途**或盈利活动。
+  - 若您喜欢本规则，请购买并支持官方正版出版物。
 
 ## ✨ 特性
 
