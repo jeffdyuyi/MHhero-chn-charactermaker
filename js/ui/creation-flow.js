@@ -735,7 +735,7 @@ export class CreationFlow {
         let html = '';
 
         // 改造 / 花招诡计：固定属性增幅
-        if (mech.statBoost && !mech.choice && mech.statBoost.target !== 'strength') {
+        if (mech.statBoost && !mech.choice && mech.statBoost.target !== 'strength' && mech.statBoost.target !== 'any_two') {
             html += `
                 <div class="origin-exchange-notice" style="margin-top: 15px; border-color: var(--charcoal-ink);">
                     <strong style="color: var(--charcoal-ink);">⚙️ 起源增益配置：</strong>
